@@ -7,7 +7,6 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const server_1 = __importDefault(require("./loaders/server"));
 //Cargar la configuracion de .env
 dotenv_1.default.config();
-// await require('./loaders').default({ expressApp: app });
 const server = new server_1.default();
 server.listen();
 //# sourceMappingURL=app.js.map

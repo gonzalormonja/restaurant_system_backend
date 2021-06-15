@@ -17,6 +17,9 @@ const category_1 = __importDefault(require("../models/category"));
 const characteristic_1 = __importDefault(require("../models/characteristic"));
 const ingredient_1 = __importDefault(require("../models/ingredient"));
 const menu_1 = __importDefault(require("../models/menu"));
+const menuCharacteristic_1 = __importDefault(require("../models/menuCharacteristic"));
+const menuGarnish_1 = __importDefault(require("../models/menuGarnish"));
+const menuIngredient_1 = __importDefault(require("../models/menuIngredient"));
 const price_1 = __importDefault(require("../models/price"));
 const getMenus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const menus = yield menu_1.default.findAll({
@@ -24,7 +27,7 @@ const getMenus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             { model: category_1.default },
             { model: price_1.default },
             { model: menu_1.default, as: 'garnishes' },
-            { model: menu_1.default, as: 'menusOfGranish' },
+            { model: menu_1.default, as: 'menusOfGarnish' },
             { model: characteristic_1.default },
             { model: ingredient_1.default }
         ]
@@ -33,10 +36,47 @@ const getMenus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.getMenus = getMenus;
 const postMenu = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b, _c;
     try {
         const { body } = req;
-        const menu = menu_1.default.build(body);
-        yield menu.save();
+        const menu = yield menu_1.default.create(body);
+        //* add ingredients
+        (_a = body.ingredients) === null || _a === void 0 ? void 0 : _a.map((ingredient) => __awaiter(void 0, void 0, void 0, function* () {
+            const ingredientRecord = yield ingredient_1.default.findByPk(ingredient.id);
+            if (ingredientRecord) {
+                menuIngredient_1.default.create({
+                    idIngredient: ingredientRecord.id,
+                    idMenu: menu.id,
+                    quantity: ingredient.quantity
+                });
+            }
+        }));
+        //* add characteristics
+        (_b = body.idCharacteristics) === null || _b === void 0 ? void 0 : _b.map((idCharacteristic) => __awaiter(void 0, void 0, void 0, function* () {
+            const characteristicRecord = yield characteristic_1.default.findByPk(idCharacteristic);
+            if (characteristicRecord) {
+                menuCharacteristic_1.default.create({
+                    idCharacteristic: characteristicRecord.id,
+                    idMenu: menu.id
+                });
+            }
+        }));
+        //* add garnishes
+        (_c = body.garnishes) === null || _c === void 0 ? void 0 : _c.map((garnish) => __awaiter(void 0, void 0, void 0, function* () {
+            const garnishRecord = yield menu_1.default.findByPk(garnish.id);
+            if (garnishRecord) {
+                if (!garnishRecord.isGarnish) {
+                    throw new Error(`El menu ${garnishRecord.name} no es una guarnicion valida`);
+                }
+                menuGarnish_1.default.create({
+                    idGarnish: garnishRecord.id,
+                    idMenu: menu.id,
+                    max_quantity: garnish.max_quantity
+                });
+            }
+        }));
+        //* add price
+        yield price_1.default.create({ price: body.price ? body.price : 0, idMenu: menu.id });
         res.json(menu);
     }
     catch (error) {

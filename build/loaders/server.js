@@ -13,10 +13,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const menus_routes_1 = __importDefault(require("../app/routes/menus.routes"));
-const categories_routes_1 = __importDefault(require("../app/routes/categories.routes"));
-const ingredients_routes_1 = __importDefault(require("../app/routes/ingredients.routes"));
-const characteristics_routes_1 = __importDefault(require("../app/routes/characteristics.routes"));
+const menus_routes_1 = __importDefault(require("../routes/menus.routes"));
+const categories_routes_1 = __importDefault(require("../routes/categories.routes"));
+const ingredients_routes_1 = __importDefault(require("../routes/ingredients.routes"));
+const characteristics_routes_1 = __importDefault(require("../routes/characteristics.routes"));
 const cors_1 = __importDefault(require("cors"));
 const connection_1 = __importDefault(require("../db/connection"));
 class Server {

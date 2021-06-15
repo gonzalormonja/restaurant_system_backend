@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize';
+import { Model, DataTypes, BuildOptions } from 'sequelize';
 import db from '../db/connection';
 import Characteristic from './characteristic';
 import Ingredient from './ingredient';
@@ -7,7 +7,22 @@ import MenuGarnish from './menuGarnish';
 import MenuIngredient from './menuIngredient';
 import Price from './price';
 
-const Menu = db.define('menus', {
+interface Menu extends Model {
+  id: number;
+  name: string;
+  bar_code: string;
+  short_name: string;
+  idCategory: number;
+  maximum_of_flavors: number;
+  state: boolean;
+  isGarnish: boolean;
+}
+
+type MenuStatic = typeof Model & {
+  new (values?: object, options?: BuildOptions): Menu;
+};
+
+const MenuModel = db.define('menus', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -47,34 +62,42 @@ const Menu = db.define('menus', {
     type: DataTypes.BOOLEAN,
     defaultValue: false
   }
-});
+}) as MenuStatic;
 
-Menu.belongsToMany(Menu, {
+MenuModel.belongsToMany(MenuModel, {
   through: MenuGarnish,
   foreignKey: 'idGarnish',
   otherKey: 'idMenu',
-  as: 'menusOfGranish'
+  as: 'menusOfGarnish'
 });
-Menu.belongsToMany(Menu, { through: MenuGarnish, foreignKey: 'idMenu', otherKey: 'idGarnish', as: 'garnishes' });
 
-Menu.hasMany(Price, { foreignKey: 'idMenu' });
+MenuModel.belongsToMany(MenuModel, {
+  through: MenuGarnish,
+  foreignKey: 'idMenu',
+  otherKey: 'idGarnish',
+  as: 'garnishes'
+});
 
-Menu.belongsToMany(Ingredient, {
+MenuModel.hasMany(Price, { foreignKey: 'idMenu' });
+
+MenuModel.belongsToMany(Ingredient, {
   through: MenuIngredient,
   foreignKey: 'idMenu',
   otherKey: 'idIngredient'
 });
-Ingredient.belongsToMany(Menu, {
+
+Ingredient.belongsToMany(MenuModel, {
   through: MenuIngredient,
   foreignKey: 'idIngredient',
   otherKey: 'idMenu'
 });
 
-Menu.belongsToMany(Characteristic, {
+MenuModel.belongsToMany(Characteristic, {
   through: MenuCharacteristic,
   foreignKey: 'idMenu',
   otherKey: 'idCharacteristic'
 });
-Characteristic.belongsToMany(Menu, { through: MenuCharacteristic, foreignKey: 'idMenu' });
 
-export default Menu;
+Characteristic.belongsToMany(MenuModel, { through: MenuCharacteristic, foreignKey: 'idMenu' });
+
+export default MenuModel;

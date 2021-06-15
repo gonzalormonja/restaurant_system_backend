@@ -1,8 +1,19 @@
-import { DataTypes } from 'sequelize';
+import { BuildOptions, DataTypes, Model } from 'sequelize';
 import db from '../db/connection';
 import Menu from './menu';
 
-const Category = db.define('categories', {
+interface Category extends Model {
+  id: number;
+  name: string;
+  idCategory: number;
+  state: boolean;
+}
+
+type CategoryStatic = typeof Model & {
+  new (values?: object, options?: BuildOptions): Category;
+};
+
+const CategoryModel = db.define('categories', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -22,12 +33,12 @@ const Category = db.define('categories', {
     type: DataTypes.BOOLEAN,
     defaultValue: true
   }
-});
+}) as CategoryStatic;
 
-Category.belongsTo(Category, { foreignKey: 'idCategory' });
+CategoryModel.belongsTo(CategoryModel, { foreignKey: 'idCategory' });
 
-Category.hasMany(Menu, {
+CategoryModel.hasMany(Menu, {
   foreignKey: 'idCategory'
 });
-Menu.belongsTo(Category, { foreignKey: 'idCategory' });
-export default Category;
+Menu.belongsTo(CategoryModel, { foreignKey: 'idCategory' });
+export default CategoryModel;

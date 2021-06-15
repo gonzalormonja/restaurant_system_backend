@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const connection_1 = __importDefault(require("../db/connection"));
 const menu_1 = __importDefault(require("./menu"));
-const Category = connection_1.default.define('categories', {
+const CategoryModel = connection_1.default.define('categories', {
     id: {
         type: sequelize_1.DataTypes.INTEGER,
         primaryKey: true,
@@ -27,10 +27,10 @@ const Category = connection_1.default.define('categories', {
         defaultValue: true
     }
 });
-Category.belongsTo(Category, { foreignKey: 'idCategory' });
-Category.hasMany(menu_1.default, {
+CategoryModel.belongsTo(CategoryModel, { foreignKey: 'idCategory' });
+CategoryModel.hasMany(menu_1.default, {
     foreignKey: 'idCategory'
 });
-menu_1.default.belongsTo(Category, { foreignKey: 'idCategory' });
-exports.default = Category;
+menu_1.default.belongsTo(CategoryModel, { foreignKey: 'idCategory' });
+exports.default = CategoryModel;
 //# sourceMappingURL=category.js.map

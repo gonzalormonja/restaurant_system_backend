@@ -1,7 +1,18 @@
-import { DataTypes } from 'sequelize';
+import { BuildOptions, DataTypes, Model } from 'sequelize';
 import db from '../db/connection';
 
-const MenuGarnish = db.define('menus_garnishes', {
+interface MenuGarnish extends Model {
+  id: number;
+  idMenu: number;
+  idGarnish: number;
+  max_quantity: number;
+}
+
+type MenuGarnishStatic = typeof Model & {
+  new (values?: object, options?: BuildOptions): MenuGarnish;
+};
+
+const MenuGarnishModel = db.define('menus_garnishes', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -17,10 +28,8 @@ const MenuGarnish = db.define('menus_garnishes', {
   },
   max_quantity: {
     type: DataTypes.INTEGER,
-    validate: {
-      notEmpty: true
-    }
+    defaultValue: 1
   }
-});
+}) as MenuGarnishStatic;
 
-export default MenuGarnish;
+export default MenuGarnishModel;

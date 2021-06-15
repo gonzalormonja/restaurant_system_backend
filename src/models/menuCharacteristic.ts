@@ -1,7 +1,17 @@
-import { DataTypes } from 'sequelize';
+import { BuildOptions, DataTypes, Model } from 'sequelize';
 import db from '../db/connection';
 
-const MenuCharacteristic = db.define('menus_characteristics', {
+interface MenuCharacteristic extends Model {
+  id: number;
+  idMenu: number;
+  idCharacteristic: number;
+}
+
+type MenuCharacteristicStatic = typeof Model & {
+  new (values?: object, options?: BuildOptions): MenuCharacteristic;
+};
+
+const MenuCharacteristicModel = db.define('menus_characteristics', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -15,6 +25,6 @@ const MenuCharacteristic = db.define('menus_characteristics', {
     type: DataTypes.INTEGER,
     defaultValue: null
   }
-});
+}) as MenuCharacteristicStatic;
 
-export default MenuCharacteristic;
+export default MenuCharacteristicModel;

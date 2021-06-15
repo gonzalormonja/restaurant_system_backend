@@ -11,7 +11,7 @@ const menuCharacteristic_1 = __importDefault(require("./menuCharacteristic"));
 const menuGarnish_1 = __importDefault(require("./menuGarnish"));
 const menuIngredient_1 = __importDefault(require("./menuIngredient"));
 const price_1 = __importDefault(require("./price"));
-const Menu = connection_1.default.define('menus', {
+const MenuModel = connection_1.default.define('menus', {
     id: {
         type: sequelize_1.DataTypes.INTEGER,
         primaryKey: true,
@@ -52,29 +52,34 @@ const Menu = connection_1.default.define('menus', {
         defaultValue: false
     }
 });
-Menu.belongsToMany(Menu, {
+MenuModel.belongsToMany(MenuModel, {
     through: menuGarnish_1.default,
     foreignKey: 'idGarnish',
     otherKey: 'idMenu',
-    as: 'menusOfGranish'
+    as: 'menusOfGarnish'
 });
-Menu.belongsToMany(Menu, { through: menuGarnish_1.default, foreignKey: 'idMenu', otherKey: 'idGarnish', as: 'garnishes' });
-Menu.hasMany(price_1.default, { foreignKey: 'idMenu' });
-Menu.belongsToMany(ingredient_1.default, {
+MenuModel.belongsToMany(MenuModel, {
+    through: menuGarnish_1.default,
+    foreignKey: 'idMenu',
+    otherKey: 'idGarnish',
+    as: 'garnishes'
+});
+MenuModel.hasMany(price_1.default, { foreignKey: 'idMenu' });
+MenuModel.belongsToMany(ingredient_1.default, {
     through: menuIngredient_1.default,
     foreignKey: 'idMenu',
     otherKey: 'idIngredient'
 });
-ingredient_1.default.belongsToMany(Menu, {
+ingredient_1.default.belongsToMany(MenuModel, {
     through: menuIngredient_1.default,
     foreignKey: 'idIngredient',
     otherKey: 'idMenu'
 });
-Menu.belongsToMany(characteristic_1.default, {
+MenuModel.belongsToMany(characteristic_1.default, {
     through: menuCharacteristic_1.default,
     foreignKey: 'idMenu',
     otherKey: 'idCharacteristic'
 });
-characteristic_1.default.belongsToMany(Menu, { through: menuCharacteristic_1.default, foreignKey: 'idMenu' });
-exports.default = Menu;
+characteristic_1.default.belongsToMany(MenuModel, { through: menuCharacteristic_1.default, foreignKey: 'idMenu' });
+exports.default = MenuModel;
 //# sourceMappingURL=menu.js.map

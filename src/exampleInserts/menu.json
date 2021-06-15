@@ -6,7 +6,18 @@
     "maximum_of_flavors": null,
     "state": true,
     "isGarnish": false,
-    "idIngredients": [],
+    "ingredients": [
+        {
+            "id": 1,
+            "quantity": 350
+        }
+    ],
+    "granishes": [
+        {
+            "id": 3,
+            "max_quantity": 2
+        }
+    ],
     "price": 150,
     "idCharacteristics": []
 }

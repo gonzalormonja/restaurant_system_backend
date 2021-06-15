@@ -1,7 +1,16 @@
-import { DataTypes } from 'sequelize';
+import { BuildOptions, DataTypes, Model } from 'sequelize';
 import db from '../db/connection';
 
-const Characteristic = db.define('characteristics', {
+interface Characteristic extends Model {
+  id: number;
+  name: string;
+}
+
+type CharacteristicStatic = typeof Model & {
+  new (values?: object, options?: BuildOptions): Characteristic;
+};
+
+const CharacteristicModel = db.define('characteristics', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -13,6 +22,6 @@ const Characteristic = db.define('characteristics', {
       notEmpty: true
     }
   }
-});
+}) as CharacteristicStatic;
 
-export default Characteristic;
+export default CharacteristicModel;

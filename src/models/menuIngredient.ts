@@ -1,7 +1,18 @@
-import { DataTypes } from 'sequelize';
+import { BuildOptions, DataTypes, Model } from 'sequelize';
 import db from '../db/connection';
 
-const MenuIngredient = db.define('menus_ingredients', {
+interface MenuIngredient extends Model {
+  id: number;
+  idMenu: number;
+  idIngredient: number;
+  quantity: number;
+}
+
+type MenuIngredientStatic = typeof Model & {
+  new (values?: object, options?: BuildOptions): MenuIngredient;
+};
+
+const MenuIngredientModel = db.define('menus_ingredients', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -21,6 +32,6 @@ const MenuIngredient = db.define('menus_ingredients', {
       notEmpty: true
     }
   }
-});
+}) as MenuIngredientStatic;
 
-export default MenuIngredient;
+export default MenuIngredientModel;

@@ -14,8 +14,9 @@ router.post('/', [
     express_validator_1.check('short_name', 'El nombre corto es obligatorio').isString().notEmpty(),
     express_validator_1.check('price', 'El precio es obligatorio').isFloat().notEmpty(),
     express_validator_1.check('idCategory').custom(db_validators_1.validateCategory),
-    express_validator_1.check('idIngredients').custom(db_validators_1.validateIngredients),
+    express_validator_1.check('ingrdients').custom(db_validators_1.validateIngredients),
     express_validator_1.check('idCharacteristics').custom(db_validators_1.validateCharacteristics),
+    express_validator_1.check('garnishes').custom(db_validators_1.validateGarnishes),
     validate_fields_1.validate_fields
 ], menus_controllers_1.postMenu);
 router.put('/:id', menus_controllers_1.putMenu);

@@ -1,8 +1,8 @@
 import express, { Application } from 'express';
-import menuRoutes from '../app/routes/menus.routes';
-import categoryRoutes from '../app/routes/categories.routes';
-import IngredientRoute from '../app/routes/ingredients.routes';
-import CharacteristicRoutes from '../app/routes/characteristics.routes';
+import menuRoutes from '../routes/menus.routes';
+import categoryRoutes from '../routes/categories.routes';
+import IngredientRoute from '../routes/ingredients.routes';
+import CharacteristicRoutes from '../routes/characteristics.routes';
 
 import cors from 'cors';
 import db from '../db/connection';
