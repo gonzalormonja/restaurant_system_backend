@@ -127,6 +127,39 @@ paths:
           required: true
           schema:
             type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                short_name:
+                  type: string
+                bar_code:
+                  type: string
+                idCategory:
+                  type: number
+                maximum_of_flavors:
+                  type: number
+                state:
+                  type: boolean
+                  default: true
+                isGarnish:
+                  type: boolean
+                  default: false
+                idIngredients:
+                  type: array
+                  items:
+                    type: number
+                price:
+                  type: number
+                idCharacteristics:
+                  type: array
+                  items:
+                    type: number
       responses:
         '200':
           $ref: '#/components/responses/200_ok'
