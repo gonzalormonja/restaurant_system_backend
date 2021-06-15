@@ -1,6 +1,9 @@
 import express, { Application } from 'express';
 import menuRoutes from '../app/routes/menus.routes';
 import categoryRoutes from '../app/routes/categories.routes';
+import IngredientRoute from '../app/routes/ingredients.routes';
+import CharacteristicRoutes from '../app/routes/characteristics.routes';
+
 import cors from 'cors';
 import db from '../db/connection';
 
@@ -9,7 +12,9 @@ class Server {
   private port: string;
   private apiPaths = {
     menus: '/menus',
-    categories: '/categories'
+    categories: '/categories',
+    ingredients: '/ingredients',
+    characteristics: '/characteristics'
   };
 
   constructor() {
@@ -34,6 +39,8 @@ class Server {
   routes = () => {
     this.app.use(this.apiPaths.menus, menuRoutes);
     this.app.use(this.apiPaths.categories, categoryRoutes);
+    this.app.use(this.apiPaths.ingredients, IngredientRoute);
+    this.app.use(this.apiPaths.characteristics, CharacteristicRoutes);
   };
 
   middlewares = () => {

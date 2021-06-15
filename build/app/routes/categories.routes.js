@@ -9,6 +9,6 @@ router.get('/', categories_controllers_1.getCategories);
 router.get('/:id', categories_controllers_1.getCategory);
 router.post('/', [express_validator_1.check('name', 'El nombre es obligatorio').notEmpty(), validate_fields_1.validate_fields], categories_controllers_1.postCategory);
 router.put('/:id', categories_controllers_1.putCategory);
-router.delete('/:id', categories_controllers_1.deleteCategory);
+router.delete('/:id', [express_validator_1.check('name', 'El nombre es obligatorio').notEmpty(), validate_fields_1.validate_fields], categories_controllers_1.deleteCategory);
 exports.default = router;
 //# sourceMappingURL=categories.routes.js.map

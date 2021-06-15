@@ -47,16 +47,16 @@ const postMenu = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.postMenu = postMenu;
-const getMenu = (req, res) => {
+const getMenu = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const menu = menu_1.default.findByPk(id);
+    const menu = yield menu_1.default.findByPk(id);
     if (!menu) {
         return res.status(404).json({
             msg: `No existe un menu con el id ${id}`
         });
     }
     res.json(menu);
-};
+});
 exports.getMenu = getMenu;
 const putMenu = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;

@@ -12,61 +12,55 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteCategory = exports.putCategory = exports.getCategory = exports.postCategory = exports.getCategories = void 0;
-const category_1 = __importDefault(require("../models/category"));
-const menu_1 = __importDefault(require("../models/menu"));
-const getCategories = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.deleteCharacteristic = exports.putCharacteristic = exports.getCharacteristic = exports.postCharacteristic = exports.getCharacteristics = void 0;
+const characteristic_1 = __importDefault(require("../models/characteristic"));
+const getCharacteristics = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const categories = yield category_1.default.findAll({
-            include: [
-                { model: category_1.default },
-                { model: menu_1.default }
-            ]
-        });
-        res.json(categories);
+        const characteristics = yield characteristic_1.default.findAll();
+        res.json(characteristics);
     }
     catch (error) {
         console.log(error);
         res.status(500).json({
-            msg: '[getCategories] Error al crear una categoria'
+            msg: '[getCharacteristics] Error al crear una caracteristica'
         });
     }
 });
-exports.getCategories = getCategories;
-const postCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getCharacteristics = getCharacteristics;
+const postCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { body } = req;
-        const category = category_1.default.build(body);
+        const category = characteristic_1.default.build(body);
         yield category.save();
         res.json(category);
     }
     catch (error) {
         console.log(error);
         res.status(500).json({
-            msg: '[postCategory] Error al crear una categoria'
+            msg: '[postCharacteristic] Error al crear una caracteristica'
         });
     }
 });
-exports.postCategory = postCategory;
-const getCategory = (req, res) => {
+exports.postCharacteristic = postCharacteristic;
+const getCharacteristic = (req, res) => {
     const { id } = req.params;
-    const category = category_1.default.findByPk(id);
+    const category = characteristic_1.default.findByPk(id);
     if (!category) {
         return res.status(404).json({
-            msg: `No existe una categoria con el id ${id}`
+            msg: `No existe una caracteristica con el id ${id}`
         });
     }
     res.json(category);
 };
-exports.getCategory = getCategory;
-const putCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getCharacteristic = getCharacteristic;
+const putCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const { body } = req;
     try {
-        const category = yield category_1.default.findByPk(id);
+        const category = yield characteristic_1.default.findByPk(id);
         if (!category) {
             return res.status(404).json({
-                msg: `No existe una categoria con el id ${id}`
+                msg: `No existe una caracteristica con el id ${id}`
             });
         }
         yield category.update(body);
@@ -75,18 +69,18 @@ const putCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     catch (error) {
         console.log(error);
         res.status(500).json({
-            msg: '[putCategory] Error al actualizar un menu'
+            msg: '[putCharacteristic] Error al actualizar un menu'
         });
     }
 });
-exports.putCategory = putCategory;
-const deleteCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.putCharacteristic = putCharacteristic;
+const deleteCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const category = yield category_1.default.findByPk(id);
+        const category = yield characteristic_1.default.findByPk(id);
         if (!category) {
             return res.status(404).json({
-                msg: `No existe una categoria con el id ${id}`
+                msg: `No existe una caracteristica con el id ${id}`
             });
         }
         yield category.update({ state: false });
@@ -95,9 +89,9 @@ const deleteCategory = (req, res) => __awaiter(void 0, void 0, void 0, function*
     catch (error) {
         console.log(error);
         res.status(500).json({
-            msg: '[deleteCategory] Error al eliminar una categoria'
+            msg: '[deleteCharacteristic] Error al eliminar una caracteristica'
         });
     }
 });
-exports.deleteCategory = deleteCategory;
-//# sourceMappingURL=categories.controllers.js.map
+exports.deleteCharacteristic = deleteCharacteristic;
+//# sourceMappingURL=characteristics.controllers.js.map

@@ -12,10 +12,8 @@ const router = Router();
 
 router.get('/', getCategories);
 router.get('/:id', getCategory);
-
 router.post('/', [check('name', 'El nombre es obligatorio').notEmpty(), validate_fields], postCategory);
-
 router.put('/:id', putCategory);
-router.delete('/:id', deleteCategory);
+router.delete('/:id', [check('name', 'El nombre es obligatorio').notEmpty(), validate_fields], deleteCategory);
 
 export default router;

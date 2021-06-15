@@ -88,22 +88,3 @@ export const deleteCategory = async (req: Request, res: Response) => {
     });
   }
 };
-
-export const findMenuByName = async (req: Request, res: Response) => {
-  try {
-    const { name } = req.body;
-
-    const categories = await Category.findAll({
-      where: {
-        $like: { name: name }
-      }
-    });
-
-    res.json(categories);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      msg: '[findMenuByName] Error al buscar una categoria'
-    });
-  }
-};

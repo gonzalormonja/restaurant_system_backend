@@ -2,7 +2,7 @@ openapi: 3.0.0
 servers:
   - url: http://localhost:3000
     description: Localhost Environment
-    
+
 info:
   version: '1.0.0'
   title: Restaurant API
@@ -11,22 +11,12 @@ info:
 
 components:
   responses:
-    200_Login:
+    200_ok:
       description: OK
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              user_id:
-                type: string
-                example: 5f8db309216bebdc870c8d0b
-              token:
-                type: string
-                example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjVmOGRiMzA5MjE2YmViZGM4NzBjOGQwYiIsInBlcm1pc3Npb25zIjpbImZpbmFuY2Vyc19yZWFkIiwiZmluYW5jZXJzX2NyZWF0ZSIsImZpbmFuY2Vyc191cGRhdGUiLCJmaW5hbmNlcnNfZGVsZXRlIiwicHJvZmVzc2lvbnNfcmVhZCIsInByb2Zlc3Npb25zX2NyZWF0ZSIsInByb2Zlc3Npb25zX3VwZGF0ZSIsInByb2Zlc3Npb25zX2RlbGV0ZSIsInByb2Zlc3Npb25hbHNfcmVhZCIsInByb2Zlc3Npb25hbHNfY3JlYXRlIiwicHJvZmVzc2lvbmFsc191cGRhdGUiLCJwcm9mZXNzaW9uYWxzX2RlbGV0ZSJdfSwiaWF0IjoxNjAzMzkwNDk1LCJleHAiOjE2MDMzOTEwOTV9.h4IYU0T35a7GmFB4Higpmf4Nowjie0jnszX-KO6aCsQ
-              expires_in:
-                type: integer
-                example: 3600
+            type: boolean
     400_Bad_Request:
       description: Error processing request
       content:
@@ -62,14 +52,298 @@ paths:
       summary: Get all menus
       responses:
         '200':
-          $ref: '#/components/responses/200_Login'
+          $ref: '#/components/responses/200_ok'
         '400':
           $ref: '#/components/responses/400_Bad_Request'
-  /categories:
-    get:
-      summary: Get all menus
+        '401':
+          $ref: '#/components/responses/400_Bad_Request'
+    post:
+      summary: Create all menus
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - short_name
+                - price
+              properties:
+                name:
+                  type: string
+                short_name:
+                  type: string
+                bar_code:
+                  type: string
+                idCategory:
+                  type: number
+                maximum_of_flavors:
+                  type: number
+                state:
+                  type: boolean
+                  default: true
+                isGarnish:
+                  type: boolean
+                  default: false
+                idIngredients:
+                  type: array
+                  items:
+                    type: number
+                price:
+                  type: number
+                idCharacteristics:
+                  type: array
+                  items:
+                    type: number
       responses:
         '200':
-          $ref: '#/components/responses/200_Login'
+          $ref: '#/components/responses/200_ok'
         '400':
+          $ref: '#/components/responses/400_Bad_Request'
+        '401':
+          $ref: '#/components/responses/400_Bad_Request'
+  /menus/{id}:
+    get:
+      summary: Get one menu
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          $ref: '#/components/responses/200_ok'
+        '400':
+          $ref: '#/components/responses/400_Bad_Request'
+        '401':
+          $ref: '#/components/responses/400_Bad_Request'
+    put:
+      summary: Update one menu
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          $ref: '#/components/responses/200_ok'
+        '400':
+          $ref: '#/components/responses/400_Bad_Request'
+        '401':
+          $ref: '#/components/responses/400_Bad_Request'
+    delete:
+      summary: Delete one menu
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          $ref: '#/components/responses/200_ok'
+        '400':
+          $ref: '#/components/responses/400_Bad_Request'
+        '401':
+          $ref: '#/components/responses/400_Bad_Request'
+
+  /categories:
+    get:
+      summary: Get all categories
+      responses:
+        '200':
+          $ref: '#/components/responses/200_ok'
+        '400':
+          $ref: '#/components/responses/400_Bad_Request'
+        '401':
+          $ref: '#/components/responses/400_Bad_Request'
+    post:
+      summary: Create all categories
+      responses:
+        '200':
+          $ref: '#/components/responses/200_ok'
+        '400':
+          $ref: '#/components/responses/400_Bad_Request'
+        '401':
+          $ref: '#/components/responses/400_Bad_Request'
+  /categories/{id}:
+    get:
+      summary: Get one category
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          $ref: '#/components/responses/200_ok'
+        '400':
+          $ref: '#/components/responses/400_Bad_Request'
+        '401':
+          $ref: '#/components/responses/400_Bad_Request'
+    put:
+      summary: Update one category
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          $ref: '#/components/responses/200_ok'
+        '400':
+          $ref: '#/components/responses/400_Bad_Request'
+        '401':
+          $ref: '#/components/responses/400_Bad_Request'
+    delete:
+      summary: Delete one category
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          $ref: '#/components/responses/200_ok'
+        '400':
+          $ref: '#/components/responses/400_Bad_Request'
+        '401':
+          $ref: '#/components/responses/400_Bad_Request'
+
+  /ingredients:
+    get:
+      summary: Get all ingredients
+      responses:
+        '200':
+          $ref: '#/components/responses/200_ok'
+        '400':
+          $ref: '#/components/responses/400_Bad_Request'
+        '401':
+          $ref: '#/components/responses/400_Bad_Request'
+    post:
+      summary: Create all ingredients
+      responses:
+        '200':
+          $ref: '#/components/responses/200_ok'
+        '400':
+          $ref: '#/components/responses/400_Bad_Request'
+        '401':
+          $ref: '#/components/responses/400_Bad_Request'
+  /ingredients/{id}:
+    get:
+      summary: Get one ingredient
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          $ref: '#/components/responses/200_ok'
+        '400':
+          $ref: '#/components/responses/400_Bad_Request'
+        '401':
+          $ref: '#/components/responses/400_Bad_Request'
+    put:
+      summary: Update one ingredient
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          $ref: '#/components/responses/200_ok'
+        '400':
+          $ref: '#/components/responses/400_Bad_Request'
+        '401':
+          $ref: '#/components/responses/400_Bad_Request'
+    delete:
+      summary: Delete one ingredient
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          $ref: '#/components/responses/200_ok'
+        '400':
+          $ref: '#/components/responses/400_Bad_Request'
+        '401':
+          $ref: '#/components/responses/400_Bad_Request'
+
+  /characteristics:
+    get:
+      summary: Get all characteristics
+      responses:
+        '200':
+          $ref: '#/components/responses/200_ok'
+        '400':
+          $ref: '#/components/responses/400_Bad_Request'
+        '401':
+          $ref: '#/components/responses/400_Bad_Request'
+    post:
+      summary: Create all characteristics
+      responses:
+        '200':
+          $ref: '#/components/responses/200_ok'
+        '400':
+          $ref: '#/components/responses/400_Bad_Request'
+        '401':
+          $ref: '#/components/responses/400_Bad_Request'
+  /characteristics/{id}:
+    get:
+      summary: Get one characteristic
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          $ref: '#/components/responses/200_ok'
+        '400':
+          $ref: '#/components/responses/400_Bad_Request'
+        '401':
+          $ref: '#/components/responses/400_Bad_Request'
+    put:
+      summary: Update one characteristic
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          $ref: '#/components/responses/200_ok'
+        '400':
+          $ref: '#/components/responses/400_Bad_Request'
+        '401':
+          $ref: '#/components/responses/400_Bad_Request'
+    delete:
+      summary: Delete one characteristic
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          $ref: '#/components/responses/200_ok'
+        '400':
+          $ref: '#/components/responses/400_Bad_Request'
+        '401':
           $ref: '#/components/responses/400_Bad_Request'

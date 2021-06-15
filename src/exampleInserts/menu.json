@@ -1,0 +1,12 @@
+{
+    "name": "Fideos estirados a mano",
+    "short_name": "Fideos",
+    "bar_code": null,
+    "idCategory": null,
+    "maximum_of_flavors": null,
+    "state": true,
+    "isGarnish": false,
+    "idIngredients": [],
+    "price": 150,
+    "idCharacteristics": []
+}

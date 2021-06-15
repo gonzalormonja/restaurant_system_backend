@@ -35,17 +35,16 @@ export const postMenu = async (req: Request, res: Response) => {
   }
 };
 
-export const getMenu = (req: Request, res: Response) => {
+export const getMenu = async (req: Request, res: Response) => {
   const { id } = req.params;
-
-  const menu = Menu.findByPk(id);
+  const menu = await Menu.findByPk(id);
 
   if (!menu) {
     return res.status(404).json({
       msg: `No existe un menu con el id ${id}`
     });
   }
-
+  
   res.json(menu);
 };
 

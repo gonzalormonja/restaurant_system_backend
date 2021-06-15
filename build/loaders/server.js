@@ -15,13 +15,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const menus_routes_1 = __importDefault(require("../app/routes/menus.routes"));
 const categories_routes_1 = __importDefault(require("../app/routes/categories.routes"));
+const ingredients_routes_1 = __importDefault(require("../app/routes/ingredients.routes"));
+const characteristics_routes_1 = __importDefault(require("../app/routes/characteristics.routes"));
 const cors_1 = __importDefault(require("cors"));
 const connection_1 = __importDefault(require("../db/connection"));
 class Server {
     constructor() {
         this.apiPaths = {
             menus: '/menus',
-            categories: '/categories'
+            categories: '/categories',
+            ingredients: '/ingredients',
+            characteristics: '/characteristics'
         };
         this.dbConnection = () => __awaiter(this, void 0, void 0, function* () {
             try {
@@ -36,6 +40,8 @@ class Server {
         this.routes = () => {
             this.app.use(this.apiPaths.menus, menus_routes_1.default);
             this.app.use(this.apiPaths.categories, categories_routes_1.default);
+            this.app.use(this.apiPaths.ingredients, ingredients_routes_1.default);
+            this.app.use(this.apiPaths.characteristics, characteristics_routes_1.default);
         };
         this.middlewares = () => {
             //CORS
