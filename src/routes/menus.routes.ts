@@ -46,11 +46,6 @@ router.post(
 );
 router.put(
   '/:id',
-  [param('id', 'El id debe ser de tipo numerico y es obligatorio').isInt().notEmpty(), validate_fields],
-  putMenu
-);
-router.delete(
-  '/:id',
   [
     param('id', 'El id debe ser de tipo numerico y es obligatorio').isInt().notEmpty(),
     body('state', 'El estado debe ser un booleano valido').isBoolean(),
@@ -61,6 +56,11 @@ router.delete(
     body('garnishes').isArray().custom(validateGarnishes),
     validate_fields
   ],
+  putMenu
+);
+router.delete(
+  '/:id',
+  [param('id', 'El id debe ser de tipo numerico y es obligatorio').isInt().notEmpty(), validate_fields],
   deleteMenu
 );
 
