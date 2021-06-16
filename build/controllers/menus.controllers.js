@@ -22,7 +22,34 @@ const menuGarnish_1 = __importDefault(require("../models/menuGarnish"));
 const menuIngredient_1 = __importDefault(require("../models/menuIngredient"));
 const price_1 = __importDefault(require("../models/price"));
 const getMenus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const menus = yield menu_1.default.findAll({
+    let { search, start, limit, columnOrder, order } = req.query;
+    const pipeline = [];
+    if (search) {
+        const searchQuery = { $iLike: `%${search}%` };
+        pipeline.push({
+            $or: [{ name: searchQuery }, { short_name: searchQuery }, { bar_code: searchQuery }]
+        });
+    }
+    if (start) {
+        pipeline.push({
+            offset: start
+        });
+    }
+    if (limit) {
+        pipeline.push({
+            limit: Number(limit)
+        });
+    }
+    if (!columnOrder) {
+        columnOrder = 'id';
+    }
+    if (!order) {
+        order = 'DESC';
+    }
+    pipeline.push({
+        order: [[columnOrder, order]]
+    });
+    pipeline.push({
         include: [
             { model: category_1.default },
             { model: price_1.default },
@@ -32,6 +59,8 @@ const getMenus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             { model: ingredient_1.default }
         ]
     });
+    console.log(pipeline.reduce((acc, el) => (Object.assign(Object.assign({}, acc), el)), {}));
+    const menus = yield menu_1.default.findAll(pipeline.reduce((acc, el) => (Object.assign(Object.assign({}, acc), el)), {}));
     res.json(menus);
 });
 exports.getMenus = getMenus;

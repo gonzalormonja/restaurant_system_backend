@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { access } from 'fs';
 import Category from '../models/category';
 import Characteristic from '../models/characteristic';
 import Ingredient from '../models/ingredient';
@@ -9,7 +10,36 @@ import MenuIngredient from '../models/menuIngredient';
 import Price from '../models/price';
 
 export const getMenus = async (req: Request, res: Response) => {
-  const menus = await Menu.findAll({
+  let { search, start, limit, columnOrder, order } = req.query;
+
+  const pipeline: any[] = [];
+
+  if (search) {
+    const searchQuery = { $iLike: `%${search}%` };
+    pipeline.push({
+      $or: [{ name: searchQuery }, { short_name: searchQuery }, { bar_code: searchQuery }]
+    });
+  }
+  if (start) {
+    pipeline.push({
+      offset: start
+    });
+  }
+  if (limit) {
+    pipeline.push({
+      limit: Number(limit)
+    });
+  }
+  if (!columnOrder) {
+    columnOrder = 'id';
+  }
+  if (!order) {
+    order = 'DESC';
+  }
+  pipeline.push({
+    order: [[columnOrder, order]]
+  });
+  pipeline.push({
     include: [
       { model: Category },
       { model: Price },
@@ -19,6 +49,8 @@ export const getMenus = async (req: Request, res: Response) => {
       { model: Ingredient }
     ]
   });
+  console.log(pipeline.reduce((acc, el) => ({ ...acc, ...el }), {}));
+  const menus = await Menu.findAll(pipeline.reduce((acc, el) => ({ ...acc, ...el }), {}));
 
   res.json(menus);
 };
