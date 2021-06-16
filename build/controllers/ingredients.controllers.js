@@ -16,7 +16,35 @@ exports.deleteIngredient = exports.putIngredient = exports.getIngredient = expor
 const ingredient_1 = __importDefault(require("../models/ingredient"));
 const getIngredients = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const ingredients = yield ingredient_1.default.findAll();
+        let { search, start, limit, columnOrder, order } = req.query;
+        const pipeline = [];
+        if (search) {
+            const searchQuery = { $iLike: `%${search}%` };
+            pipeline.push({
+                $or: [{ name: searchQuery }]
+            });
+        }
+        if (start) {
+            pipeline.push({
+                offset: start
+            });
+        }
+        if (limit) {
+            pipeline.push({
+                limit: Number(limit)
+            });
+        }
+        if (!columnOrder) {
+            columnOrder = 'id';
+        }
+        if (!order) {
+            order = 'DESC';
+        }
+        pipeline.push({
+            order: [[columnOrder, order]]
+        });
+        console.log(pipeline.reduce((acc, el) => (Object.assign(Object.assign({}, acc), el)), {}));
+        const ingredients = yield ingredient_1.default.findAll(pipeline.reduce((acc, el) => (Object.assign(Object.assign({}, acc), el)), {}));
         res.json(ingredients);
     }
     catch (error) {
@@ -30,8 +58,7 @@ exports.getIngredients = getIngredients;
 const postIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { body } = req;
-        const category = ingredient_1.default.build(body);
-        yield category.save();
+        const category = yield ingredient_1.default.create(body);
         res.json(category);
     }
     catch (error) {

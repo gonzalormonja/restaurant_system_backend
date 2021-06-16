@@ -3,7 +3,38 @@ import Ingredient from '../models/ingredient';
 
 export const getIngredients = async (req: Request, res: Response) => {
   try {
-    const ingredients = await Ingredient.findAll();
+    let { search, start, limit, columnOrder, order } = req.query;
+
+    const pipeline: any[] = [];
+
+    if (search) {
+      const searchQuery = { $iLike: `%${search}%` };
+      pipeline.push({
+        $or: [{ name: searchQuery }]
+      });
+    }
+    if (start) {
+      pipeline.push({
+        offset: start
+      });
+    }
+    if (limit) {
+      pipeline.push({
+        limit: Number(limit)
+      });
+    }
+    if (!columnOrder) {
+      columnOrder = 'id';
+    }
+    if (!order) {
+      order = 'DESC';
+    }
+    pipeline.push({
+      order: [[columnOrder, order]]
+    });
+    console.log(pipeline.reduce((acc, el) => ({ ...acc, ...el }), {}));
+
+    const ingredients = await Ingredient.findAll(pipeline.reduce((acc, el) => ({ ...acc, ...el }), {}));
     res.json(ingredients);
   } catch (error) {
     console.log(error);
@@ -16,8 +47,7 @@ export const getIngredients = async (req: Request, res: Response) => {
 export const postIngredient = async (req: Request, res: Response) => {
   try {
     const { body } = req;
-    const category = Ingredient.build(body);
-    await category.save();
+    const category = await Ingredient.create(body);
     res.json(category);
   } catch (error) {
     console.log(error);
