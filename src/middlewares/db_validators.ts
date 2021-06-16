@@ -12,6 +12,19 @@ export const validateCategory = async (idCategory) => {
   }
 };
 
+export const validateCategories = async (categories) => {
+  if (categories) {
+    await Promise.all(
+      categories.map(async (category) => {
+        const existcategory = await Category.findByPk(category);
+        if (!existcategory) {
+          throw new Error(`La categoria ${category} no existe`);
+        }
+      })
+    );
+  }
+};
+
 export const validateIngredients = async (ingredients) => {
   if (ingredients) {
     await Promise.all(

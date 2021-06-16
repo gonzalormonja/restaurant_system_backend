@@ -71,7 +71,13 @@ paths:
           name: order
           schema:
             type: string
-          description: 'DESC || ASC
+          description: 'DESC || ASC'
+        - in: query
+          name: idCategories
+          schema:
+            type: array
+            items:
+              type: number
       responses:
         '200':
           $ref: '#/components/responses/200_ok'

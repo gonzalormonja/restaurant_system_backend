@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { access } from 'fs';
 import Category from '../models/category';
 import Characteristic from '../models/characteristic';
 import Ingredient from '../models/ingredient';
@@ -10,7 +9,7 @@ import MenuIngredient from '../models/menuIngredient';
 import Price from '../models/price';
 
 export const getMenus = async (req: Request, res: Response) => {
-  let { search, start, limit, columnOrder, order } = req.query;
+  let { search, start, limit, columnOrder, order, idCategories } = req.query;
 
   const pipeline: any[] = [];
 
@@ -18,6 +17,11 @@ export const getMenus = async (req: Request, res: Response) => {
     const searchQuery = { $iLike: `%${search}%` };
     pipeline.push({
       $or: [{ name: searchQuery }, { short_name: searchQuery }, { bar_code: searchQuery }]
+    });
+  }
+  if (idCategories) {
+    pipeline.push({
+      idcategory: { $in: [idCategories] }
     });
   }
   if (start) {
