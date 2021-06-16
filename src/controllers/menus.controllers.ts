@@ -127,7 +127,7 @@ export const getMenu = async (req: Request, res: Response) => {
   res.json(menu);
 };
 
-export const putMenu = async (req: Request, res: Response) => {
+export const patchMenu = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { body } = req;
 
@@ -207,8 +207,10 @@ export const putMenu = async (req: Request, res: Response) => {
       });
     }
 
-    //* add price
-    await Price.create({ price: body.price ? body.price : 0, idMenu: menu.id });
+    if (body.price) {
+      //* add price
+      await Price.create({ price: body.price ? body.price : 0, idMenu: menu.id });
+    }
 
     res.json(menu);
   } catch (error) {

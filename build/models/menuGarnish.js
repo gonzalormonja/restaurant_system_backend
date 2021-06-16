@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const connection_1 = __importDefault(require("../db/connection"));
-const MenuGarnishModel = connection_1.default.define('menus_garnishes', {
+const MenuGarnish = connection_1.default.define('menus_garnishes', {
     id: {
         type: sequelize_1.DataTypes.INTEGER,
         primaryKey: true,
@@ -24,5 +24,5 @@ const MenuGarnishModel = connection_1.default.define('menus_garnishes', {
         defaultValue: 1
     }
 });
-exports.default = MenuGarnishModel;
+exports.default = MenuGarnish;
 //# sourceMappingURL=menuGarnish.js.map

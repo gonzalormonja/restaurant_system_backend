@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateGarnishes = exports.validateCharacteristics = exports.validateIngredients = exports.validateCategory = void 0;
+exports.validateGarnishes = exports.validateCharacteristics = exports.validateIngredients = exports.validateCategories = exports.validateCategory = void 0;
 const category_1 = __importDefault(require("../models/category"));
 const characteristic_1 = __importDefault(require("../models/characteristic"));
 const ingredient_1 = __importDefault(require("../models/ingredient"));
@@ -26,6 +26,17 @@ const validateCategory = (idCategory) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.validateCategory = validateCategory;
+const validateCategories = (categories) => __awaiter(void 0, void 0, void 0, function* () {
+    if (categories) {
+        yield Promise.all(categories.map((category) => __awaiter(void 0, void 0, void 0, function* () {
+            const existcategory = yield category_1.default.findByPk(category);
+            if (!existcategory) {
+                throw new Error(`La categoria ${category} no existe`);
+            }
+        })));
+    }
+});
+exports.validateCategories = validateCategories;
 const validateIngredients = (ingredients) => __awaiter(void 0, void 0, void 0, function* () {
     if (ingredients) {
         yield Promise.all(ingredients.map((ingredient) => __awaiter(void 0, void 0, void 0, function* () {

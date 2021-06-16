@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findMenuByName = exports.deleteMenu = exports.putMenu = exports.getMenu = exports.postMenu = exports.getMenus = void 0;
+exports.findMenuByName = exports.deleteMenu = exports.patchMenu = exports.getMenu = exports.postMenu = exports.getMenus = void 0;
 const category_1 = __importDefault(require("../models/category"));
 const characteristic_1 = __importDefault(require("../models/characteristic"));
 const ingredient_1 = __importDefault(require("../models/ingredient"));
@@ -22,12 +22,17 @@ const menuGarnish_1 = __importDefault(require("../models/menuGarnish"));
 const menuIngredient_1 = __importDefault(require("../models/menuIngredient"));
 const price_1 = __importDefault(require("../models/price"));
 const getMenus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let { search, start, limit, columnOrder, order } = req.query;
+    let { search, start, limit, columnOrder, order, idCategories } = req.query;
     const pipeline = [];
     if (search) {
         const searchQuery = { $iLike: `%${search}%` };
         pipeline.push({
             $or: [{ name: searchQuery }, { short_name: searchQuery }, { bar_code: searchQuery }]
+        });
+    }
+    if (idCategories) {
+        pipeline.push({
+            idcategory: { $in: [idCategories] }
         });
     }
     if (start) {
@@ -127,7 +132,8 @@ const getMenu = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.json(menu);
 });
 exports.getMenu = getMenu;
-const putMenu = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const patchMenu = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _d, _e, _f;
     const { id } = req.params;
     const { body } = req;
     try {
@@ -138,6 +144,72 @@ const putMenu = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             });
         }
         yield menu.update(body);
+        //* update ingredients
+        if (body.ingredients) {
+            //* delete previous ingredients
+            menuIngredient_1.default.destroy({
+                where: {
+                    idMenu: id
+                }
+            });
+            //*add ingredients
+            (_d = body.ingredients) === null || _d === void 0 ? void 0 : _d.map((ingredient) => __awaiter(void 0, void 0, void 0, function* () {
+                const ingredientRecord = yield ingredient_1.default.findByPk(ingredient.id);
+                if (ingredientRecord) {
+                    menuIngredient_1.default.create({
+                        idIngredient: ingredientRecord.id,
+                        idMenu: menu.id,
+                        quantity: ingredient.quantity
+                    });
+                }
+            }));
+        }
+        //* update characteristics
+        if (body.idCharacteristics) {
+            //* delete previous characteristics
+            menuCharacteristic_1.default.destroy({
+                where: {
+                    idMenu: id
+                }
+            });
+            //* add characteristics
+            (_e = body.idCharacteristics) === null || _e === void 0 ? void 0 : _e.map((idCharacteristic) => __awaiter(void 0, void 0, void 0, function* () {
+                const characteristicRecord = yield characteristic_1.default.findByPk(idCharacteristic);
+                if (characteristicRecord) {
+                    menuCharacteristic_1.default.create({
+                        idCharacteristic: characteristicRecord.id,
+                        idMenu: menu.id
+                    });
+                }
+            }));
+        }
+        //* update granishes
+        if (body.granishes) {
+            //* delete previous granishes
+            menuGarnish_1.default.destroy({
+                where: {
+                    idMenu: id
+                }
+            });
+            //* add garnishes
+            (_f = body.garnishes) === null || _f === void 0 ? void 0 : _f.map((garnish) => __awaiter(void 0, void 0, void 0, function* () {
+                const garnishRecord = yield menu_1.default.findByPk(garnish.id);
+                if (garnishRecord) {
+                    if (!garnishRecord.isGarnish) {
+                        throw new Error(`El menu ${garnishRecord.name} no es una guarnicion valida`);
+                    }
+                    menuGarnish_1.default.create({
+                        idGarnish: garnishRecord.id,
+                        idMenu: menu.id,
+                        max_quantity: garnish.max_quantity
+                    });
+                }
+            }));
+        }
+        if (body.price) {
+            //* add price
+            yield price_1.default.create({ price: body.price ? body.price : 0, idMenu: menu.id });
+        }
         res.json(menu);
     }
     catch (error) {
@@ -147,7 +219,7 @@ const putMenu = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
     }
 });
-exports.putMenu = putMenu;
+exports.patchMenu = patchMenu;
 const deleteMenu = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
