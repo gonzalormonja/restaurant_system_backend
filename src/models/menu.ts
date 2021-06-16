@@ -7,7 +7,7 @@ import MenuGarnish from './menuGarnish';
 import MenuIngredient from './menuIngredient';
 import Price from './price';
 
-interface Menu extends Model {
+interface MenuInterface extends Model {
   id: number;
   name: string;
   bar_code: string;
@@ -19,10 +19,10 @@ interface Menu extends Model {
 }
 
 type MenuStatic = typeof Model & {
-  new (values?: object, options?: BuildOptions): Menu;
+  new (values?: object, options?: BuildOptions): MenuInterface;
 };
 
-const MenuModel = db.define('menus', {
+const Menu = db.define('menus', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -64,40 +64,40 @@ const MenuModel = db.define('menus', {
   }
 }) as MenuStatic;
 
-MenuModel.belongsToMany(MenuModel, {
+Menu.belongsToMany(Menu, {
   through: MenuGarnish,
   foreignKey: 'idGarnish',
   otherKey: 'idMenu',
   as: 'menusOfGarnish'
 });
 
-MenuModel.belongsToMany(MenuModel, {
+Menu.belongsToMany(Menu, {
   through: MenuGarnish,
   foreignKey: 'idMenu',
   otherKey: 'idGarnish',
   as: 'garnishes'
 });
 
-MenuModel.hasMany(Price, { foreignKey: 'idMenu' });
+Menu.hasMany(Price, { foreignKey: 'idMenu' });
 
-MenuModel.belongsToMany(Ingredient, {
+Menu.belongsToMany(Ingredient, {
   through: MenuIngredient,
   foreignKey: 'idMenu',
   otherKey: 'idIngredient'
 });
 
-Ingredient.belongsToMany(MenuModel, {
+Ingredient.belongsToMany(Menu, {
   through: MenuIngredient,
   foreignKey: 'idIngredient',
   otherKey: 'idMenu'
 });
 
-MenuModel.belongsToMany(Characteristic, {
+Menu.belongsToMany(Characteristic, {
   through: MenuCharacteristic,
   foreignKey: 'idMenu',
   otherKey: 'idCharacteristic'
 });
 
-Characteristic.belongsToMany(MenuModel, { through: MenuCharacteristic, foreignKey: 'idMenu' });
+Characteristic.belongsToMany(Menu, { through: MenuCharacteristic, foreignKey: 'idMenu' });
 
-export default MenuModel;
+export default Menu;

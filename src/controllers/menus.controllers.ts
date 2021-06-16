@@ -4,7 +4,7 @@ import Characteristic from '../models/characteristic';
 import Ingredient from '../models/ingredient';
 import Menu from '../models/menu';
 import MenuCharacteristic from '../models/menuCharacteristic';
-import MenuGarnishModel from '../models/menuGarnish';
+import MenuGarnish from '../models/menuGarnish';
 import MenuIngredient from '../models/menuIngredient';
 import Price from '../models/price';
 
@@ -94,7 +94,7 @@ export const postMenu = async (req: Request, res: Response) => {
         if (!garnishRecord.isGarnish) {
           throw new Error(`El menu ${garnishRecord.name} no es una guarnicion valida`);
         }
-        MenuGarnishModel.create({
+        MenuGarnish.create({
           idGarnish: garnishRecord.id,
           idMenu: menu.id,
           max_quantity: garnish.max_quantity
@@ -140,6 +140,76 @@ export const putMenu = async (req: Request, res: Response) => {
     }
 
     await menu.update(body);
+
+    //* update ingredients
+    if (body.ingredients) {
+      //* delete previous ingredients
+      MenuIngredient.destroy({
+        where: {
+          idMenu: id
+        }
+      });
+      //*add ingredients
+      body.ingredients?.map(async (ingredient) => {
+        const ingredientRecord = await Ingredient.findByPk(ingredient.id);
+        if (ingredientRecord) {
+          MenuIngredient.create({
+            idIngredient: ingredientRecord.id,
+            idMenu: menu.id,
+            quantity: ingredient.quantity
+          });
+        }
+      });
+    }
+
+    //* update characteristics
+    if (body.idCharacteristics) {
+      //* delete previous characteristics
+      MenuCharacteristic.destroy({
+        where: {
+          idMenu: id
+        }
+      });
+      //* add characteristics
+      body.idCharacteristics?.map(async (idCharacteristic) => {
+        const characteristicRecord = await Characteristic.findByPk(idCharacteristic);
+        if (characteristicRecord) {
+          MenuCharacteristic.create({
+            idCharacteristic: characteristicRecord.id,
+            idMenu: menu.id
+          });
+        }
+      });
+    }
+
+    //* update granishes
+    if (body.granishes) {
+      //* delete previous granishes
+      MenuGarnish.destroy({
+        where: {
+          idMenu: id
+        }
+      });
+
+      //* add garnishes
+      body.garnishes?.map(async (garnish) => {
+        const garnishRecord = await Menu.findByPk(garnish.id);
+        if (garnishRecord) {
+          if (!garnishRecord.isGarnish) {
+            throw new Error(`El menu ${garnishRecord.name} no es una guarnicion valida`);
+          }
+          MenuGarnish.create({
+            idGarnish: garnishRecord.id,
+            idMenu: menu.id,
+            max_quantity: garnish.max_quantity
+          });
+        }
+      });
+    }
+
+    //* add price
+    await Price.create({ price: body.price ? body.price : 0, idMenu: menu.id });
+
     res.json(menu);
   } catch (error) {
     console.log(error);

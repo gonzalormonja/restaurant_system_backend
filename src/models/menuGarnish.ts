@@ -1,7 +1,7 @@
 import { BuildOptions, DataTypes, Model } from 'sequelize';
 import db from '../db/connection';
 
-interface MenuGarnish extends Model {
+interface MenuGarnishInterface extends Model {
   id: number;
   idMenu: number;
   idGarnish: number;
@@ -9,10 +9,10 @@ interface MenuGarnish extends Model {
 }
 
 type MenuGarnishStatic = typeof Model & {
-  new (values?: object, options?: BuildOptions): MenuGarnish;
+  new (values?: object, options?: BuildOptions): MenuGarnishInterface;
 };
 
-const MenuGarnishModel = db.define('menus_garnishes', {
+const MenuGarnish = db.define('menus_garnishes', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -32,4 +32,4 @@ const MenuGarnishModel = db.define('menus_garnishes', {
   }
 }) as MenuGarnishStatic;
 
-export default MenuGarnishModel;
+export default MenuGarnish;

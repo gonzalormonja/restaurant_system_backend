@@ -1,16 +1,16 @@
 import { BuildOptions, DataTypes, Model } from 'sequelize';
 import db from '../db/connection';
 
-interface Characteristic extends Model {
+interface CharacteristicInterface extends Model {
   id: number;
   name: string;
 }
 
 type CharacteristicStatic = typeof Model & {
-  new (values?: object, options?: BuildOptions): Characteristic;
+  new (values?: object, options?: BuildOptions): CharacteristicInterface;
 };
 
-const CharacteristicModel = db.define('characteristics', {
+const Characteristic = db.define('characteristics', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -24,4 +24,4 @@ const CharacteristicModel = db.define('characteristics', {
   }
 }) as CharacteristicStatic;
 
-export default CharacteristicModel;
+export default Characteristic;

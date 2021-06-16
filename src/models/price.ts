@@ -2,17 +2,17 @@ import { BuildOptions, Model } from 'sequelize';
 import { DataTypes } from 'sequelize';
 import db from '../db/connection';
 
-interface Price extends Model {
+interface PriceInterface extends Model {
   id: number;
   price: number;
   idMenu: number;
 }
 
 type PriceStatic = typeof Model & {
-  new (values?: object, options?: BuildOptions): Price;
+  new (values?: object, options?: BuildOptions): PriceInterface;
 };
 
-const PriceModel = db.define('prices', {
+const Price = db.define('prices', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -30,4 +30,4 @@ const PriceModel = db.define('prices', {
   }
 }) as PriceStatic;
 
-export default PriceModel;
+export default Price;

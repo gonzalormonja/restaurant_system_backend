@@ -2,7 +2,7 @@ import { BuildOptions, DataTypes, Model } from 'sequelize';
 import db from '../db/connection';
 import Menu from './menu';
 
-interface Category extends Model {
+interface CategoryInterface extends Model {
   id: number;
   name: string;
   idCategory: number;
@@ -10,10 +10,10 @@ interface Category extends Model {
 }
 
 type CategoryStatic = typeof Model & {
-  new (values?: object, options?: BuildOptions): Category;
+  new (values?: object, options?: BuildOptions): CategoryInterface;
 };
 
-const CategoryModel = db.define('categories', {
+const Category = db.define('categories', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -35,10 +35,10 @@ const CategoryModel = db.define('categories', {
   }
 }) as CategoryStatic;
 
-CategoryModel.belongsTo(CategoryModel, { foreignKey: 'idCategory' });
+Category.belongsTo(Category, { foreignKey: 'idCategory' });
 
-CategoryModel.hasMany(Menu, {
+Category.hasMany(Menu, {
   foreignKey: 'idCategory'
 });
-Menu.belongsTo(CategoryModel, { foreignKey: 'idCategory' });
-export default CategoryModel;
+Menu.belongsTo(Category, { foreignKey: 'idCategory' });
+export default Category;
