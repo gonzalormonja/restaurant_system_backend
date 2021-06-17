@@ -4,34 +4,52 @@ create user 'restaurant'@'localhost' IDENTIFIED BY 'password'
 
 GRANT ALL ON *.* TO 'restaurant'@'localhost';*/
 
-select * from menus_ingredients ;
 
-insert into categories (name)values('Pastas');
-insert into menus(name,short_name,idCategory)values('Fideos','Fideos',1);
-insert into menus(name,short_name,isGarnish)values('Salsa bolognesa','bolognesa',true);
-insert into menus_garnishes(idMenu,idGarnish,max_quantity)values(2,3,1);
-insert into characteristics(name)values('Al dente');
-insert into menus_characteristics(idMenu,idCharacteristic)values(2,1);
-insert into prices(price,idMenu)values(150,2);
-insert into prices(price,idMenu)values(50,3);
-insert into ingredients(name,unit_of_measure)values('Fideo','kg');
-insert into menus_ingredients(quantity,idMenu,idIngredient)values(0.5,2,1);
-
-DROP TABLE if exists menus;
-DROP TABLE if exists categories;
-DROP TABLE if exists characteristics;
-DROP TABLE if exists ingredients;
 DROP TABLE if exists menus_characteristics;
 DROP TABLE if exists menus_garnishes;
 DROP TABLE if exists menus_ingredients;
+DROP TABLE if exists characteristics;
+DROP TABLE if exists ingredients;
 DROP TABLE if exists prices;
+DROP TABLE if exists menus;
+DROP TABLE if exists categories;
+DROP TABLE if exists customers;
+
+create table customers(id INT PRIMARY KEY AUTO_INCREMENT,
+name varchar(255) not null,
+phone varchar(255) not null,
+email varchar(255) not null,
+createdAt timestamp,
+updatedAt timestamp );
+
+create table types(id INT PRIMARY KEY AUTO_INCREMENT,
+name VARCHAR(255) not null,
+idCustomer INT NOT NULL,
+createdAt timestamp,
+updatedAt timestamp,
+FOREIGN KEY(idCustomer)REFERENCES customers(id) );
+
+CREATE TABLE users(
+id INT PRIMARY KEY AUTO_INCREMENT,
+name VARCHAR(255) NOT NULL,
+phone VARCHAR(255),
+email VARCHAR(255),
+username VARCHAR(255) NOT NULL,
+password VARCHAR(255) NOT NULL,
+idCustomer int not null,
+idType INT NOT NULL,
+createdAt timestamp,
+updatedAt timestamp,
+FOREIGN KEY(idCustomer)REFERENCES customers(id),
+FOREIGN KEY(idType)REFERENCES types(id)
+);
 
 create table categories( id INT PRIMARY KEY AUTO_INCREMENT,
 name varchar(255) NOT NULL,
 state BOOLEAN DEFAULT TRUE,
 createdAt timestamp,
 updatedAt timestamp,
-idCategory INT DEFAULT NULL)
+idCategory INT DEFAULT NULL);
 
 create table menus( id int PRIMARY KEY NOT NULL AUTO_INCREMENT,
 name varchar(255),
@@ -54,21 +72,21 @@ createdAt timestamp,
 updatedAt timestamp,
 FOREIGN KEY(idMenu) REFERENCES menus(id),
 FOREIGN KEY(idGarnish) REFERENCES menus(id)
-)
+);
 
 CREATE TABLE prices(id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 price float NOT NULL,
 idMenu INT NOT NULL,
 createdAt timestamp,
 updatedAt timestamp,
-FOREIGN KEY(idMenu) REFERENCES menus(id))
+FOREIGN KEY(idMenu) REFERENCES menus(id));
 
 CREATE TABLE ingredients(id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 name varchar(255) NOT NULL,
 unit_of_measure varchar(255) NOT NULL,
 createdAt timestamp,
 updatedAt timestamp
-)
+);
 
 CREATE TABLE menus_ingredients(id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 quantity FLOAT NOT NULL,
@@ -78,12 +96,12 @@ createdAt timestamp,
 updatedAt timestamp,
 FOREIGN KEY(idMenu) REFERENCES menus(id),
 FOREIGN KEY(idIngredient) REFERENCES ingredients(id)
-)
+);
 
 CREATE TABLE characteristics(id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 name VARCHAR(255) NOT NULL,
 createdAt timestamp,
-updatedAt timestamp)
+updatedAt timestamp);
 
 CREATE TABLE menus_characteristics(id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 idMenu INT NOT NULL,
@@ -91,6 +109,6 @@ idCharacteristic INT NOT NULL,
 createdAt timestamp,
 updatedAt timestamp,
 FOREIGN KEY(idMenu) REFERENCES menus(id),
-FOREIGN KEY(idCharacteristic) REFERENCES characteristics(id) )
+FOREIGN KEY(idCharacteristic) REFERENCES characteristics(id) );
 
 

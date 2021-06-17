@@ -1,5 +1,6 @@
 import { BuildOptions, DataTypes, Model } from 'sequelize';
 import db from '../db/connection';
+import Customer from './customer';
 import Menu from './menu';
 
 interface CategoryInterface extends Model {
@@ -7,6 +8,7 @@ interface CategoryInterface extends Model {
   name: string;
   idCategory: number;
   state: boolean;
+  idCustomer: number;
 }
 
 type CategoryStatic = typeof Model & {
@@ -32,8 +34,17 @@ const Category = db.define('categories', {
   state: {
     type: DataTypes.BOOLEAN,
     defaultValue: true
+  },
+  idCustomer: {
+    type: DataTypes.INTEGER,
+    validate: {
+      notEmpty: true
+    }
   }
 }) as CategoryStatic;
+
+Customer.hasMany(Category, { foreignKey: 'idCustomer' });
+Category.belongsTo(Customer, { foreignKey: 'idCustomer' });
 
 Category.belongsTo(Category, { foreignKey: 'idCategory' });
 

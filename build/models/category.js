@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const connection_1 = __importDefault(require("../db/connection"));
+const customer_1 = __importDefault(require("./customer"));
 const menu_1 = __importDefault(require("./menu"));
 const Category = connection_1.default.define('categories', {
     id: {
@@ -25,8 +26,16 @@ const Category = connection_1.default.define('categories', {
     state: {
         type: sequelize_1.DataTypes.BOOLEAN,
         defaultValue: true
+    },
+    idCustomer: {
+        type: sequelize_1.DataTypes.INTEGER,
+        validate: {
+            notEmpty: true
+        }
     }
 });
+customer_1.default.hasMany(Category, { foreignKey: 'idCustomer' });
+Category.belongsTo(customer_1.default, { foreignKey: 'idCustomer' });
 Category.belongsTo(Category, { foreignKey: 'idCategory' });
 Category.hasMany(menu_1.default, {
     foreignKey: 'idCategory'

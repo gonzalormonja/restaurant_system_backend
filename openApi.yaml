@@ -8,8 +8,14 @@ info:
   title: Restaurant API
   description: >-
     Restaurant API documentation
-
+security:
+  - ApiKeyAuth: []
 components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: token
   responses:
     200_ok:
       description: OK
@@ -47,6 +53,41 @@ components:
                     type: string
                     example: 'Token expired'
 paths:
+  /users/signIn:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  example: 'admin'
+                password:
+                  type: string
+                  example: 'admin'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id:
+                    type: string
+                    example: 5f8db309216bebdc870c8d0b
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjVmOGRiMzA5MjE2YmViZGM4NzBjOGQwYiIsInBlcm1pc3Npb25zIjpbImZpbmFuY2Vyc19yZWFkIiwiZmluYW5jZXJzX2NyZWF0ZSIsImZpbmFuY2Vyc191cGRhdGUiLCJmaW5hbmNlcnNfZGVsZXRlIiwicHJvZmVzc2lvbnNfcmVhZCIsInByb2Zlc3Npb25zX2NyZWF0ZSIsInByb2Zlc3Npb25zX3VwZGF0ZSIsInByb2Zlc3Npb25zX2RlbGV0ZSIsInByb2Zlc3Npb25hbHNfcmVhZCIsInByb2Zlc3Npb25hbHNfY3JlYXRlIiwicHJvZmVzc2lvbmFsc191cGRhdGUiLCJwcm9mZXNzaW9uYWxzX2RlbGV0ZSJdfSwiaWF0IjoxNjAzMzkwNDk1LCJleHAiOjE2MDMzOTEwOTV9.h4IYU0T35a7GmFB4Higpmf4Nowjie0jnszX-KO6aCsQ
+                  expires_in:
+                    type: integer
+                    example: 3600
   /menus:
     get:
       summary: Get all menus

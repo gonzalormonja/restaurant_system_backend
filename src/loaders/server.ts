@@ -1,8 +1,4 @@
 import express, { Application } from 'express';
-import menuRoutes from '../routes/menus.routes';
-import categoryRoutes from '../routes/categories.routes';
-import IngredientRoute from '../routes/ingredients.routes';
-import CharacteristicRoutes from '../routes/characteristics.routes';
 
 import cors from 'cors';
 import db from '../db/connection';

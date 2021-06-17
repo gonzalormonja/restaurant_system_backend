@@ -21,6 +21,9 @@ router.post('/', [
     express_validator_1.body('name', 'El nombre es obligatorio').isString().notEmpty(),
     express_validator_1.body('short_name', 'El nombre corto es obligatorio').isString().notEmpty(),
     express_validator_1.body('price', 'El precio es obligatorio').isFloat().notEmpty(),
+    express_validator_1.body('approximate_delay_minutes', 'El approximate_delay_minutes debe ser un entero valido')
+        .isInt()
+        .optional({ nullable: true }),
     express_validator_1.body('idCategory').isInt().custom(db_validators_1.validateCategory).optional({ nullable: true }),
     express_validator_1.body('ingrdients').isArray().custom(db_validators_1.validateIngredients).optional({ nullable: true }),
     express_validator_1.body('idCharacteristics').isArray().custom(db_validators_1.validateCharacteristics).optional({ nullable: true }),
@@ -33,6 +36,9 @@ router.patch('/:id', [
     express_validator_1.body('name', 'El nombre es obligatorio').isString().optional({ nullable: true }),
     express_validator_1.body('short_name', 'El nombre corto es obligatorio').isString().optional({ nullable: true }),
     express_validator_1.body('price', 'El precio debe ser de tipo numerico').isFloat().optional({ nullable: true }),
+    express_validator_1.body('approximate_delay_minutes', 'El approximate_delay_minutes debe ser un entero valido')
+        .isInt()
+        .optional({ nullable: true }),
     express_validator_1.body('idCategory').isInt().custom(db_validators_1.validateCategory).optional({ nullable: true }),
     express_validator_1.body('ingrdients').isArray().custom(db_validators_1.validateIngredients).optional({ nullable: true }),
     express_validator_1.body('idCharacteristics').isArray().custom(db_validators_1.validateCharacteristics).optional({ nullable: true }),

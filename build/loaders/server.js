@@ -13,20 +13,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const menus_routes_1 = __importDefault(require("../routes/menus.routes"));
-const categories_routes_1 = __importDefault(require("../routes/categories.routes"));
-const ingredients_routes_1 = __importDefault(require("../routes/ingredients.routes"));
-const characteristics_routes_1 = __importDefault(require("../routes/characteristics.routes"));
 const cors_1 = __importDefault(require("cors"));
 const connection_1 = __importDefault(require("../db/connection"));
+const routes_1 = require("../routes");
 class Server {
     constructor() {
-        this.apiPaths = {
-            menus: '/menus',
-            categories: '/categories',
-            ingredients: '/ingredients',
-            characteristics: '/characteristics'
-        };
         this.dbConnection = () => __awaiter(this, void 0, void 0, function* () {
             try {
                 yield connection_1.default.authenticate();
@@ -37,12 +28,6 @@ class Server {
                 throw new Error('Error al conectar la base de datos');
             }
         });
-        this.routes = () => {
-            this.app.use(this.apiPaths.menus, menus_routes_1.default);
-            this.app.use(this.apiPaths.categories, categories_routes_1.default);
-            this.app.use(this.apiPaths.ingredients, ingredients_routes_1.default);
-            this.app.use(this.apiPaths.characteristics, characteristics_routes_1.default);
-        };
         this.middlewares = () => {
             //CORS
             this.app.use(cors_1.default());
@@ -64,7 +49,7 @@ class Server {
         this.port = process.env.PORT || '8000';
         this.dbConnection();
         this.middlewares();
-        this.routes();
+        routes_1.route_init(this.app);
     }
 }
 exports.default = Server;

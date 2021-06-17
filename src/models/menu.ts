@@ -1,6 +1,7 @@
 import { Model, DataTypes, BuildOptions } from 'sequelize';
 import db from '../db/connection';
 import Characteristic from './characteristic';
+import Customer from './customer';
 import Ingredient from './ingredient';
 import MenuCharacteristic from './menuCharacteristic';
 import MenuGarnish from './menuGarnish';
@@ -16,6 +17,7 @@ interface MenuInterface extends Model {
   maximum_of_flavors: number;
   state: boolean;
   isGarnish: boolean;
+  idCustomer: number;
 }
 
 type MenuStatic = typeof Model & {
@@ -62,10 +64,19 @@ const Menu = db.define('menus', {
     type: DataTypes.BOOLEAN,
     defaultValue: false
   },
-  approximate_delay_minutes:{
+  approximate_delay_minutes: {
     type: DataTypes.INTEGER
+  },
+  idCustomer: {
+    type: DataTypes.INTEGER,
+    validate: {
+      notEmpty: true
+    }
   }
 }) as MenuStatic;
+
+Customer.hasMany(Menu, { foreignKey: 'idCustomer' });
+Menu.belongsTo(Customer, { foreignKey: 'idCustomer' });
 
 Menu.belongsToMany(Menu, {
   through: MenuGarnish,

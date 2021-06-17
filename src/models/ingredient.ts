@@ -1,10 +1,12 @@
 import { BuildOptions, DataTypes, Model } from 'sequelize';
 import db from '../db/connection';
+import Customer from './customer';
 
 interface IngredientInterface extends Model {
   id: number;
   name: string;
   unit_of_measure: string;
+  idCustomer: number;
 }
 
 type IngredientStatic = typeof Model & {
@@ -26,7 +28,16 @@ const Ingredient = db.define('ingredients', {
   unit_of_measure: {
     type: DataTypes.STRING,
     defaultValue: null
+  },
+  idCustomer: {
+    type: DataTypes.INTEGER,
+    validate: {
+      notEmpty: true
+    }
   }
 }) as IngredientStatic;
+
+Customer.hasMany(Ingredient, { foreignKey: 'idCustomer' });
+Ingredient.belongsTo(Customer, { foreignKey: 'idCustomer' });
 
 export default Ingredient;

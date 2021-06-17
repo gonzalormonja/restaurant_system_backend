@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const connection_1 = __importDefault(require("../db/connection"));
 const characteristic_1 = __importDefault(require("./characteristic"));
+const customer_1 = __importDefault(require("./customer"));
 const ingredient_1 = __importDefault(require("./ingredient"));
 const menuCharacteristic_1 = __importDefault(require("./menuCharacteristic"));
 const menuGarnish_1 = __importDefault(require("./menuGarnish"));
@@ -50,8 +51,19 @@ const Menu = connection_1.default.define('menus', {
     isGarnish: {
         type: sequelize_1.DataTypes.BOOLEAN,
         defaultValue: false
+    },
+    approximate_delay_minutes: {
+        type: sequelize_1.DataTypes.INTEGER
+    },
+    idCustomer: {
+        type: sequelize_1.DataTypes.INTEGER,
+        validate: {
+            notEmpty: true
+        }
     }
 });
+customer_1.default.hasMany(Menu, { foreignKey: 'idCustomer' });
+Menu.belongsTo(customer_1.default, { foreignKey: 'idCustomer' });
 Menu.belongsToMany(Menu, {
     through: menuGarnish_1.default,
     foreignKey: 'idGarnish',
