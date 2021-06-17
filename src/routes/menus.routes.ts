@@ -36,6 +36,9 @@ router.post(
     body('name', 'El nombre es obligatorio').isString().notEmpty(),
     body('short_name', 'El nombre corto es obligatorio').isString().notEmpty(),
     body('price', 'El precio es obligatorio').isFloat().notEmpty(),
+    body('approximate_delay_minutes', 'El approximate_delay_minutes debe ser un entero valido')
+      .isInt()
+      .optional({ nullable: true }),
     body('idCategory').isInt().custom(validateCategory).optional({ nullable: true }),
     body('ingrdients').isArray().custom(validateIngredients).optional({ nullable: true }),
     body('idCharacteristics').isArray().custom(validateCharacteristics).optional({ nullable: true }),
@@ -52,6 +55,9 @@ router.patch(
     body('name', 'El nombre es obligatorio').isString().optional({ nullable: true }),
     body('short_name', 'El nombre corto es obligatorio').isString().optional({ nullable: true }),
     body('price', 'El precio debe ser de tipo numerico').isFloat().optional({ nullable: true }),
+    body('approximate_delay_minutes', 'El approximate_delay_minutes debe ser un entero valido')
+      .isInt()
+      .optional({ nullable: true }),
     body('idCategory').isInt().custom(validateCategory).optional({ nullable: true }),
     body('ingrdients').isArray().custom(validateIngredients).optional({ nullable: true }),
     body('idCharacteristics').isArray().custom(validateCharacteristics).optional({ nullable: true }),

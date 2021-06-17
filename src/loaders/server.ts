@@ -6,16 +6,11 @@ import CharacteristicRoutes from '../routes/characteristics.routes';
 
 import cors from 'cors';
 import db from '../db/connection';
+import { route_init } from '../routes';
 
 class Server {
   private app: Application;
   private port: string;
-  private apiPaths = {
-    menus: '/menus',
-    categories: '/categories',
-    ingredients: '/ingredients',
-    characteristics: '/characteristics'
-  };
 
   constructor() {
     this.app = express();
@@ -23,7 +18,7 @@ class Server {
 
     this.dbConnection();
     this.middlewares();
-    this.routes();
+    route_init(this.app);
   }
 
   dbConnection = async () => {
@@ -34,13 +29,6 @@ class Server {
       console.log(error);
       throw new Error('Error al conectar la base de datos');
     }
-  };
-
-  routes = () => {
-    this.app.use(this.apiPaths.menus, menuRoutes);
-    this.app.use(this.apiPaths.categories, categoryRoutes);
-    this.app.use(this.apiPaths.ingredients, IngredientRoute);
-    this.app.use(this.apiPaths.characteristics, CharacteristicRoutes);
   };
 
   middlewares = () => {

@@ -108,6 +108,8 @@ paths:
                   type: number
                 maximum_of_flavors:
                   type: number
+                approximate_delay_minutes:
+                  type: number
                 state:
                   type: boolean
                   default: true
@@ -192,6 +194,8 @@ paths:
                 idCategory:
                   type: number
                 maximum_of_flavors:
+                  type: number
+                approximate_delay_minutes:
                   type: number
                 state:
                   type: boolean

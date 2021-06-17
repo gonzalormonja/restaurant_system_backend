@@ -61,6 +61,9 @@ const Menu = db.define('menus', {
   isGarnish: {
     type: DataTypes.BOOLEAN,
     defaultValue: false
+  },
+  approximate_delay_minutes:{
+    type: DataTypes.INTEGER
   }
 }) as MenuStatic;
 
