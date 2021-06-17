@@ -13,12 +13,14 @@ DROP TABLE if exists ingredients;
 DROP TABLE if exists prices;
 DROP TABLE if exists menus;
 DROP TABLE if exists categories;
+DROP TABLE if exists users;
+DROP TABLE if exists types;
 DROP TABLE if exists customers;
 
 create table customers(id INT PRIMARY KEY AUTO_INCREMENT,
-name varchar(255) not null,
-phone varchar(255) not null,
-email varchar(255) not null,
+name varchar(255),
+phone varchar(255),
+email varchar(255),
 createdAt timestamp,
 updatedAt timestamp );
 
@@ -111,4 +113,18 @@ updatedAt timestamp,
 FOREIGN KEY(idMenu) REFERENCES menus(id),
 FOREIGN KEY(idCharacteristic) REFERENCES characteristics(id) );
 
+
+INSERT INTO customers(name)values('Restaurante pepito');
+INSERT INTO types(name,idCustomer)values('administrator',1); 
+INSERT
+	INTO
+	users(name,
+	username,
+	password,
+	idCustomer,
+	idType)
+values('Pedro','admin',
+'$2b$10$Ed0/UB1wtpKmEEiBphiNUuKRguvUPsLe4ch7OUTG5A7tGhM1677CO',
+1,
+1);
 
