@@ -63,7 +63,7 @@ export const postMenu = async (req: Request, res: Response) => {
   try {
     const { body } = req;
 
-    const menu = await Menu.create(body);
+    const menu = await Menu.create({ ...body, idCustomer: req['user'].idCustomer });
     //* add ingredients
     body.ingredients?.map(async (ingredient) => {
       const ingredientRecord = await Ingredient.findByPk(ingredient.id);

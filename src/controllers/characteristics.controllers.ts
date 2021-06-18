@@ -16,8 +16,7 @@ export const getCharacteristics = async (req: Request, res: Response) => {
 export const postCharacteristic = async (req: Request, res: Response) => {
   try {
     const { body } = req;
-    const category = Characteristic.build(body);
-    await category.save();
+    const category = await Characteristic.create({ ...body, idCustomer: req['user'].idCustomer });
     res.json(category);
   } catch (error) {
     console.log(error);

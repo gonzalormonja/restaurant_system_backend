@@ -58,7 +58,7 @@ exports.getIngredients = getIngredients;
 const postIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { body } = req;
-        const category = yield ingredient_1.default.create(body);
+        const category = yield ingredient_1.default.create(Object.assign(Object.assign({}, body), { idCustomer: req['user'].idCustomer }));
         res.json(category);
     }
     catch (error) {

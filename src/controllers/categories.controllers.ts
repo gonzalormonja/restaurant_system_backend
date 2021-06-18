@@ -5,10 +5,7 @@ import Menu from '../models/menu';
 export const getCategories = async (req: Request, res: Response) => {
   try {
     const categories = await Category.findAll({
-      include:[
-        {model: Category},
-        {model: Menu}
-      ]
+      include: [{ model: Category }, { model: Menu }]
     });
     res.json(categories);
   } catch (error) {
@@ -22,8 +19,7 @@ export const getCategories = async (req: Request, res: Response) => {
 export const postCategory = async (req: Request, res: Response) => {
   try {
     const { body } = req;
-    const category = Category.build(body);
-    await category.save();
+    const category = await Category.create({ ...body, idCustomer: req['user'].idCustomer });
     res.json(category);
   } catch (error) {
     console.log(error);

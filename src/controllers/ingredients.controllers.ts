@@ -47,7 +47,7 @@ export const getIngredients = async (req: Request, res: Response) => {
 export const postIngredient = async (req: Request, res: Response) => {
   try {
     const { body } = req;
-    const category = await Ingredient.create(body);
+    const category = await Ingredient.create({ ...body, idCustomer: req['user'].idCustomer });
     res.json(category);
   } catch (error) {
     console.log(error);

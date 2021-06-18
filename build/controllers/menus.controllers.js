@@ -73,7 +73,7 @@ const postMenu = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c;
     try {
         const { body } = req;
-        const menu = yield menu_1.default.create(body);
+        const menu = yield menu_1.default.create(Object.assign(Object.assign({}, body), { idCustomer: req['user'].idCustomer }));
         //* add ingredients
         (_a = body.ingredients) === null || _a === void 0 ? void 0 : _a.map((ingredient) => __awaiter(void 0, void 0, void 0, function* () {
             const ingredientRecord = yield ingredient_1.default.findByPk(ingredient.id);

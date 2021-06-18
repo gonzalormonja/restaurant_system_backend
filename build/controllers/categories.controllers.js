@@ -18,10 +18,7 @@ const menu_1 = __importDefault(require("../models/menu"));
 const getCategories = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const categories = yield category_1.default.findAll({
-            include: [
-                { model: category_1.default },
-                { model: menu_1.default }
-            ]
+            include: [{ model: category_1.default }, { model: menu_1.default }]
         });
         res.json(categories);
     }
@@ -36,8 +33,7 @@ exports.getCategories = getCategories;
 const postCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { body } = req;
-        const category = category_1.default.build(body);
-        yield category.save();
+        const category = yield category_1.default.create(Object.assign(Object.assign({}, body), { idCustomer: req['user'].idCustomer }));
         res.json(category);
     }
     catch (error) {

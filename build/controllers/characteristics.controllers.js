@@ -30,8 +30,7 @@ exports.getCharacteristics = getCharacteristics;
 const postCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { body } = req;
-        const category = characteristic_1.default.build(body);
-        yield category.save();
+        const category = yield characteristic_1.default.create(Object.assign(Object.assign({}, body), { idCustomer: req['user'].idCustomer }));
         res.json(category);
     }
     catch (error) {
