@@ -3,7 +3,9 @@ import Characteristic from '../models/characteristic';
 
 export const getCharacteristics = async (req: Request, res: Response) => {
   try {
-    const characteristics = await Characteristic.findAll();
+    const characteristics = await Characteristic.findAll({
+      where: { idCustomer: req['user'].idCustomer }
+    });
     res.json(characteristics);
   } catch (error) {
     console.log(error);
@@ -29,7 +31,16 @@ export const postCharacteristic = async (req: Request, res: Response) => {
 export const getCharacteristic = (req: Request, res: Response) => {
   const { id } = req.params;
 
-  const category = Characteristic.findByPk(id);
+  const category = Characteristic.findOne({
+    where: {
+      $and: [
+        { id: id },
+        {
+          idCustomer: req['user'].idCustomer
+        }
+      ]
+    }
+  });
 
   if (!category) {
     return res.status(404).json({
@@ -45,7 +56,16 @@ export const putCharacteristic = async (req: Request, res: Response) => {
   const { body } = req;
 
   try {
-    const category = await Characteristic.findByPk(id);
+    const category = await Characteristic.findOne({
+      where: {
+        $and: [
+          { id: id },
+          {
+            idCustomer: req['user'].idCustomer
+          }
+        ]
+      }
+    });
     if (!category) {
       return res.status(404).json({
         msg: `No existe una caracteristica con el id ${id}`
@@ -65,7 +85,16 @@ export const putCharacteristic = async (req: Request, res: Response) => {
 export const deleteCharacteristic = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const category = await Characteristic.findByPk(id);
+    const category = await Characteristic.findOne({
+      where: {
+        $and: [
+          { id: id },
+          {
+            idCustomer: req['user'].idCustomer
+          }
+        ]
+      }
+    });
     if (!category) {
       return res.status(404).json({
         msg: `No existe una caracteristica con el id ${id}`

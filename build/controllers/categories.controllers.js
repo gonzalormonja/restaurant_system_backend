@@ -18,6 +18,7 @@ const menu_1 = __importDefault(require("../models/menu"));
 const getCategories = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const categories = yield category_1.default.findAll({
+            where: { idCustomer: req['user'].idCustomer },
             include: [{ model: category_1.default }, { model: menu_1.default }]
         });
         res.json(categories);
@@ -46,7 +47,16 @@ const postCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 exports.postCategory = postCategory;
 const getCategory = (req, res) => {
     const { id } = req.params;
-    const category = category_1.default.findByPk(id);
+    const category = category_1.default.findOne({
+        where: {
+            $and: [
+                { id: id },
+                {
+                    idCustomer: req['user'].idCustomer
+                }
+            ]
+        }
+    });
     if (!category) {
         return res.status(404).json({
             msg: `No existe una categoria con el id ${id}`
@@ -59,7 +69,16 @@ const putCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     const { id } = req.params;
     const { body } = req;
     try {
-        const category = yield category_1.default.findByPk(id);
+        const category = yield category_1.default.findOne({
+            where: {
+                $and: [
+                    { id: id },
+                    {
+                        idCustomer: req['user'].idCustomer
+                    }
+                ]
+            }
+        });
         if (!category) {
             return res.status(404).json({
                 msg: `No existe una categoria con el id ${id}`
@@ -79,7 +98,16 @@ exports.putCategory = putCategory;
 const deleteCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const category = yield category_1.default.findByPk(id);
+        const category = yield category_1.default.findOne({
+            where: {
+                $and: [
+                    { id: id },
+                    {
+                        idCustomer: req['user'].idCustomer
+                    }
+                ]
+            }
+        });
         if (!category) {
             return res.status(404).json({
                 msg: `No existe una categoria con el id ${id}`

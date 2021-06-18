@@ -43,7 +43,11 @@ const getIngredients = (req, res) => __awaiter(void 0, void 0, void 0, function*
         pipeline.push({
             order: [[columnOrder, order]]
         });
-        console.log(pipeline.reduce((acc, el) => (Object.assign(Object.assign({}, acc), el)), {}));
+        pipeline.push({
+            where: {
+                idCustomer: req['user'].idCustomer
+            }
+        });
         const ingredients = yield ingredient_1.default.findAll(pipeline.reduce((acc, el) => (Object.assign(Object.assign({}, acc), el)), {}));
         res.json(ingredients);
     }
@@ -69,22 +73,40 @@ const postIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.postIngredient = postIngredient;
-const getIngredient = (req, res) => {
+const getIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const category = ingredient_1.default.findByPk(id);
+    const category = yield ingredient_1.default.findOne({
+        where: {
+            $and: [
+                { id: id },
+                {
+                    idCustomer: req['user'].idCustomer
+                }
+            ]
+        }
+    });
     if (!category) {
         return res.status(404).json({
             msg: `No existe una ingrediente con el id ${id}`
         });
     }
     res.json(category);
-};
+});
 exports.getIngredient = getIngredient;
 const putIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const { body } = req;
     try {
-        const category = yield ingredient_1.default.findByPk(id);
+        const category = yield ingredient_1.default.findOne({
+            where: {
+                $and: [
+                    { id: id },
+                    {
+                        idCustomer: req['user'].idCustomer
+                    }
+                ]
+            }
+        });
         if (!category) {
             return res.status(404).json({
                 msg: `No existe una ingrediente con el id ${id}`
@@ -104,7 +126,16 @@ exports.putIngredient = putIngredient;
 const deleteIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const category = yield ingredient_1.default.findByPk(id);
+        const category = yield ingredient_1.default.findOne({
+            where: {
+                $and: [
+                    { id: id },
+                    {
+                        idCustomer: req['user'].idCustomer
+                    }
+                ]
+            }
+        });
         if (!category) {
             return res.status(404).json({
                 msg: `No existe una ingrediente con el id ${id}`

@@ -16,7 +16,9 @@ exports.deleteCharacteristic = exports.putCharacteristic = exports.getCharacteri
 const characteristic_1 = __importDefault(require("../models/characteristic"));
 const getCharacteristics = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const characteristics = yield characteristic_1.default.findAll();
+        const characteristics = yield characteristic_1.default.findAll({
+            where: { idCustomer: req['user'].idCustomer }
+        });
         res.json(characteristics);
     }
     catch (error) {
@@ -43,7 +45,16 @@ const postCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, funct
 exports.postCharacteristic = postCharacteristic;
 const getCharacteristic = (req, res) => {
     const { id } = req.params;
-    const category = characteristic_1.default.findByPk(id);
+    const category = characteristic_1.default.findOne({
+        where: {
+            $and: [
+                { id: id },
+                {
+                    idCustomer: req['user'].idCustomer
+                }
+            ]
+        }
+    });
     if (!category) {
         return res.status(404).json({
             msg: `No existe una caracteristica con el id ${id}`
@@ -56,7 +67,16 @@ const putCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, functi
     const { id } = req.params;
     const { body } = req;
     try {
-        const category = yield characteristic_1.default.findByPk(id);
+        const category = yield characteristic_1.default.findOne({
+            where: {
+                $and: [
+                    { id: id },
+                    {
+                        idCustomer: req['user'].idCustomer
+                    }
+                ]
+            }
+        });
         if (!category) {
             return res.status(404).json({
                 msg: `No existe una caracteristica con el id ${id}`
@@ -76,7 +96,16 @@ exports.putCharacteristic = putCharacteristic;
 const deleteCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const category = yield characteristic_1.default.findByPk(id);
+        const category = yield characteristic_1.default.findOne({
+            where: {
+                $and: [
+                    { id: id },
+                    {
+                        idCustomer: req['user'].idCustomer
+                    }
+                ]
+            }
+        });
         if (!category) {
             return res.status(404).json({
                 msg: `No existe una caracteristica con el id ${id}`

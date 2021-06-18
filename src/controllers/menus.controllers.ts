@@ -53,6 +53,11 @@ export const getMenus = async (req: Request, res: Response) => {
       { model: Ingredient }
     ]
   });
+  pipeline.push({
+    where: {
+      idCustomer: req['user'].idCustomer
+    }
+  });
   console.log(pipeline.reduce((acc, el) => ({ ...acc, ...el }), {}));
   const menus = await Menu.findAll(pipeline.reduce((acc, el) => ({ ...acc, ...el }), {}));
 
@@ -116,7 +121,11 @@ export const postMenu = async (req: Request, res: Response) => {
 
 export const getMenu = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const menu = await Menu.findByPk(id);
+  const menu = await Menu.findOne({
+    where: {
+      $and: [{ id: id }, { idCustomer: req['user'].idCustomer }]
+    }
+  });
 
   if (!menu) {
     return res.status(404).json({
@@ -132,7 +141,11 @@ export const patchMenu = async (req: Request, res: Response) => {
   const { body } = req;
 
   try {
-    const menu = await Menu.findByPk(id);
+    const menu = await Menu.findOne({
+      where: {
+        $and: [{ id: id }, { idCustomer: req['user'].idCustomer }]
+      }
+    });
     if (!menu) {
       return res.status(404).json({
         msg: `No existe un menu con el id ${id}`
@@ -224,7 +237,11 @@ export const patchMenu = async (req: Request, res: Response) => {
 export const deleteMenu = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const menu = await Menu.findByPk(id);
+    const menu = await Menu.findOne({
+      where: {
+        $and: [{ id: id }, { idCustomer: req['user'].idCustomer }]
+      }
+    });
     if (!menu) {
       return res.status(404).json({
         msg: `No existe un menu con el id ${id}`
@@ -247,7 +264,10 @@ export const findMenuByName = async (req: Request, res: Response) => {
 
     const menus = await Menu.findAll({
       where: {
-        $or: [{ $like: { name: name } }, { $like: { short_name: name } }]
+        $and: [
+          { $or: [{ $like: { name: name } }, { $like: { short_name: name } }] },
+          { idCustomer: req['user'].idCustomer }
+        ]
       }
     });
 

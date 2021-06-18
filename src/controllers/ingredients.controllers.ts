@@ -32,8 +32,11 @@ export const getIngredients = async (req: Request, res: Response) => {
     pipeline.push({
       order: [[columnOrder, order]]
     });
-    console.log(pipeline.reduce((acc, el) => ({ ...acc, ...el }), {}));
-
+    pipeline.push({
+      where: {
+        idCustomer: req['user'].idCustomer
+      }
+    });
     const ingredients = await Ingredient.findAll(pipeline.reduce((acc, el) => ({ ...acc, ...el }), {}));
     res.json(ingredients);
   } catch (error) {
@@ -57,10 +60,19 @@ export const postIngredient = async (req: Request, res: Response) => {
   }
 };
 
-export const getIngredient = (req: Request, res: Response) => {
+export const getIngredient = async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  const category = Ingredient.findByPk(id);
+  const category = await Ingredient.findOne({
+    where: {
+      $and: [
+        { id: id },
+        {
+          idCustomer: req['user'].idCustomer
+        }
+      ]
+    }
+  });
 
   if (!category) {
     return res.status(404).json({
@@ -76,7 +88,16 @@ export const putIngredient = async (req: Request, res: Response) => {
   const { body } = req;
 
   try {
-    const category = await Ingredient.findByPk(id);
+    const category = await Ingredient.findOne({
+      where: {
+        $and: [
+          { id: id },
+          {
+            idCustomer: req['user'].idCustomer
+          }
+        ]
+      }
+    });
     if (!category) {
       return res.status(404).json({
         msg: `No existe una ingrediente con el id ${id}`
@@ -96,7 +117,16 @@ export const putIngredient = async (req: Request, res: Response) => {
 export const deleteIngredient = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const category = await Ingredient.findByPk(id);
+    const category = await Ingredient.findOne({
+      where: {
+        $and: [
+          { id: id },
+          {
+            idCustomer: req['user'].idCustomer
+          }
+        ]
+      }
+    });
     if (!category) {
       return res.status(404).json({
         msg: `No existe una ingrediente con el id ${id}`

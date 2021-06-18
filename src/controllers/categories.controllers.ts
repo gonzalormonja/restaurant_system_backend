@@ -5,6 +5,7 @@ import Menu from '../models/menu';
 export const getCategories = async (req: Request, res: Response) => {
   try {
     const categories = await Category.findAll({
+      where: { idCustomer: req['user'].idCustomer },
       include: [{ model: Category }, { model: Menu }]
     });
     res.json(categories);
@@ -32,7 +33,16 @@ export const postCategory = async (req: Request, res: Response) => {
 export const getCategory = (req: Request, res: Response) => {
   const { id } = req.params;
 
-  const category = Category.findByPk(id);
+  const category = Category.findOne({
+    where: {
+      $and: [
+        { id: id },
+        {
+          idCustomer: req['user'].idCustomer
+        }
+      ]
+    }
+  });
 
   if (!category) {
     return res.status(404).json({
@@ -48,7 +58,16 @@ export const putCategory = async (req: Request, res: Response) => {
   const { body } = req;
 
   try {
-    const category = await Category.findByPk(id);
+    const category = await Category.findOne({
+      where: {
+        $and: [
+          { id: id },
+          {
+            idCustomer: req['user'].idCustomer
+          }
+        ]
+      }
+    });
     if (!category) {
       return res.status(404).json({
         msg: `No existe una categoria con el id ${id}`
@@ -68,7 +87,16 @@ export const putCategory = async (req: Request, res: Response) => {
 export const deleteCategory = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const category = await Category.findByPk(id);
+    const category = await Category.findOne({
+      where: {
+        $and: [
+          { id: id },
+          {
+            idCustomer: req['user'].idCustomer
+          }
+        ]
+      }
+    });
     if (!category) {
       return res.status(404).json({
         msg: `No existe una categoria con el id ${id}`

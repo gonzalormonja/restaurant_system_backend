@@ -64,6 +64,11 @@ const getMenus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             { model: ingredient_1.default }
         ]
     });
+    pipeline.push({
+        where: {
+            idCustomer: req['user'].idCustomer
+        }
+    });
     console.log(pipeline.reduce((acc, el) => (Object.assign(Object.assign({}, acc), el)), {}));
     const menus = yield menu_1.default.findAll(pipeline.reduce((acc, el) => (Object.assign(Object.assign({}, acc), el)), {}));
     res.json(menus);
@@ -123,7 +128,11 @@ const postMenu = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.postMenu = postMenu;
 const getMenu = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const menu = yield menu_1.default.findByPk(id);
+    const menu = yield menu_1.default.findOne({
+        where: {
+            $and: [{ id: id }, { idCustomer: req['user'].idCustomer }]
+        }
+    });
     if (!menu) {
         return res.status(404).json({
             msg: `No existe un menu con el id ${id}`
@@ -137,7 +146,11 @@ const patchMenu = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const { body } = req;
     try {
-        const menu = yield menu_1.default.findByPk(id);
+        const menu = yield menu_1.default.findOne({
+            where: {
+                $and: [{ id: id }, { idCustomer: req['user'].idCustomer }]
+            }
+        });
         if (!menu) {
             return res.status(404).json({
                 msg: `No existe un menu con el id ${id}`
@@ -223,7 +236,11 @@ exports.patchMenu = patchMenu;
 const deleteMenu = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const menu = yield menu_1.default.findByPk(id);
+        const menu = yield menu_1.default.findOne({
+            where: {
+                $and: [{ id: id }, { idCustomer: req['user'].idCustomer }]
+            }
+        });
         if (!menu) {
             return res.status(404).json({
                 msg: `No existe un menu con el id ${id}`
@@ -245,7 +262,10 @@ const findMenuByName = (req, res) => __awaiter(void 0, void 0, void 0, function*
         const { name } = req.body;
         const menus = yield menu_1.default.findAll({
             where: {
-                $or: [{ $like: { name: name } }, { $like: { short_name: name } }]
+                $and: [
+                    { $or: [{ $like: { name: name } }, { $like: { short_name: name } }] },
+                    { idCustomer: req['user'].idCustomer }
+                ]
             }
         });
         res.json(menus);
