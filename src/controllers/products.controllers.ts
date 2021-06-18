@@ -2,13 +2,13 @@ import { Request, Response } from 'express';
 import Category from '../models/category';
 import Characteristic from '../models/characteristic';
 import Ingredient from '../models/ingredient';
-import Menu from '../models/menu';
-import MenuCharacteristic from '../models/menuCharacteristic';
-import MenuGarnish from '../models/menuGarnish';
-import MenuIngredient from '../models/menuIngredient';
+import Product from '../models/product';
+import ProductCharacteristic from '../models/productCharacteristic';
+import ProductGarnish from '../models/productGarnish';
+import ProductIngredient from '../models/productIngredient';
 import Price from '../models/price';
 
-export const getMenus = async (req: Request, res: Response) => {
+export const getProducts = async (req: Request, res: Response) => {
   let { search, start, limit, columnOrder, order, idCategories } = req.query;
 
   const pipeline: any[] = [];
@@ -47,8 +47,8 @@ export const getMenus = async (req: Request, res: Response) => {
     include: [
       { model: Category },
       { model: Price },
-      { model: Menu, as: 'garnishes' },
-      { model: Menu, as: 'menusOfGarnish' },
+      { model: Product, as: 'garnishes' },
+      { model: Product, as: 'productsOfGarnish' },
       { model: Characteristic },
       { model: Ingredient }
     ]
@@ -59,23 +59,23 @@ export const getMenus = async (req: Request, res: Response) => {
     }
   });
   console.log(pipeline.reduce((acc, el) => ({ ...acc, ...el }), {}));
-  const menus = await Menu.findAll(pipeline.reduce((acc, el) => ({ ...acc, ...el }), {}));
+  const products = await Product.findAll(pipeline.reduce((acc, el) => ({ ...acc, ...el }), {}));
 
-  res.json(menus);
+  res.json(products);
 };
 
-export const postMenu = async (req: Request, res: Response) => {
+export const postProduct = async (req: Request, res: Response) => {
   try {
     const { body } = req;
 
-    const menu = await Menu.create({ ...body, idCustomer: req['user'].idCustomer });
+    const product = await Product.create({ ...body, idCustomer: req['user'].idCustomer });
     //* add ingredients
     body.ingredients?.map(async (ingredient) => {
       const ingredientRecord = await Ingredient.findByPk(ingredient.id);
       if (ingredientRecord) {
-        MenuIngredient.create({
+        ProductIngredient.create({
           idIngredient: ingredientRecord.id,
-          idMenu: menu.id,
+          idProduct: product.id,
           quantity: ingredient.quantity
         });
       }
@@ -85,90 +85,90 @@ export const postMenu = async (req: Request, res: Response) => {
     body.idCharacteristics?.map(async (idCharacteristic) => {
       const characteristicRecord = await Characteristic.findByPk(idCharacteristic);
       if (characteristicRecord) {
-        MenuCharacteristic.create({
+        ProductCharacteristic.create({
           idCharacteristic: characteristicRecord.id,
-          idMenu: menu.id
+          idProduct: product.id
         });
       }
     });
 
     //* add garnishes
     body.garnishes?.map(async (garnish) => {
-      const garnishRecord = await Menu.findByPk(garnish.id);
+      const garnishRecord = await Product.findByPk(garnish.id);
       if (garnishRecord) {
         if (!garnishRecord.isGarnish) {
-          throw new Error(`El menu ${garnishRecord.name} no es una guarnicion valida`);
+          throw new Error(`El product ${garnishRecord.name} no es una guarnicion valida`);
         }
-        MenuGarnish.create({
+        ProductGarnish.create({
           idGarnish: garnishRecord.id,
-          idMenu: menu.id,
+          idProduct: product.id,
           max_quantity: garnish.max_quantity
         });
       }
     });
 
     //* add price
-    await Price.create({ price: body.price ? body.price : 0, idMenu: menu.id });
+    await Price.create({ price: body.price ? body.price : 0, idProduct: product.id });
 
-    res.json(menu);
+    res.json(product);
   } catch (error) {
     console.log(error);
     res.status(500).json({
-      msg: '[postMenu] Error al crear un menu'
+      msg: '[postProduct] Error al crear un product'
     });
   }
 };
 
-export const getMenu = async (req: Request, res: Response) => {
+export const getProduct = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const menu = await Menu.findOne({
+  const product = await Product.findOne({
     where: {
       $and: [{ id: id }, { idCustomer: req['user'].idCustomer }]
     }
   });
 
-  if (!menu) {
+  if (!product) {
     return res.status(404).json({
-      msg: `No existe un menu con el id ${id}`
+      msg: `No existe un product con el id ${id}`
     });
   }
 
-  res.json(menu);
+  res.json(product);
 };
 
-export const patchMenu = async (req: Request, res: Response) => {
+export const patchProduct = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { body } = req;
 
   try {
-    const menu = await Menu.findOne({
+    const product = await Product.findOne({
       where: {
         $and: [{ id: id }, { idCustomer: req['user'].idCustomer }]
       }
     });
-    if (!menu) {
+    if (!product) {
       return res.status(404).json({
-        msg: `No existe un menu con el id ${id}`
+        msg: `No existe un product con el id ${id}`
       });
     }
 
-    await menu.update(body);
+    await product.update(body);
 
     //* update ingredients
     if (body.ingredients) {
       //* delete previous ingredients
-      MenuIngredient.destroy({
+      ProductIngredient.destroy({
         where: {
-          idMenu: id
+          idProduct: id
         }
       });
       //*add ingredients
       body.ingredients?.map(async (ingredient) => {
         const ingredientRecord = await Ingredient.findByPk(ingredient.id);
         if (ingredientRecord) {
-          MenuIngredient.create({
+          ProductIngredient.create({
             idIngredient: ingredientRecord.id,
-            idMenu: menu.id,
+            idProduct: product.id,
             quantity: ingredient.quantity
           });
         }
@@ -178,18 +178,18 @@ export const patchMenu = async (req: Request, res: Response) => {
     //* update characteristics
     if (body.idCharacteristics) {
       //* delete previous characteristics
-      MenuCharacteristic.destroy({
+      ProductCharacteristic.destroy({
         where: {
-          idMenu: id
+          idProduct: id
         }
       });
       //* add characteristics
       body.idCharacteristics?.map(async (idCharacteristic) => {
         const characteristicRecord = await Characteristic.findByPk(idCharacteristic);
         if (characteristicRecord) {
-          MenuCharacteristic.create({
+          ProductCharacteristic.create({
             idCharacteristic: characteristicRecord.id,
-            idMenu: menu.id
+            idProduct: product.id
           });
         }
       });
@@ -198,22 +198,22 @@ export const patchMenu = async (req: Request, res: Response) => {
     //* update granishes
     if (body.granishes) {
       //* delete previous granishes
-      MenuGarnish.destroy({
+      ProductGarnish.destroy({
         where: {
-          idMenu: id
+          idProduct: id
         }
       });
 
       //* add garnishes
       body.garnishes?.map(async (garnish) => {
-        const garnishRecord = await Menu.findByPk(garnish.id);
+        const garnishRecord = await Product.findByPk(garnish.id);
         if (garnishRecord) {
           if (!garnishRecord.isGarnish) {
-            throw new Error(`El menu ${garnishRecord.name} no es una guarnicion valida`);
+            throw new Error(`El product ${garnishRecord.name} no es una guarnicion valida`);
           }
-          MenuGarnish.create({
+          ProductGarnish.create({
             idGarnish: garnishRecord.id,
-            idMenu: menu.id,
+            idProduct: product.id,
             max_quantity: garnish.max_quantity
           });
         }
@@ -222,47 +222,47 @@ export const patchMenu = async (req: Request, res: Response) => {
 
     if (body.price) {
       //* add price
-      await Price.create({ price: body.price ? body.price : 0, idMenu: menu.id });
+      await Price.create({ price: body.price ? body.price : 0, idProduct: product.id });
     }
 
-    res.json(menu);
+    res.json(product);
   } catch (error) {
     console.log(error);
     res.status(500).json({
-      msg: '[putMenu] Error al actualizar un menu'
+      msg: '[putProduct] Error al actualizar un product'
     });
   }
 };
 
-export const deleteMenu = async (req: Request, res: Response) => {
+export const deleteProduct = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const menu = await Menu.findOne({
+    const product = await Product.findOne({
       where: {
         $and: [{ id: id }, { idCustomer: req['user'].idCustomer }]
       }
     });
-    if (!menu) {
+    if (!product) {
       return res.status(404).json({
-        msg: `No existe un menu con el id ${id}`
+        msg: `No existe un product con el id ${id}`
       });
     }
 
-    await menu.update({ state: false });
-    return res.json(menu);
+    await product.update({ state: false });
+    return res.json(product);
   } catch (error) {
     console.log(error);
     res.status(500).json({
-      msg: '[deleteMenu] Error al eliminar un menu'
+      msg: '[deleteProduct] Error al eliminar un product'
     });
   }
 };
 
-export const findMenuByName = async (req: Request, res: Response) => {
+export const findProductByName = async (req: Request, res: Response) => {
   try {
     const { name } = req.body;
 
-    const menus = await Menu.findAll({
+    const products = await Product.findAll({
       where: {
         $and: [
           { $or: [{ $like: { name: name } }, { $like: { short_name: name } }] },
@@ -271,11 +271,11 @@ export const findMenuByName = async (req: Request, res: Response) => {
       }
     });
 
-    res.json(menus);
+    res.json(products);
   } catch (error) {
     console.log(error);
     res.status(500).json({
-      msg: '[findMenuByName] Error al buscar un menu'
+      msg: '[findProductByName] Error al buscar un product'
     });
   }
 };

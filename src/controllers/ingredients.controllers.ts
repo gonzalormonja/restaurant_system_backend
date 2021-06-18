@@ -109,7 +109,7 @@ export const putIngredient = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({
-      msg: '[putIngredient] Error al actualizar un menu'
+      msg: '[putIngredient] Error al actualizar un product'
     });
   }
 };

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { deleteMenu, getMenu, getMenus, postMenu, patchMenu } from '../controllers/menus.controllers';
+import { deleteProduct, getProduct, getProducts, postProduct, patchProduct } from '../controllers/products.controllers';
 import { body, param, query } from 'express-validator';
 import { validate_fields } from '../middlewares/validate_fields';
 import {
@@ -24,12 +24,12 @@ router.get(
     query('idCategories').isArray().custom(validateCategories).optional({ nullable: true }),
     validate_fields
   ],
-  getMenus
+  getProducts
 );
 router.get(
   '/:id',
   [isAuth, param('id', 'El id debe ser de tipo numerico y es obligatorio').isInt().notEmpty(), validate_fields],
-  getMenu
+  getProduct
 );
 router.post(
   '/',
@@ -48,7 +48,7 @@ router.post(
     body('garnishes').isArray().custom(validateGarnishes).optional({ nullable: true }),
     validate_fields
   ],
-  postMenu
+  postProduct
 );
 router.patch(
   '/:id',
@@ -68,12 +68,12 @@ router.patch(
     body('garnishes').isArray().custom(validateGarnishes).optional({ nullable: true }),
     validate_fields
   ],
-  patchMenu
+  patchProduct
 );
 router.delete(
   '/:id',
   [isAuth, param('id', 'El id debe ser de tipo numerico y es obligatorio').isInt().notEmpty(), validate_fields],
-  deleteMenu
+  deleteProduct
 );
 
 export default router;

@@ -1,24 +1,24 @@
 import { BuildOptions, DataTypes, Model } from 'sequelize';
 import db from '../db/connection';
 
-interface MenuGarnishInterface extends Model {
+interface ProductGarnishInterface extends Model {
   id: number;
-  idMenu: number;
+  idProduct: number;
   idGarnish: number;
   max_quantity: number;
 }
 
-type MenuGarnishStatic = typeof Model & {
-  new (values?: object, options?: BuildOptions): MenuGarnishInterface;
+type ProductGarnishStatic = typeof Model & {
+  new (values?: object, options?: BuildOptions): ProductGarnishInterface;
 };
 
-const MenuGarnish = db.define('menus_garnishes', {
+const ProductGarnish = db.define('products_garnishes', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  idMenu: {
+  idProduct: {
     type: DataTypes.INTEGER,
     defaultValue: null
   },
@@ -30,6 +30,6 @@ const MenuGarnish = db.define('menus_garnishes', {
     type: DataTypes.INTEGER,
     defaultValue: 1
   }
-}) as MenuGarnishStatic;
+}) as ProductGarnishStatic;
 
-export default MenuGarnish;
+export default ProductGarnish;

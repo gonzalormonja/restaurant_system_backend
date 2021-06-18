@@ -1,23 +1,23 @@
 import { BuildOptions, DataTypes, Model } from 'sequelize';
 import db from '../db/connection';
 
-interface MenuCharacteristicInterface extends Model {
+interface ProductCharacteristicInterface extends Model {
   id: number;
-  idMenu: number;
+  idProduct: number;
   idCharacteristic: number;
 }
 
-type MenuCharacteristicStatic = typeof Model & {
-  new (values?: object, options?: BuildOptions): MenuCharacteristicInterface;
+type ProductCharacteristicStatic = typeof Model & {
+  new (values?: object, options?: BuildOptions): ProductCharacteristicInterface;
 };
 
-const MenuCharacteristic = db.define('menus_characteristics', {
+const ProductCharacteristic = db.define('products_characteristics', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  idMenu: {
+  idProduct: {
     type: DataTypes.INTEGER,
     defaultValue: null
   },
@@ -25,6 +25,6 @@ const MenuCharacteristic = db.define('menus_characteristics', {
     type: DataTypes.INTEGER,
     defaultValue: null
   }
-}) as MenuCharacteristicStatic;
+}) as ProductCharacteristicStatic;
 
-export default MenuCharacteristic;
+export default ProductCharacteristic;

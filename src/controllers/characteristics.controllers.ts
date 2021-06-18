@@ -77,7 +77,7 @@ export const putCharacteristic = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({
-      msg: '[putCharacteristic] Error al actualizar un menu'
+      msg: '[putCharacteristic] Error al actualizar un product'
     });
   }
 };

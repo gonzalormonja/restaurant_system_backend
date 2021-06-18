@@ -1,7 +1,7 @@
 import { BuildOptions, DataTypes, Model } from 'sequelize';
 import db from '../db/connection';
 import Customer from './customer';
-import Menu from './menu';
+import Product from './product';
 
 interface CategoryInterface extends Model {
   id: number;
@@ -48,8 +48,8 @@ Category.belongsTo(Customer, { foreignKey: 'idCustomer' });
 
 Category.belongsTo(Category, { foreignKey: 'idCategory' });
 
-Category.hasMany(Menu, {
+Category.hasMany(Product, {
   foreignKey: 'idCategory'
 });
-Menu.belongsTo(Category, { foreignKey: 'idCategory' });
+Product.belongsTo(Category, { foreignKey: 'idCategory' });
 export default Category;

@@ -1,24 +1,24 @@
 import { BuildOptions, DataTypes, Model } from 'sequelize';
 import db from '../db/connection';
 
-interface MenuIngredientInterface extends Model {
+interface ProductIngredientInterface extends Model {
   id: number;
-  idMenu: number;
+  idProduct: number;
   idIngredient: number;
   quantity: number;
 }
 
-type MenuIngredientStatic = typeof Model & {
-  new (values?: object, options?: BuildOptions): MenuIngredientInterface;
+type ProductIngredientStatic = typeof Model & {
+  new (values?: object, options?: BuildOptions): ProductIngredientInterface;
 };
 
-const MenuIngredient = db.define('menus_ingredients', {
+const ProductIngredient = db.define('products_ingredients', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  idMenu: {
+  idProduct: {
     type: DataTypes.INTEGER,
     defaultValue: null
   },
@@ -32,6 +32,6 @@ const MenuIngredient = db.define('menus_ingredients', {
       notEmpty: true
     }
   }
-}) as MenuIngredientStatic;
+}) as ProductIngredientStatic;
 
-export default MenuIngredient;
+export default ProductIngredient;

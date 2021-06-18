@@ -3,12 +3,12 @@ import db from '../db/connection';
 import Characteristic from './characteristic';
 import Customer from './customer';
 import Ingredient from './ingredient';
-import MenuCharacteristic from './menuCharacteristic';
-import MenuGarnish from './menuGarnish';
-import MenuIngredient from './menuIngredient';
+import ProductCharacteristic from './productCharacteristic';
+import ProductGarnish from './productGarnish';
+import ProductIngredient from './productIngredient';
 import Price from './price';
 
-interface MenuInterface extends Model {
+interface ProductInterface extends Model {
   id: number;
   name: string;
   bar_code: string;
@@ -21,11 +21,11 @@ interface MenuInterface extends Model {
   approximate_delay_minutes: number;
 }
 
-type MenuStatic = typeof Model & {
-  new (values?: object, options?: BuildOptions): MenuInterface;
+type ProductStatic = typeof Model & {
+  new (values?: object, options?: BuildOptions): ProductInterface;
 };
 
-const Menu = db.define('menus', {
+const Product = db.define('products', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -74,45 +74,45 @@ const Menu = db.define('menus', {
       notEmpty: true
     }
   }
-}) as MenuStatic;
+}) as ProductStatic;
 
-Customer.hasMany(Menu, { foreignKey: 'idCustomer' });
-Menu.belongsTo(Customer, { foreignKey: 'idCustomer' });
+Customer.hasMany(Product, { foreignKey: 'idCustomer' });
+Product.belongsTo(Customer, { foreignKey: 'idCustomer' });
 
-Menu.belongsToMany(Menu, {
-  through: MenuGarnish,
+Product.belongsToMany(Product, {
+  through: ProductGarnish,
   foreignKey: 'idGarnish',
-  otherKey: 'idMenu',
-  as: 'menusOfGarnish'
+  otherKey: 'idProduct',
+  as: 'productsOfGarnish'
 });
 
-Menu.belongsToMany(Menu, {
-  through: MenuGarnish,
-  foreignKey: 'idMenu',
+Product.belongsToMany(Product, {
+  through: ProductGarnish,
+  foreignKey: 'idProduct',
   otherKey: 'idGarnish',
   as: 'garnishes'
 });
 
-Menu.hasMany(Price, { foreignKey: 'idMenu' });
+Product.hasMany(Price, { foreignKey: 'idProduct' });
 
-Menu.belongsToMany(Ingredient, {
-  through: MenuIngredient,
-  foreignKey: 'idMenu',
+Product.belongsToMany(Ingredient, {
+  through: ProductIngredient,
+  foreignKey: 'idProduct',
   otherKey: 'idIngredient'
 });
 
-Ingredient.belongsToMany(Menu, {
-  through: MenuIngredient,
+Ingredient.belongsToMany(Product, {
+  through: ProductIngredient,
   foreignKey: 'idIngredient',
-  otherKey: 'idMenu'
+  otherKey: 'idProduct'
 });
 
-Menu.belongsToMany(Characteristic, {
-  through: MenuCharacteristic,
-  foreignKey: 'idMenu',
+Product.belongsToMany(Characteristic, {
+  through: ProductCharacteristic,
+  foreignKey: 'idProduct',
   otherKey: 'idCharacteristic'
 });
 
-Characteristic.belongsToMany(Menu, { through: MenuCharacteristic, foreignKey: 'idMenu' });
+Characteristic.belongsToMany(Product, { through: ProductCharacteristic, foreignKey: 'idProduct' });
 
-export default Menu;
+export default Product;

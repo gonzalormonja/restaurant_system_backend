@@ -1,7 +1,7 @@
 import Category from '../models/category';
 import Characteristic from '../models/characteristic';
 import Ingredient from '../models/ingredient';
-import Menu from '../models/menu';
+import Product from '../models/product';
 
 export const validateCategory = async (idCategory) => {
   if (idCategory) {
@@ -55,12 +55,12 @@ export const validateGarnishes = async (garnishes) => {
   if (garnishes) {
     await Promise.all(
       garnishes.map(async (garnish) => {
-        const existGarnish = await Menu.findByPk(garnish.id);
+        const existGarnish = await Product.findByPk(garnish.id);
         if (!existGarnish) {
           throw new Error(`La guarnicion ${garnish.id} no existe`);
         }
         if (!existGarnish.isGarnish) {
-          throw new Error(`El menu ${garnish.name} no es una guarnicion valida`);
+          throw new Error(`El product ${garnish.name} no es una guarnicion valida`);
         }
       })
     );

@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import Category from '../models/category';
-import Menu from '../models/menu';
+import Product from '../models/product';
 
 export const getCategories = async (req: Request, res: Response) => {
   try {
     const categories = await Category.findAll({
       where: { idCustomer: req['user'].idCustomer },
-      include: [{ model: Category }, { model: Menu }]
+      include: [{ model: Category }, { model: Product }]
     });
     res.json(categories);
   } catch (error) {
@@ -79,7 +79,7 @@ export const putCategory = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({
-      msg: '[putCategory] Error al actualizar un menu'
+      msg: '[putCategory] Error al actualizar un product'
     });
   }
 };

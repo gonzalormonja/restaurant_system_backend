@@ -5,7 +5,7 @@ import db from '../db/connection';
 interface PriceInterface extends Model {
   id: number;
   price: number;
-  idMenu: number;
+  idProduct: number;
 }
 
 type PriceStatic = typeof Model & {
@@ -24,7 +24,7 @@ const Price = db.define('prices', {
       notEmpty: true
     }
   },
-  idMenu: {
+  idProduct: {
     type: DataTypes.INTEGER,
     defaultValue: null
   }
