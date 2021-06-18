@@ -70,7 +70,7 @@ paths:
                   example: 'admin'
                 password:
                   type: string
-                  example: 'admin'
+                  example: 'password'
       responses:
         '200':
           description: ok
