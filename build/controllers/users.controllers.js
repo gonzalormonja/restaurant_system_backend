@@ -16,13 +16,15 @@ exports.signIn = void 0;
 const users_1 = __importDefault(require("../models/users"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const generate_token_1 = require("../helpers/generate-token");
+const types_1 = __importDefault(require("../models/types"));
 const signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { username, password } = req.body;
         const user = yield users_1.default.findOne({
             where: {
                 username: username
-            }
+            },
+            include: [types_1.default]
         });
         if (!user) {
             res.status(404).json({
@@ -35,14 +37,19 @@ const signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                     msg: '[SignIn] usuario no encontrado'
                 });
             }
+            const token = generate_token_1.generate_token(user);
+            user.password = null;
+            res.json({
+                token: token,
+                expires_in: process.env.EXPIRE_TIME_TOKEN,
+                user: user
+            });
         }
-        const token = generate_token_1.generate_token(user);
-        res.json(token);
     }
     catch (error) {
         console.log(error);
         res.status(500).json({
-            msg: '[getCharacteristics] Error al crear una caracteristica'
+            msg: '[SignIn] Error al iniciar sesion'
         });
     }
 });

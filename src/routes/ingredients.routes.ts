@@ -7,12 +7,14 @@ import {
   postIngredient,
   putIngredient
 } from '../controllers/ingredients.controllers';
+import isAuth from '../middlewares/isAuth';
 import { validate_fields } from '../middlewares/validate_fields';
 const router = Router();
 
 router.get(
   '/',
   [
+    isAuth,
     query('search', 'El campo de search debe ser tipo string').isString().optional({ nullable: true }),
     query('start', 'El campo start debe ser numerico').isInt().optional({ nullable: true }),
     query('limit', 'El campo limit debe ser numerico').isInt().optional({ nullable: true }),
@@ -24,12 +26,13 @@ router.get(
 );
 router.get(
   '/:id',
-  [param('id', 'El id debe ser de tipo numerico y es obligatorio').isInt().notEmpty(), validate_fields],
+  [isAuth, param('id', 'El id debe ser de tipo numerico y es obligatorio').isInt().notEmpty(), validate_fields],
   getIngredient
 );
 router.post(
   '/',
   [
+    isAuth,
     body('name', 'El nombre es obligatorio').isString().notEmpty(),
     body('unit_of_measure', 'La unidad de medida debe ser de tipo string').isString().optional({ nullable: true }),
     validate_fields
@@ -39,6 +42,7 @@ router.post(
 router.put(
   '/:id',
   [
+    isAuth,
     param('id', 'El id debe ser de tipo numerico y es obligatorio').isInt().notEmpty(),
     body('name', 'El nombre debe ser de tipo string').isString().optional({ nullable: true }),
     body('unit_of_measure', 'La unidad de medida debe ser de tipo string').isString().optional({ nullable: true }),
@@ -48,7 +52,7 @@ router.put(
 );
 router.delete(
   '/:id',
-  [param('id', 'El id debe ser de tipo numerico y es obligatorio').isInt().notEmpty(), validate_fields],
+  [isAuth, param('id', 'El id debe ser de tipo numerico y es obligatorio').isInt().notEmpty(), validate_fields],
   deleteIngredient
 );
 

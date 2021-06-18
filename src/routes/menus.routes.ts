@@ -9,11 +9,13 @@ import {
   validateGarnishes,
   validateIngredients
 } from '../middlewares/db_validators';
+import isAuth from '../middlewares/isAuth';
 const router = Router();
 
 router.get(
   '/',
   [
+    isAuth,
     query('search', 'El campo de search debe ser tipo string').isString().optional({ nullable: true }),
     query('start', 'El campo start debe ser numerico').isInt().optional({ nullable: true }),
     query('limit', 'El campo limit debe ser numerico').isInt().optional({ nullable: true }),
@@ -26,12 +28,13 @@ router.get(
 );
 router.get(
   '/:id',
-  [param('id', 'El id debe ser de tipo numerico y es obligatorio').isInt().notEmpty(), validate_fields],
+  [isAuth, param('id', 'El id debe ser de tipo numerico y es obligatorio').isInt().notEmpty(), validate_fields],
   getMenu
 );
 router.post(
   '/',
   [
+    isAuth,
     body('state', 'El estado debe ser un booleano valido').isBoolean().optional({ nullable: true }),
     body('name', 'El nombre es obligatorio').isString().notEmpty(),
     body('short_name', 'El nombre corto es obligatorio').isString().notEmpty(),
@@ -50,6 +53,7 @@ router.post(
 router.patch(
   '/:id',
   [
+    isAuth,
     param('id', 'El id debe ser de tipo numerico y es obligatorio').isInt().notEmpty(),
     body('state', 'El estado debe ser un booleano valido').isBoolean().optional({ nullable: true }),
     body('name', 'El nombre es obligatorio').isString().optional({ nullable: true }),
@@ -68,7 +72,7 @@ router.patch(
 );
 router.delete(
   '/:id',
-  [param('id', 'El id debe ser de tipo numerico y es obligatorio').isInt().notEmpty(), validate_fields],
+  [isAuth, param('id', 'El id debe ser de tipo numerico y es obligatorio').isInt().notEmpty(), validate_fields],
   deleteMenu
 );
 

@@ -18,6 +18,7 @@ interface MenuInterface extends Model {
   state: boolean;
   isGarnish: boolean;
   idCustomer: number;
+  approximate_delay_minutes: number;
 }
 
 type MenuStatic = typeof Model & {

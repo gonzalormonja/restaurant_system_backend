@@ -54,7 +54,7 @@ const User = connection_1.default.define('users', {
 });
 customer_1.default.hasMany(User, { foreignKey: 'idCustomer' });
 User.belongsTo(customer_1.default, { foreignKey: 'idCustomer' });
-User.hasOne(types_1.default, { foreignKey: 'idType' });
-types_1.default.belongsTo(User, { foreignKey: 'idType' });
+types_1.default.hasMany(User, { foreignKey: 'idType' });
+User.belongsTo(types_1.default, { foreignKey: 'idType' });
 exports.default = User;
 //# sourceMappingURL=users.js.map

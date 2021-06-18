@@ -67,7 +67,7 @@ const User = db.define('users', {
 Customer.hasMany(User, { foreignKey: 'idCustomer' });
 User.belongsTo(Customer, { foreignKey: 'idCustomer' });
 
-User.hasOne(Type, { foreignKey: 'idType' });
-Type.belongsTo(User, { foreignKey: 'idType' });
+Type.hasMany(User, { foreignKey: 'idType' });
+User.belongsTo(Type, { foreignKey: 'idType' });
 
 export default User;

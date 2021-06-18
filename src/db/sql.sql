@@ -49,9 +49,11 @@ FOREIGN KEY(idType)REFERENCES types(id)
 create table categories( id INT PRIMARY KEY AUTO_INCREMENT,
 name varchar(255) NOT NULL,
 state BOOLEAN DEFAULT TRUE,
+idCustomer INT NOT NULL,
+idCategory INT DEFAULT NULL,
 createdAt timestamp,
 updatedAt timestamp,
-idCategory INT DEFAULT NULL);
+FOREIGN KEY(idCustomer)REFERENCES customers(id));
 
 create table menus( id int PRIMARY KEY NOT NULL AUTO_INCREMENT,
 name varchar(255),
@@ -61,9 +63,12 @@ idCategory int,
 maximum_of_flavors int default null,
 state boolean default true,
 isGarnish boolean default false,
+approximate_delay_minutes int default null,
+idCustomer INT NOT NULL,
 createdAt timestamp,
 updatedAt timestamp,
-FOREIGN KEY(idCategory) REFERENCES categories(id)
+FOREIGN KEY(idCategory) REFERENCES categories(id),
+FOREIGN KEY(idCustomer) REFERENCES customers(id)
 );
 
 CREATE TABLE menus_garnishes(id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -86,8 +91,10 @@ FOREIGN KEY(idMenu) REFERENCES menus(id));
 CREATE TABLE ingredients(id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 name varchar(255) NOT NULL,
 unit_of_measure varchar(255) NOT NULL,
+idCustomer INT NOT NULL,
 createdAt timestamp,
-updatedAt timestamp
+updatedAt timestamp,
+FOREIGN KEY(idCustomer) REFERENCES customers(id)
 );
 
 CREATE TABLE menus_ingredients(id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -102,8 +109,10 @@ FOREIGN KEY(idIngredient) REFERENCES ingredients(id)
 
 CREATE TABLE characteristics(id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 name VARCHAR(255) NOT NULL,
+idCustomer INT NOT NULL,
 createdAt timestamp,
-updatedAt timestamp);
+updatedAt timestamp,
+FOREIGN KEY(idCustomer) REFERENCES customers(id));
 
 CREATE TABLE menus_characteristics(id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 idMenu INT NOT NULL,
