@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findProductByName = exports.deleteProduct = exports.patchProduct = exports.getProduct = exports.postProduct = exports.getProducts = void 0;
+exports.deleteProduct = exports.patchProduct = exports.getProduct = exports.postProduct = exports.getProducts = void 0;
 const category_1 = __importDefault(require("../models/category"));
 const characteristic_1 = __importDefault(require("../models/characteristic"));
 const ingredient_1 = __importDefault(require("../models/ingredient"));
@@ -21,6 +21,7 @@ const productCharacteristic_1 = __importDefault(require("../models/productCharac
 const productGarnish_1 = __importDefault(require("../models/productGarnish"));
 const productIngredient_1 = __importDefault(require("../models/productIngredient"));
 const price_1 = __importDefault(require("../models/price"));
+const chage_timezone_object_1 = require("../utils/chage-timezone-object");
 const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { search, start, limit, columnOrder, order, idCategories } = req.query;
     const pipeline = [];
@@ -69,9 +70,8 @@ const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             idCustomer: req['user'].idCustomer
         }
     });
-    console.log(pipeline.reduce((acc, el) => (Object.assign(Object.assign({}, acc), el)), {}));
     const products = yield product_1.default.findAll(pipeline.reduce((acc, el) => (Object.assign(Object.assign({}, acc), el)), {}));
-    res.json(products);
+    res.json(products.map((product) => chage_timezone_object_1.changeTimezoneObject(product.toJSON(), req['tz'])));
 });
 exports.getProducts = getProducts;
 const postProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -116,7 +116,7 @@ const postProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         }));
         //* add price
         yield price_1.default.create({ price: body.price ? body.price : 0, idProduct: product.id });
-        res.json(product);
+        res.json(chage_timezone_object_1.changeTimezoneObject(product.toJSON(), req['tz']));
     }
     catch (error) {
         console.log(error);
@@ -138,7 +138,7 @@ const getProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             msg: `No existe un product con el id ${id}`
         });
     }
-    res.json(product);
+    res.json(chage_timezone_object_1.changeTimezoneObject(product.toJSON(), req['tz']));
 });
 exports.getProduct = getProduct;
 const patchProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -223,7 +223,7 @@ const patchProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             //* add price
             yield price_1.default.create({ price: body.price ? body.price : 0, idProduct: product.id });
         }
-        res.json(product);
+        res.json(chage_timezone_object_1.changeTimezoneObject(product.toJSON(), req['tz']));
     }
     catch (error) {
         console.log(error);
@@ -247,7 +247,7 @@ const deleteProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             });
         }
         yield product.update({ state: false });
-        return res.json(product);
+        return res.json(chage_timezone_object_1.changeTimezoneObject(product.toJSON(), req['tz']));
     }
     catch (error) {
         console.log(error);
@@ -257,25 +257,4 @@ const deleteProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.deleteProduct = deleteProduct;
-const findProductByName = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { name } = req.body;
-        const products = yield product_1.default.findAll({
-            where: {
-                $and: [
-                    { $or: [{ $like: { name: name } }, { $like: { short_name: name } }] },
-                    { idCustomer: req['user'].idCustomer }
-                ]
-            }
-        });
-        res.json(products);
-    }
-    catch (error) {
-        console.log(error);
-        res.status(500).json({
-            msg: '[findProductByName] Error al buscar un product'
-        });
-    }
-});
-exports.findProductByName = findProductByName;
 //# sourceMappingURL=products.controllers.js.map

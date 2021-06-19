@@ -7,6 +7,7 @@ import ProductCharacteristic from '../models/productCharacteristic';
 import ProductGarnish from '../models/productGarnish';
 import ProductIngredient from '../models/productIngredient';
 import Price from '../models/price';
+import { changeTimezoneObject } from '../utils/chage-timezone-object';
 
 export const getProducts = async (req: Request, res: Response) => {
   let { search, start, limit, columnOrder, order, idCategories } = req.query;
@@ -58,10 +59,8 @@ export const getProducts = async (req: Request, res: Response) => {
       idCustomer: req['user'].idCustomer
     }
   });
-  console.log(pipeline.reduce((acc, el) => ({ ...acc, ...el }), {}));
   const products = await Product.findAll(pipeline.reduce((acc, el) => ({ ...acc, ...el }), {}));
-
-  res.json(products);
+  res.json(products.map((product) => changeTimezoneObject(product.toJSON(), req['tz'])));
 };
 
 export const postProduct = async (req: Request, res: Response) => {
@@ -110,7 +109,7 @@ export const postProduct = async (req: Request, res: Response) => {
     //* add price
     await Price.create({ price: body.price ? body.price : 0, idProduct: product.id });
 
-    res.json(product);
+    res.json(changeTimezoneObject(product.toJSON(), req['tz']));
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -133,7 +132,7 @@ export const getProduct = async (req: Request, res: Response) => {
     });
   }
 
-  res.json(product);
+  res.json(changeTimezoneObject(product.toJSON(), req['tz']));
 };
 
 export const patchProduct = async (req: Request, res: Response) => {
@@ -225,7 +224,7 @@ export const patchProduct = async (req: Request, res: Response) => {
       await Price.create({ price: body.price ? body.price : 0, idProduct: product.id });
     }
 
-    res.json(product);
+    res.json(changeTimezoneObject(product.toJSON(), req['tz']));
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -249,33 +248,11 @@ export const deleteProduct = async (req: Request, res: Response) => {
     }
 
     await product.update({ state: false });
-    return res.json(product);
+    return res.json(changeTimezoneObject(product.toJSON(), req['tz']));
   } catch (error) {
     console.log(error);
     res.status(500).json({
       msg: '[deleteProduct] Error al eliminar un product'
-    });
-  }
-};
-
-export const findProductByName = async (req: Request, res: Response) => {
-  try {
-    const { name } = req.body;
-
-    const products = await Product.findAll({
-      where: {
-        $and: [
-          { $or: [{ $like: { name: name } }, { $like: { short_name: name } }] },
-          { idCustomer: req['user'].idCustomer }
-        ]
-      }
-    });
-
-    res.json(products);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      msg: '[findProductByName] Error al buscar un product'
     });
   }
 };
