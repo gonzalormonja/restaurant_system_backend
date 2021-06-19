@@ -4,13 +4,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.route_init = void 0;
-const menus_routes_1 = __importDefault(require("./menus.routes"));
+const products_routes_1 = __importDefault(require("./products.routes"));
 const categories_routes_1 = __importDefault(require("./categories.routes"));
 const ingredients_routes_1 = __importDefault(require("./ingredients.routes"));
 const characteristics_routes_1 = __importDefault(require("./characteristics.routes"));
 const users_routes_1 = __importDefault(require("./users.routes"));
+const language_1 = __importDefault(require("../middlewares/language"));
+const timezone_1 = __importDefault(require("../middlewares/timezone"));
 const route_init = (app) => {
-    app.use('/menus', menus_routes_1.default);
+    app.use(language_1.default);
+    app.use(timezone_1.default);
+    app.use('/products', products_routes_1.default);
     app.use('/categories', categories_routes_1.default);
     app.use('/ingredients', ingredients_routes_1.default);
     app.use('/characteristics', characteristics_routes_1.default);

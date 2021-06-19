@@ -14,12 +14,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteCategory = exports.putCategory = exports.getCategory = exports.postCategory = exports.getCategories = void 0;
 const category_1 = __importDefault(require("../models/category"));
-const menu_1 = __importDefault(require("../models/menu"));
+const product_1 = __importDefault(require("../models/product"));
 const getCategories = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const categories = yield category_1.default.findAll({
             where: { idCustomer: req['user'].idCustomer },
-            include: [{ model: category_1.default }, { model: menu_1.default }]
+            include: [{ model: category_1.default }, { model: product_1.default }]
         });
         res.json(categories);
     }
@@ -90,7 +90,7 @@ const putCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     catch (error) {
         console.log(error);
         res.status(500).json({
-            msg: '[putCategory] Error al actualizar un menu'
+            msg: '[putCategory] Error al actualizar un product'
         });
     }
 });

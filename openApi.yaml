@@ -4,7 +4,7 @@ servers:
     description: Localhost Environment
 
 info:
-  version: '1.0.0'
+  version: "1.0.0"
   title: Restaurant API
   description: >-
     Restaurant API documentation
@@ -35,7 +35,7 @@ components:
                 properties:
                   name:
                     type: string
-                    example: 'ValidationError'
+                    example: "ValidationError"
                   message:
                     type: string
                     example: '"email" is required'
@@ -51,9 +51,20 @@ components:
                 properties:
                   message:
                     type: string
-                    example: 'Token expired'
+                    example: "Token expired"
 paths:
   /users/signIn:
+    parameters:
+      - in: header
+        name: tz
+        schema:
+          type: string
+          example: "-03:00"
+      - in: header
+        name: lang
+        schema:
+          type: string
+          example: "ES"
     post:
       requestBody:
         required: true
@@ -67,12 +78,12 @@ paths:
               properties:
                 username:
                   type: string
-                  example: 'admin'
+                  example: "admin"
                 password:
                   type: string
-                  example: 'password'
+                  example: "password"
       responses:
-        '200':
+        "200":
           description: ok
           content:
             application/json:
@@ -88,10 +99,20 @@ paths:
                   expires_in:
                     type: integer
                     example: 3600
-  /menus:
+  /products:
     get:
-      summary: Get all menus
+      summary: Get all products
       parameters:
+        - in: header
+          name: tz
+          schema:
+            type: string
+            example: "-03:00"
+        - in: header
+          name: lang
+          schema:
+            type: string
+            example: "ES"
         - in: query
           name: search
           schema:
@@ -112,7 +133,7 @@ paths:
           name: order
           schema:
             type: string
-          description: 'DESC || ASC'
+          description: "DESC || ASC"
         - in: query
           name: idCategories
           schema:
@@ -120,14 +141,25 @@ paths:
             items:
               type: number
       responses:
-        '200':
-          $ref: '#/components/responses/200_ok'
-        '400':
-          $ref: '#/components/responses/400_Bad_Request'
-        '401':
-          $ref: '#/components/responses/400_Bad_Request'
+        "200":
+          $ref: "#/components/responses/200_ok"
+        "400":
+          $ref: "#/components/responses/400_Bad_Request"
+        "401":
+          $ref: "#/components/responses/400_Bad_Request"
     post:
-      summary: Create all menus
+      summary: Create all products
+      parameters:
+        - in: header
+          name: tz
+          schema:
+            type: string
+            example: "-03:00"
+        - in: header
+          name: lang
+          schema:
+            type: string
+            example: "ES"
       requestBody:
         required: true
         content:
@@ -189,31 +221,51 @@ paths:
                   items:
                     type: number
       responses:
-        '200':
-          $ref: '#/components/responses/200_ok'
-        '400':
-          $ref: '#/components/responses/400_Bad_Request'
-        '401':
-          $ref: '#/components/responses/400_Bad_Request'
-  /menus/{id}:
+        "200":
+          $ref: "#/components/responses/200_ok"
+        "400":
+          $ref: "#/components/responses/400_Bad_Request"
+        "401":
+          $ref: "#/components/responses/400_Bad_Request"
+  /products/{id}:
     get:
-      summary: Get one menu
+      summary: Get one product
       parameters:
+        - in: header
+          name: tz
+          schema:
+            type: string
+            example: "-03:00"
+        - in: header
+          name: lang
+          schema:
+            type: string
+            example: "ES"
         - in: path
           name: id
           required: true
           schema:
             type: number
       responses:
-        '200':
-          $ref: '#/components/responses/200_ok'
-        '400':
-          $ref: '#/components/responses/400_Bad_Request'
-        '401':
-          $ref: '#/components/responses/400_Bad_Request'
+        "200":
+          $ref: "#/components/responses/200_ok"
+        "400":
+          $ref: "#/components/responses/400_Bad_Request"
+        "401":
+          $ref: "#/components/responses/400_Bad_Request"
     put:
-      summary: Update one menu
+      summary: Update one product
       parameters:
+        - in: header
+          name: tz
+          schema:
+            type: string
+            example: "-03:00"
+        - in: header
+          name: lang
+          schema:
+            type: string
+            example: "ES"
         - in: path
           name: id
           required: true
@@ -255,98 +307,170 @@ paths:
                   items:
                     type: number
       responses:
-        '200':
-          $ref: '#/components/responses/200_ok'
-        '400':
-          $ref: '#/components/responses/400_Bad_Request'
-        '401':
-          $ref: '#/components/responses/400_Bad_Request'
+        "200":
+          $ref: "#/components/responses/200_ok"
+        "400":
+          $ref: "#/components/responses/400_Bad_Request"
+        "401":
+          $ref: "#/components/responses/400_Bad_Request"
     delete:
-      summary: Delete one menu
+      summary: Delete one product
       parameters:
+        - in: header
+          name: tz
+          schema:
+            type: string
+            example: "-03:00"
+        - in: header
+          name: lang
+          schema:
+            type: string
+            example: "ES"
         - in: path
           name: id
           required: true
           schema:
             type: number
       responses:
-        '200':
-          $ref: '#/components/responses/200_ok'
-        '400':
-          $ref: '#/components/responses/400_Bad_Request'
-        '401':
-          $ref: '#/components/responses/400_Bad_Request'
+        "200":
+          $ref: "#/components/responses/200_ok"
+        "400":
+          $ref: "#/components/responses/400_Bad_Request"
+        "401":
+          $ref: "#/components/responses/400_Bad_Request"
 
   /categories:
     get:
       summary: Get all categories
+      parameters:
+        - in: header
+          name: tz
+          schema:
+            type: string
+            example: "-03:00"
+        - in: header
+          name: lang
+          schema:
+            type: string
+            example: "ES"
       responses:
-        '200':
-          $ref: '#/components/responses/200_ok'
-        '400':
-          $ref: '#/components/responses/400_Bad_Request'
-        '401':
-          $ref: '#/components/responses/400_Bad_Request'
+        "200":
+          $ref: "#/components/responses/200_ok"
+        "400":
+          $ref: "#/components/responses/400_Bad_Request"
+        "401":
+          $ref: "#/components/responses/400_Bad_Request"
     post:
       summary: Create all categories
+      parameters:
+        - in: header
+          name: tz
+          schema:
+            type: string
+            example: "-03:00"
+        - in: header
+          name: lang
+          schema:
+            type: string
+            example: "ES"
       responses:
-        '200':
-          $ref: '#/components/responses/200_ok'
-        '400':
-          $ref: '#/components/responses/400_Bad_Request'
-        '401':
-          $ref: '#/components/responses/400_Bad_Request'
+        "200":
+          $ref: "#/components/responses/200_ok"
+        "400":
+          $ref: "#/components/responses/400_Bad_Request"
+        "401":
+          $ref: "#/components/responses/400_Bad_Request"
   /categories/{id}:
     get:
       summary: Get one category
       parameters:
+        - in: header
+          name: tz
+          schema:
+            type: string
+            example: "-03:00"
+        - in: header
+          name: lang
+          schema:
+            type: string
+            example: "ES"
         - in: path
           name: id
           required: true
           schema:
             type: number
       responses:
-        '200':
-          $ref: '#/components/responses/200_ok'
-        '400':
-          $ref: '#/components/responses/400_Bad_Request'
-        '401':
-          $ref: '#/components/responses/400_Bad_Request'
+        "200":
+          $ref: "#/components/responses/200_ok"
+        "400":
+          $ref: "#/components/responses/400_Bad_Request"
+        "401":
+          $ref: "#/components/responses/400_Bad_Request"
     put:
       summary: Update one category
       parameters:
+        - in: header
+          name: tz
+          schema:
+            type: string
+            example: "-03:00"
+        - in: header
+          name: lang
+          schema:
+            type: string
+            example: "ES"
         - in: path
           name: id
           required: true
           schema:
             type: number
       responses:
-        '200':
-          $ref: '#/components/responses/200_ok'
-        '400':
-          $ref: '#/components/responses/400_Bad_Request'
-        '401':
-          $ref: '#/components/responses/400_Bad_Request'
+        "200":
+          $ref: "#/components/responses/200_ok"
+        "400":
+          $ref: "#/components/responses/400_Bad_Request"
+        "401":
+          $ref: "#/components/responses/400_Bad_Request"
     delete:
       summary: Delete one category
       parameters:
+        - in: header
+          name: tz
+          schema:
+            type: string
+            example: "-03:00"
+        - in: header
+          name: lang
+          schema:
+            type: string
+            example: "ES"
         - in: path
           name: id
           required: true
           schema:
             type: number
       responses:
-        '200':
-          $ref: '#/components/responses/200_ok'
-        '400':
-          $ref: '#/components/responses/400_Bad_Request'
-        '401':
-          $ref: '#/components/responses/400_Bad_Request'
+        "200":
+          $ref: "#/components/responses/200_ok"
+        "400":
+          $ref: "#/components/responses/400_Bad_Request"
+        "401":
+          $ref: "#/components/responses/400_Bad_Request"
 
   /ingredients:
     get:
       summary: Get all ingredients
       parameters:
+        - in: header
+          name: tz
+          schema:
+            type: string
+            example: "-03:00"
+        - in: header
+          name: lang
+          schema:
+            type: string
+            example: "ES"
         - in: query
           name: search
           schema:
@@ -367,16 +491,27 @@ paths:
           name: order
           schema:
             type: string
-          description: 'DESC || ASC'
+          description: "DESC || ASC"
       responses:
-        '200':
-          $ref: '#/components/responses/200_ok'
-        '400':
-          $ref: '#/components/responses/400_Bad_Request'
-        '401':
-          $ref: '#/components/responses/400_Bad_Request'
+        "200":
+          $ref: "#/components/responses/200_ok"
+        "400":
+          $ref: "#/components/responses/400_Bad_Request"
+        "401":
+          $ref: "#/components/responses/400_Bad_Request"
     post:
       summary: Create all ingredients
+      parameters:
+        - in: header
+          name: tz
+          schema:
+            type: string
+            example: "-03:00"
+        - in: header
+          name: lang
+          schema:
+            type: string
+            example: "ES"
       requestBody:
         required: true
         content:
@@ -391,31 +526,51 @@ paths:
                 unit_of_measure:
                   type: string
       responses:
-        '200':
-          $ref: '#/components/responses/200_ok'
-        '400':
-          $ref: '#/components/responses/400_Bad_Request'
-        '401':
-          $ref: '#/components/responses/400_Bad_Request'
+        "200":
+          $ref: "#/components/responses/200_ok"
+        "400":
+          $ref: "#/components/responses/400_Bad_Request"
+        "401":
+          $ref: "#/components/responses/400_Bad_Request"
   /ingredients/{id}:
     get:
       summary: Get one ingredient
       parameters:
+        - in: header
+          name: tz
+          schema:
+            type: string
+            example: "-03:00"
+        - in: header
+          name: lang
+          schema:
+            type: string
+            example: "ES"
         - in: path
           name: id
           required: true
           schema:
             type: number
       responses:
-        '200':
-          $ref: '#/components/responses/200_ok'
-        '400':
-          $ref: '#/components/responses/400_Bad_Request'
-        '401':
-          $ref: '#/components/responses/400_Bad_Request'
+        "200":
+          $ref: "#/components/responses/200_ok"
+        "400":
+          $ref: "#/components/responses/400_Bad_Request"
+        "401":
+          $ref: "#/components/responses/400_Bad_Request"
     put:
       summary: Update one ingredient
       parameters:
+        - in: header
+          name: tz
+          schema:
+            type: string
+            example: "-03:00"
+        - in: header
+          name: lang
+          schema:
+            type: string
+            example: "ES"
         - in: path
           name: id
           required: true
@@ -435,90 +590,152 @@ paths:
                 unit_of_measure:
                   type: string
       responses:
-        '200':
-          $ref: '#/components/responses/200_ok'
-        '400':
-          $ref: '#/components/responses/400_Bad_Request'
-        '401':
-          $ref: '#/components/responses/400_Bad_Request'
+        "200":
+          $ref: "#/components/responses/200_ok"
+        "400":
+          $ref: "#/components/responses/400_Bad_Request"
+        "401":
+          $ref: "#/components/responses/400_Bad_Request"
     delete:
       summary: Delete one ingredient
       parameters:
+        - in: header
+          name: tz
+          schema:
+            type: string
+            example: "-03:00"
+        - in: header
+          name: lang
+          schema:
+            type: string
+            example: "ES"
         - in: path
           name: id
           required: true
           schema:
             type: number
       responses:
-        '200':
-          $ref: '#/components/responses/200_ok'
-        '400':
-          $ref: '#/components/responses/400_Bad_Request'
-        '401':
-          $ref: '#/components/responses/400_Bad_Request'
+        "200":
+          $ref: "#/components/responses/200_ok"
+        "400":
+          $ref: "#/components/responses/400_Bad_Request"
+        "401":
+          $ref: "#/components/responses/400_Bad_Request"
 
   /characteristics:
     get:
       summary: Get all characteristics
+      parameters:
+        - in: header
+          name: tz
+          schema:
+            type: string
+            example: "-03:00"
+        - in: header
+          name: lang
+          schema:
+            type: string
+            example: "ES"
       responses:
-        '200':
-          $ref: '#/components/responses/200_ok'
-        '400':
-          $ref: '#/components/responses/400_Bad_Request'
-        '401':
-          $ref: '#/components/responses/400_Bad_Request'
+        "200":
+          $ref: "#/components/responses/200_ok"
+        "400":
+          $ref: "#/components/responses/400_Bad_Request"
+        "401":
+          $ref: "#/components/responses/400_Bad_Request"
     post:
       summary: Create all characteristics
+      parameters:
+        - in: header
+          name: tz
+          schema:
+            type: string
+            example: "-03:00"
+        - in: header
+          name: lang
+          schema:
+            type: string
+            example: "ES"
       responses:
-        '200':
-          $ref: '#/components/responses/200_ok'
-        '400':
-          $ref: '#/components/responses/400_Bad_Request'
-        '401':
-          $ref: '#/components/responses/400_Bad_Request'
+        "200":
+          $ref: "#/components/responses/200_ok"
+        "400":
+          $ref: "#/components/responses/400_Bad_Request"
+        "401":
+          $ref: "#/components/responses/400_Bad_Request"
   /characteristics/{id}:
     get:
       summary: Get one characteristic
       parameters:
+        - in: header
+          name: tz
+          schema:
+            type: string
+            example: "-03:00"
+        - in: header
+          name: lang
+          schema:
+            type: string
+            example: "ES"
         - in: path
           name: id
           required: true
           schema:
             type: number
       responses:
-        '200':
-          $ref: '#/components/responses/200_ok'
-        '400':
-          $ref: '#/components/responses/400_Bad_Request'
-        '401':
-          $ref: '#/components/responses/400_Bad_Request'
+        "200":
+          $ref: "#/components/responses/200_ok"
+        "400":
+          $ref: "#/components/responses/400_Bad_Request"
+        "401":
+          $ref: "#/components/responses/400_Bad_Request"
     put:
       summary: Update one characteristic
       parameters:
+        - in: header
+          name: tz
+          schema:
+            type: string
+            example: "-03:00"
+        - in: header
+          name: lang
+          schema:
+            type: string
+            example: "ES"
         - in: path
           name: id
           required: true
           schema:
             type: number
       responses:
-        '200':
-          $ref: '#/components/responses/200_ok'
-        '400':
-          $ref: '#/components/responses/400_Bad_Request'
-        '401':
-          $ref: '#/components/responses/400_Bad_Request'
+        "200":
+          $ref: "#/components/responses/200_ok"
+        "400":
+          $ref: "#/components/responses/400_Bad_Request"
+        "401":
+          $ref: "#/components/responses/400_Bad_Request"
     delete:
       summary: Delete one characteristic
       parameters:
+        - in: header
+          name: tz
+          schema:
+            type: string
+            example: "-03:00"
+        - in: header
+          name: lang
+          schema:
+            type: string
+            example: "ES"
         - in: path
           name: id
           required: true
           schema:
             type: number
       responses:
-        '200':
-          $ref: '#/components/responses/200_ok'
-        '400':
-          $ref: '#/components/responses/400_Bad_Request'
-        '401':
-          $ref: '#/components/responses/400_Bad_Request'
+        "200":
+          $ref: "#/components/responses/200_ok"
+        "400":
+          $ref: "#/components/responses/400_Bad_Request"
+        "401":
+          $ref: "#/components/responses/400_Bad_Request"

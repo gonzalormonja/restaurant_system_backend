@@ -88,7 +88,7 @@ const putCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, functi
     catch (error) {
         console.log(error);
         res.status(500).json({
-            msg: '[putCharacteristic] Error al actualizar un menu'
+            msg: '[putCharacteristic] Error al actualizar un product'
         });
     }
 });

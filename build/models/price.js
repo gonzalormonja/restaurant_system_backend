@@ -17,7 +17,7 @@ const Price = connection_1.default.define('prices', {
             notEmpty: true
         }
     },
-    idMenu: {
+    idProduct: {
         type: sequelize_1.DataTypes.INTEGER,
         defaultValue: null
     }
