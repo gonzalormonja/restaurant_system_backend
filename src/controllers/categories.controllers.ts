@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import Category from '../models/category';
 import Product from '../models/product';
+import { changeTimezoneObject } from '../utils/chage-timezone-object';
 
 export const getCategories = async (req: Request, res: Response) => {
   try {
@@ -8,7 +9,7 @@ export const getCategories = async (req: Request, res: Response) => {
       where: { idCustomer: req['user'].idCustomer },
       include: [{ model: Category }, { model: Product }]
     });
-    res.json(categories);
+    res.json(categories.map((category) => changeTimezoneObject(category.toJSON(), req['tz'])));
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -21,7 +22,7 @@ export const postCategory = async (req: Request, res: Response) => {
   try {
     const { body } = req;
     const category = await Category.create({ ...body, idCustomer: req['user'].idCustomer });
-    res.json(category);
+    changeTimezoneObject(category.toJSON(), req['tz']);
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -30,10 +31,10 @@ export const postCategory = async (req: Request, res: Response) => {
   }
 };
 
-export const getCategory = (req: Request, res: Response) => {
+export const getCategory = async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  const category = Category.findOne({
+  const category = await Category.findOne({
     where: {
       $and: [
         { id: id },
@@ -50,7 +51,7 @@ export const getCategory = (req: Request, res: Response) => {
     });
   }
 
-  res.json(category);
+  changeTimezoneObject(category.toJSON(), req['tz']);
 };
 
 export const putCategory = async (req: Request, res: Response) => {
@@ -75,7 +76,7 @@ export const putCategory = async (req: Request, res: Response) => {
     }
 
     await category.update(body);
-    res.json(category);
+    changeTimezoneObject(category.toJSON(), req['tz']);
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -104,7 +105,7 @@ export const deleteCategory = async (req: Request, res: Response) => {
     }
 
     await category.update({ state: false });
-    return res.json(category);
+    return changeTimezoneObject(category.toJSON(), req['tz']);
   } catch (error) {
     console.log(error);
     res.status(500).json({

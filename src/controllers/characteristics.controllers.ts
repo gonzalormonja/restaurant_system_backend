@@ -1,12 +1,13 @@
 import { Request, Response } from 'express';
 import Characteristic from '../models/characteristic';
+import { changeTimezoneObject } from '../utils/chage-timezone-object';
 
 export const getCharacteristics = async (req: Request, res: Response) => {
   try {
     const characteristics = await Characteristic.findAll({
       where: { idCustomer: req['user'].idCustomer }
     });
-    res.json(characteristics);
+    res.json(characteristics.map((characteristic) => changeTimezoneObject(characteristic.toJSON(), req['tz'])));
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -18,8 +19,8 @@ export const getCharacteristics = async (req: Request, res: Response) => {
 export const postCharacteristic = async (req: Request, res: Response) => {
   try {
     const { body } = req;
-    const category = await Characteristic.create({ ...body, idCustomer: req['user'].idCustomer });
-    res.json(category);
+    const characteristic = await Characteristic.create({ ...body, idCustomer: req['user'].idCustomer });
+    return res.json(changeTimezoneObject(characteristic.toJSON(), req['tz']));
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -28,10 +29,10 @@ export const postCharacteristic = async (req: Request, res: Response) => {
   }
 };
 
-export const getCharacteristic = (req: Request, res: Response) => {
+export const getCharacteristic = async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  const category = Characteristic.findOne({
+  const characteristic = await Characteristic.findOne({
     where: {
       $and: [
         { id: id },
@@ -42,13 +43,13 @@ export const getCharacteristic = (req: Request, res: Response) => {
     }
   });
 
-  if (!category) {
+  if (!characteristic) {
     return res.status(404).json({
       msg: `No existe una caracteristica con el id ${id}`
     });
   }
 
-  res.json(category);
+  return res.json(changeTimezoneObject(characteristic.toJSON(), req['tz']));
 };
 
 export const putCharacteristic = async (req: Request, res: Response) => {
@@ -56,7 +57,7 @@ export const putCharacteristic = async (req: Request, res: Response) => {
   const { body } = req;
 
   try {
-    const category = await Characteristic.findOne({
+    const characteristic = await Characteristic.findOne({
       where: {
         $and: [
           { id: id },
@@ -66,14 +67,14 @@ export const putCharacteristic = async (req: Request, res: Response) => {
         ]
       }
     });
-    if (!category) {
+    if (!characteristic) {
       return res.status(404).json({
         msg: `No existe una caracteristica con el id ${id}`
       });
     }
 
-    await category.update(body);
-    res.json(category);
+    await characteristic.update(body);
+    return res.json(changeTimezoneObject(characteristic.toJSON(), req['tz']));
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -85,7 +86,7 @@ export const putCharacteristic = async (req: Request, res: Response) => {
 export const deleteCharacteristic = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const category = await Characteristic.findOne({
+    const characteristic = await Characteristic.findOne({
       where: {
         $and: [
           { id: id },
@@ -95,14 +96,14 @@ export const deleteCharacteristic = async (req: Request, res: Response) => {
         ]
       }
     });
-    if (!category) {
+    if (!characteristic) {
       return res.status(404).json({
         msg: `No existe una caracteristica con el id ${id}`
       });
     }
 
-    await category.update({ state: false });
-    return res.json(category);
+    await characteristic.update({ state: false });
+    return res.json(changeTimezoneObject(characteristic.toJSON(), req['tz']));
   } catch (error) {
     console.log(error);
     res.status(500).json({

@@ -15,13 +15,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteCategory = exports.putCategory = exports.getCategory = exports.postCategory = exports.getCategories = void 0;
 const category_1 = __importDefault(require("../models/category"));
 const product_1 = __importDefault(require("../models/product"));
+const chage_timezone_object_1 = require("../utils/chage-timezone-object");
 const getCategories = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const categories = yield category_1.default.findAll({
             where: { idCustomer: req['user'].idCustomer },
             include: [{ model: category_1.default }, { model: product_1.default }]
         });
-        res.json(categories);
+        res.json(categories.map((category) => chage_timezone_object_1.changeTimezoneObject(category.toJSON(), req['tz'])));
     }
     catch (error) {
         console.log(error);
@@ -35,7 +36,7 @@ const postCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     try {
         const { body } = req;
         const category = yield category_1.default.create(Object.assign(Object.assign({}, body), { idCustomer: req['user'].idCustomer }));
-        res.json(category);
+        chage_timezone_object_1.changeTimezoneObject(category.toJSON(), req['tz']);
     }
     catch (error) {
         console.log(error);
@@ -45,9 +46,9 @@ const postCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.postCategory = postCategory;
-const getCategory = (req, res) => {
+const getCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const category = category_1.default.findOne({
+    const category = yield category_1.default.findOne({
         where: {
             $and: [
                 { id: id },
@@ -62,8 +63,8 @@ const getCategory = (req, res) => {
             msg: `No existe una categoria con el id ${id}`
         });
     }
-    res.json(category);
-};
+    chage_timezone_object_1.changeTimezoneObject(category.toJSON(), req['tz']);
+});
 exports.getCategory = getCategory;
 const putCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
@@ -85,7 +86,7 @@ const putCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             });
         }
         yield category.update(body);
-        res.json(category);
+        chage_timezone_object_1.changeTimezoneObject(category.toJSON(), req['tz']);
     }
     catch (error) {
         console.log(error);
@@ -114,7 +115,7 @@ const deleteCategory = (req, res) => __awaiter(void 0, void 0, void 0, function*
             });
         }
         yield category.update({ state: false });
-        return res.json(category);
+        return chage_timezone_object_1.changeTimezoneObject(category.toJSON(), req['tz']);
     }
     catch (error) {
         console.log(error);

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import Ingredient from '../models/ingredient';
+import { changeTimezoneObject } from '../utils/chage-timezone-object';
 
 export const getIngredients = async (req: Request, res: Response) => {
   try {
@@ -38,7 +39,7 @@ export const getIngredients = async (req: Request, res: Response) => {
       }
     });
     const ingredients = await Ingredient.findAll(pipeline.reduce((acc, el) => ({ ...acc, ...el }), {}));
-    res.json(ingredients);
+    res.json(ingredients.map((ingredient) => changeTimezoneObject(ingredient.toJSON(), req['tz'])));
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -50,8 +51,8 @@ export const getIngredients = async (req: Request, res: Response) => {
 export const postIngredient = async (req: Request, res: Response) => {
   try {
     const { body } = req;
-    const category = await Ingredient.create({ ...body, idCustomer: req['user'].idCustomer });
-    res.json(category);
+    const ingredient = await Ingredient.create({ ...body, idCustomer: req['user'].idCustomer });
+    res.json(changeTimezoneObject(ingredient.toJSON(), req['tz']));
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -63,7 +64,7 @@ export const postIngredient = async (req: Request, res: Response) => {
 export const getIngredient = async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  const category = await Ingredient.findOne({
+  const ingredient = await Ingredient.findOne({
     where: {
       $and: [
         { id: id },
@@ -74,13 +75,13 @@ export const getIngredient = async (req: Request, res: Response) => {
     }
   });
 
-  if (!category) {
+  if (!ingredient) {
     return res.status(404).json({
       msg: `No existe una ingrediente con el id ${id}`
     });
   }
 
-  res.json(category);
+  res.json(changeTimezoneObject(ingredient.toJSON(), req['tz']));
 };
 
 export const putIngredient = async (req: Request, res: Response) => {
@@ -88,7 +89,7 @@ export const putIngredient = async (req: Request, res: Response) => {
   const { body } = req;
 
   try {
-    const category = await Ingredient.findOne({
+    const ingredient = await Ingredient.findOne({
       where: {
         $and: [
           { id: id },
@@ -98,14 +99,14 @@ export const putIngredient = async (req: Request, res: Response) => {
         ]
       }
     });
-    if (!category) {
+    if (!ingredient) {
       return res.status(404).json({
         msg: `No existe una ingrediente con el id ${id}`
       });
     }
 
-    await category.update(body);
-    res.json(category);
+    await ingredient.update(body);
+    res.json(changeTimezoneObject(ingredient.toJSON(), req['tz']));
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -117,7 +118,7 @@ export const putIngredient = async (req: Request, res: Response) => {
 export const deleteIngredient = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const category = await Ingredient.findOne({
+    const ingredient = await Ingredient.findOne({
       where: {
         $and: [
           { id: id },
@@ -127,14 +128,14 @@ export const deleteIngredient = async (req: Request, res: Response) => {
         ]
       }
     });
-    if (!category) {
+    if (!ingredient) {
       return res.status(404).json({
         msg: `No existe una ingrediente con el id ${id}`
       });
     }
 
-    await category.update({ state: false });
-    return res.json(category);
+    await ingredient.update({ state: false });
+    return res.json(changeTimezoneObject(ingredient.toJSON(), req['tz']));
   } catch (error) {
     console.log(error);
     res.status(500).json({

@@ -14,12 +14,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteCharacteristic = exports.putCharacteristic = exports.getCharacteristic = exports.postCharacteristic = exports.getCharacteristics = void 0;
 const characteristic_1 = __importDefault(require("../models/characteristic"));
+const chage_timezone_object_1 = require("../utils/chage-timezone-object");
 const getCharacteristics = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const characteristics = yield characteristic_1.default.findAll({
             where: { idCustomer: req['user'].idCustomer }
         });
-        res.json(characteristics);
+        res.json(characteristics.map((characteristic) => chage_timezone_object_1.changeTimezoneObject(characteristic.toJSON(), req['tz'])));
     }
     catch (error) {
         console.log(error);
@@ -32,8 +33,8 @@ exports.getCharacteristics = getCharacteristics;
 const postCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { body } = req;
-        const category = yield characteristic_1.default.create(Object.assign(Object.assign({}, body), { idCustomer: req['user'].idCustomer }));
-        res.json(category);
+        const characteristic = yield characteristic_1.default.create(Object.assign(Object.assign({}, body), { idCustomer: req['user'].idCustomer }));
+        return res.json(chage_timezone_object_1.changeTimezoneObject(characteristic.toJSON(), req['tz']));
     }
     catch (error) {
         console.log(error);
@@ -43,9 +44,9 @@ const postCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.postCharacteristic = postCharacteristic;
-const getCharacteristic = (req, res) => {
+const getCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const category = characteristic_1.default.findOne({
+    const characteristic = yield characteristic_1.default.findOne({
         where: {
             $and: [
                 { id: id },
@@ -55,19 +56,19 @@ const getCharacteristic = (req, res) => {
             ]
         }
     });
-    if (!category) {
+    if (!characteristic) {
         return res.status(404).json({
             msg: `No existe una caracteristica con el id ${id}`
         });
     }
-    res.json(category);
-};
+    return res.json(chage_timezone_object_1.changeTimezoneObject(characteristic.toJSON(), req['tz']));
+});
 exports.getCharacteristic = getCharacteristic;
 const putCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const { body } = req;
     try {
-        const category = yield characteristic_1.default.findOne({
+        const characteristic = yield characteristic_1.default.findOne({
             where: {
                 $and: [
                     { id: id },
@@ -77,13 +78,13 @@ const putCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, functi
                 ]
             }
         });
-        if (!category) {
+        if (!characteristic) {
             return res.status(404).json({
                 msg: `No existe una caracteristica con el id ${id}`
             });
         }
-        yield category.update(body);
-        res.json(category);
+        yield characteristic.update(body);
+        return res.json(chage_timezone_object_1.changeTimezoneObject(characteristic.toJSON(), req['tz']));
     }
     catch (error) {
         console.log(error);
@@ -96,7 +97,7 @@ exports.putCharacteristic = putCharacteristic;
 const deleteCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const category = yield characteristic_1.default.findOne({
+        const characteristic = yield characteristic_1.default.findOne({
             where: {
                 $and: [
                     { id: id },
@@ -106,13 +107,13 @@ const deleteCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, fun
                 ]
             }
         });
-        if (!category) {
+        if (!characteristic) {
             return res.status(404).json({
                 msg: `No existe una caracteristica con el id ${id}`
             });
         }
-        yield category.update({ state: false });
-        return res.json(category);
+        yield characteristic.update({ state: false });
+        return res.json(chage_timezone_object_1.changeTimezoneObject(characteristic.toJSON(), req['tz']));
     }
     catch (error) {
         console.log(error);

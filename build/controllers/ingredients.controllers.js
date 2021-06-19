@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteIngredient = exports.putIngredient = exports.getIngredient = exports.postIngredient = exports.getIngredients = void 0;
 const ingredient_1 = __importDefault(require("../models/ingredient"));
+const chage_timezone_object_1 = require("../utils/chage-timezone-object");
 const getIngredients = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let { search, start, limit, columnOrder, order } = req.query;
@@ -49,7 +50,7 @@ const getIngredients = (req, res) => __awaiter(void 0, void 0, void 0, function*
             }
         });
         const ingredients = yield ingredient_1.default.findAll(pipeline.reduce((acc, el) => (Object.assign(Object.assign({}, acc), el)), {}));
-        res.json(ingredients);
+        res.json(ingredients.map((ingredient) => chage_timezone_object_1.changeTimezoneObject(ingredient.toJSON(), req['tz'])));
     }
     catch (error) {
         console.log(error);
@@ -62,8 +63,8 @@ exports.getIngredients = getIngredients;
 const postIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { body } = req;
-        const category = yield ingredient_1.default.create(Object.assign(Object.assign({}, body), { idCustomer: req['user'].idCustomer }));
-        res.json(category);
+        const ingredient = yield ingredient_1.default.create(Object.assign(Object.assign({}, body), { idCustomer: req['user'].idCustomer }));
+        res.json(chage_timezone_object_1.changeTimezoneObject(ingredient.toJSON(), req['tz']));
     }
     catch (error) {
         console.log(error);
@@ -75,7 +76,7 @@ const postIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function*
 exports.postIngredient = postIngredient;
 const getIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const category = yield ingredient_1.default.findOne({
+    const ingredient = yield ingredient_1.default.findOne({
         where: {
             $and: [
                 { id: id },
@@ -85,19 +86,19 @@ const getIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             ]
         }
     });
-    if (!category) {
+    if (!ingredient) {
         return res.status(404).json({
             msg: `No existe una ingrediente con el id ${id}`
         });
     }
-    res.json(category);
+    res.json(chage_timezone_object_1.changeTimezoneObject(ingredient.toJSON(), req['tz']));
 });
 exports.getIngredient = getIngredient;
 const putIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const { body } = req;
     try {
-        const category = yield ingredient_1.default.findOne({
+        const ingredient = yield ingredient_1.default.findOne({
             where: {
                 $and: [
                     { id: id },
@@ -107,13 +108,13 @@ const putIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                 ]
             }
         });
-        if (!category) {
+        if (!ingredient) {
             return res.status(404).json({
                 msg: `No existe una ingrediente con el id ${id}`
             });
         }
-        yield category.update(body);
-        res.json(category);
+        yield ingredient.update(body);
+        res.json(chage_timezone_object_1.changeTimezoneObject(ingredient.toJSON(), req['tz']));
     }
     catch (error) {
         console.log(error);
@@ -126,7 +127,7 @@ exports.putIngredient = putIngredient;
 const deleteIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const category = yield ingredient_1.default.findOne({
+        const ingredient = yield ingredient_1.default.findOne({
             where: {
                 $and: [
                     { id: id },
@@ -136,13 +137,13 @@ const deleteIngredient = (req, res) => __awaiter(void 0, void 0, void 0, functio
                 ]
             }
         });
-        if (!category) {
+        if (!ingredient) {
             return res.status(404).json({
                 msg: `No existe una ingrediente con el id ${id}`
             });
         }
-        yield category.update({ state: false });
-        return res.json(category);
+        yield ingredient.update({ state: false });
+        return res.json(chage_timezone_object_1.changeTimezoneObject(ingredient.toJSON(), req['tz']));
     }
     catch (error) {
         console.log(error);
