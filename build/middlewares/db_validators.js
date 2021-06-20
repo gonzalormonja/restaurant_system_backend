@@ -24,6 +24,7 @@ const validateCategory = (idCategory) => __awaiter(void 0, void 0, void 0, funct
             throw new Error(`La categoria ${idCategory} no existe`);
         }
     }
+    return true;
 });
 exports.validateCategory = validateCategory;
 const validateCategories = (categories) => __awaiter(void 0, void 0, void 0, function* () {
@@ -35,6 +36,7 @@ const validateCategories = (categories) => __awaiter(void 0, void 0, void 0, fun
             }
         })));
     }
+    return true;
 });
 exports.validateCategories = validateCategories;
 const validateIngredients = (ingredients) => __awaiter(void 0, void 0, void 0, function* () {
@@ -46,6 +48,7 @@ const validateIngredients = (ingredients) => __awaiter(void 0, void 0, void 0, f
             }
         })));
     }
+    return true;
 });
 exports.validateIngredients = validateIngredients;
 const validateCharacteristics = (idCharacteristics) => __awaiter(void 0, void 0, void 0, function* () {
@@ -57,6 +60,7 @@ const validateCharacteristics = (idCharacteristics) => __awaiter(void 0, void 0,
             }
         })));
     }
+    return true;
 });
 exports.validateCharacteristics = validateCharacteristics;
 const validateGarnishes = (garnishes) => __awaiter(void 0, void 0, void 0, function* () {
@@ -71,6 +75,7 @@ const validateGarnishes = (garnishes) => __awaiter(void 0, void 0, void 0, funct
             }
         })));
     }
+    return true;
 });
 exports.validateGarnishes = validateGarnishes;
 //# sourceMappingURL=db_validators.js.map

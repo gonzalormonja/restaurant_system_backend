@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteIngredient = exports.putIngredient = exports.getIngredient = exports.postIngredient = exports.getIngredients = void 0;
 const ingredient_1 = __importDefault(require("../models/ingredient"));
-const chage_timezone_object_1 = require("../utils/chage-timezone-object");
+const datetime_functions_1 = require("../utils/datetime-functions");
 const getIngredients = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let { search, start, limit, columnOrder, order } = req.query;
@@ -50,7 +50,7 @@ const getIngredients = (req, res) => __awaiter(void 0, void 0, void 0, function*
             }
         });
         const ingredients = yield ingredient_1.default.findAll(pipeline.reduce((acc, el) => (Object.assign(Object.assign({}, acc), el)), {}));
-        res.json(ingredients.map((ingredient) => chage_timezone_object_1.changeTimezoneObject(ingredient.toJSON(), req['tz'])));
+        res.json(ingredients.map((ingredient) => datetime_functions_1.changeTimezoneObject(ingredient.toJSON(), req['tz'])));
     }
     catch (error) {
         console.log(error);
@@ -64,7 +64,7 @@ const postIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function*
     try {
         const { body } = req;
         const ingredient = yield ingredient_1.default.create(Object.assign(Object.assign({}, body), { idCustomer: req['user'].idCustomer }));
-        res.json(chage_timezone_object_1.changeTimezoneObject(ingredient.toJSON(), req['tz']));
+        res.json(datetime_functions_1.changeTimezoneObject(ingredient.toJSON(), req['tz']));
     }
     catch (error) {
         console.log(error);
@@ -91,7 +91,7 @@ const getIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             msg: `No existe una ingrediente con el id ${id}`
         });
     }
-    res.json(chage_timezone_object_1.changeTimezoneObject(ingredient.toJSON(), req['tz']));
+    res.json(datetime_functions_1.changeTimezoneObject(ingredient.toJSON(), req['tz']));
 });
 exports.getIngredient = getIngredient;
 const putIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -114,7 +114,7 @@ const putIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             });
         }
         yield ingredient.update(body);
-        res.json(chage_timezone_object_1.changeTimezoneObject(ingredient.toJSON(), req['tz']));
+        res.json(datetime_functions_1.changeTimezoneObject(ingredient.toJSON(), req['tz']));
     }
     catch (error) {
         console.log(error);
@@ -143,7 +143,7 @@ const deleteIngredient = (req, res) => __awaiter(void 0, void 0, void 0, functio
             });
         }
         yield ingredient.update({ state: false });
-        return res.json(chage_timezone_object_1.changeTimezoneObject(ingredient.toJSON(), req['tz']));
+        return res.json(datetime_functions_1.changeTimezoneObject(ingredient.toJSON(), req['tz']));
     }
     catch (error) {
         console.log(error);

@@ -8,7 +8,7 @@ import {
   putCharacteristic
 } from '../controllers/characteristics.controllers';
 import isAuth from '../middlewares/isAuth';
-import { validate_fields } from '../middlewares/validate_fields';
+import { validate_fields } from '../middlewares/validate-fields';
 const router = Router();
 
 router.get('/', [isAuth], getCharacteristics);

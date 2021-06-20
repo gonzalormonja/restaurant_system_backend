@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import Category from '../models/category';
 import Product from '../models/product';
-import { changeTimezoneObject } from '../utils/chage-timezone-object';
+import { changeTimezoneObject } from '../utils/datetime-functions';
 
 export const getCategories = async (req: Request, res: Response) => {
   try {

@@ -7,7 +7,7 @@ import ProductCharacteristic from '../models/productCharacteristic';
 import ProductGarnish from '../models/productGarnish';
 import ProductIngredient from '../models/productIngredient';
 import Price from '../models/price';
-import { changeTimezoneObject } from '../utils/chage-timezone-object';
+import { changeTimezoneObject } from '../utils/datetime-functions';
 
 export const getProducts = async (req: Request, res: Response) => {
   let { search, start, limit, columnOrder, order, idCategories } = req.query;

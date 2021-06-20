@@ -10,6 +10,7 @@ export const validateCategory = async (idCategory) => {
       throw new Error(`La categoria ${idCategory} no existe`);
     }
   }
+  return true;
 };
 
 export const validateCategories = async (categories) => {
@@ -23,6 +24,7 @@ export const validateCategories = async (categories) => {
       })
     );
   }
+  return true;
 };
 
 export const validateIngredients = async (ingredients) => {
@@ -36,6 +38,7 @@ export const validateIngredients = async (ingredients) => {
       })
     );
   }
+  return true;
 };
 
 export const validateCharacteristics = async (idCharacteristics) => {
@@ -49,6 +52,7 @@ export const validateCharacteristics = async (idCharacteristics) => {
       })
     );
   }
+  return true;
 };
 
 export const validateGarnishes = async (garnishes) => {
@@ -65,4 +69,5 @@ export const validateGarnishes = async (garnishes) => {
       })
     );
   }
+  return true;
 };

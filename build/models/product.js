@@ -12,6 +12,8 @@ const productCharacteristic_1 = __importDefault(require("./productCharacteristic
 const productGarnish_1 = __importDefault(require("./productGarnish"));
 const productIngredient_1 = __importDefault(require("./productIngredient"));
 const price_1 = __importDefault(require("./price"));
+const timesOfDay_1 = __importDefault(require("./timesOfDay"));
+const productTimesOfDay_1 = __importDefault(require("./productTimesOfDay"));
 const Product = connection_1.default.define('products', {
     id: {
         type: sequelize_1.DataTypes.INTEGER,
@@ -93,5 +95,11 @@ Product.belongsToMany(characteristic_1.default, {
     otherKey: 'idCharacteristic'
 });
 characteristic_1.default.belongsToMany(Product, { through: productCharacteristic_1.default, foreignKey: 'idProduct' });
+Product.belongsToMany(timesOfDay_1.default, {
+    through: productTimesOfDay_1.default,
+    foreignKey: 'idProduct',
+    otherKey: 'idTimeOfDay'
+});
+timesOfDay_1.default.belongsToMany(Product, { through: productTimesOfDay_1.default, foreignKey: 'idProduct' });
 exports.default = Product;
 //# sourceMappingURL=product.js.map

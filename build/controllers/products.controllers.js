@@ -21,7 +21,7 @@ const productCharacteristic_1 = __importDefault(require("../models/productCharac
 const productGarnish_1 = __importDefault(require("../models/productGarnish"));
 const productIngredient_1 = __importDefault(require("../models/productIngredient"));
 const price_1 = __importDefault(require("../models/price"));
-const chage_timezone_object_1 = require("../utils/chage-timezone-object");
+const datetime_functions_1 = require("../utils/datetime-functions");
 const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { search, start, limit, columnOrder, order, idCategories } = req.query;
     const pipeline = [];
@@ -71,7 +71,7 @@ const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         }
     });
     const products = yield product_1.default.findAll(pipeline.reduce((acc, el) => (Object.assign(Object.assign({}, acc), el)), {}));
-    res.json(products.map((product) => chage_timezone_object_1.changeTimezoneObject(product.toJSON(), req['tz'])));
+    res.json(products.map((product) => datetime_functions_1.changeTimezoneObject(product.toJSON(), req['tz'])));
 });
 exports.getProducts = getProducts;
 const postProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -116,7 +116,7 @@ const postProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         }));
         //* add price
         yield price_1.default.create({ price: body.price ? body.price : 0, idProduct: product.id });
-        res.json(chage_timezone_object_1.changeTimezoneObject(product.toJSON(), req['tz']));
+        res.json(datetime_functions_1.changeTimezoneObject(product.toJSON(), req['tz']));
     }
     catch (error) {
         console.log(error);
@@ -138,7 +138,7 @@ const getProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             msg: `No existe un product con el id ${id}`
         });
     }
-    res.json(chage_timezone_object_1.changeTimezoneObject(product.toJSON(), req['tz']));
+    res.json(datetime_functions_1.changeTimezoneObject(product.toJSON(), req['tz']));
 });
 exports.getProduct = getProduct;
 const patchProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -223,7 +223,7 @@ const patchProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             //* add price
             yield price_1.default.create({ price: body.price ? body.price : 0, idProduct: product.id });
         }
-        res.json(chage_timezone_object_1.changeTimezoneObject(product.toJSON(), req['tz']));
+        res.json(datetime_functions_1.changeTimezoneObject(product.toJSON(), req['tz']));
     }
     catch (error) {
         console.log(error);
@@ -247,7 +247,7 @@ const deleteProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             });
         }
         yield product.update({ state: false });
-        return res.json(chage_timezone_object_1.changeTimezoneObject(product.toJSON(), req['tz']));
+        return res.json(datetime_functions_1.changeTimezoneObject(product.toJSON(), req['tz']));
     }
     catch (error) {
         console.log(error);

@@ -9,6 +9,8 @@ interface CategoryInterface extends Model {
   idCategory: number;
   state: boolean;
   idCustomer: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 type CategoryStatic = typeof Model & {

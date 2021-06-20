@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const express_validator_1 = require("express-validator");
-const validate_fields_1 = require("../middlewares/validate_fields");
+const validate_fields_1 = require("../middlewares/validate-fields");
 const users_controllers_1 = require("../controllers/users.controllers");
 const router = express_1.Router();
 router.post('/signIn', [

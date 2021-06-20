@@ -5,6 +5,8 @@ interface ProductCharacteristicInterface extends Model {
   id: number;
   idProduct: number;
   idCharacteristic: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 type ProductCharacteristicStatic = typeof Model & {

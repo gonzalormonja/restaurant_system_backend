@@ -644,7 +644,7 @@ paths:
         "401":
           $ref: "#/components/responses/400_Bad_Request"
     post:
-      summary: Create all characteristics
+      summary: Create characteristic
       parameters:
         - in: header
           name: tz
@@ -716,6 +716,166 @@ paths:
           $ref: "#/components/responses/400_Bad_Request"
     delete:
       summary: Delete one characteristic
+      parameters:
+        - in: header
+          name: tz
+          schema:
+            type: string
+            example: "-03:00"
+        - in: header
+          name: lang
+          schema:
+            type: string
+            example: "ES"
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          $ref: "#/components/responses/200_ok"
+        "400":
+          $ref: "#/components/responses/400_Bad_Request"
+        "401":
+          $ref: "#/components/responses/400_Bad_Request"
+  
+
+  /timesOfDay:
+    get:
+      summary: Get all times of day
+      parameters:
+        - in: header
+          name: tz
+          schema:
+            type: string
+            example: "-03:00"
+        - in: header
+          name: lang
+          schema:
+            type: string
+            example: "ES"
+      responses:
+        "200":
+          $ref: "#/components/responses/200_ok"
+        "400":
+          $ref: "#/components/responses/400_Bad_Request"
+        "401":
+          $ref: "#/components/responses/400_Bad_Request"
+    post:
+      summary: Create time of day
+      parameters:
+        - in: header
+          name: tz
+          schema:
+            type: string
+            example: "-03:00"
+        - in: header
+          name: lang
+          schema:
+            type: string
+            example: "ES"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - hour_start
+                - hour_end
+              properties:
+                name:
+                  type: string
+                  example: '00:00'
+                hour_start:
+                  type: string
+                  example: '00:00'
+                hour_end:
+                  type: string
+                  example: '23:59'
+
+      responses:
+        "200":
+          $ref: "#/components/responses/200_ok"
+        "400":
+          $ref: "#/components/responses/400_Bad_Request"
+        "401":
+          $ref: "#/components/responses/400_Bad_Request"
+  /timesOfDay/{id}:
+    get:
+      summary: Get one time of day
+      parameters:
+        - in: header
+          name: tz
+          schema:
+            type: string
+            example: "-03:00"
+        - in: header
+          name: lang
+          schema:
+            type: string
+            example: "ES"
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          $ref: "#/components/responses/200_ok"
+        "400":
+          $ref: "#/components/responses/400_Bad_Request"
+        "401":
+          $ref: "#/components/responses/400_Bad_Request"
+    put:
+      summary: Update one time of day
+      parameters:
+        - in: header
+          name: tz
+          schema:
+            type: string
+            example: "-03:00"
+        - in: header
+          name: lang
+          schema:
+            type: string
+            example: "ES"
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - hour_start
+                - hour_end
+              properties:
+                name:
+                  type: string
+                  example: '00:00'
+                hour_start:
+                  type: string
+                  example: '00:00'
+                hour_end:
+                  type: string
+                  example: '23:59'
+      responses:
+        "200":
+          $ref: "#/components/responses/200_ok"
+        "400":
+          $ref: "#/components/responses/400_Bad_Request"
+        "401":
+          $ref: "#/components/responses/400_Bad_Request"
+    delete:
+      summary: Delete one time of day
       parameters:
         - in: header
           name: tz

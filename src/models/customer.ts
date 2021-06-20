@@ -6,6 +6,8 @@ interface CustomerInterface extends Model {
   name: string;
   phone: string;
   email: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 type CustomerStatic = typeof Model & {

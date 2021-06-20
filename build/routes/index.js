@@ -9,6 +9,7 @@ const categories_routes_1 = __importDefault(require("./categories.routes"));
 const ingredients_routes_1 = __importDefault(require("./ingredients.routes"));
 const characteristics_routes_1 = __importDefault(require("./characteristics.routes"));
 const users_routes_1 = __importDefault(require("./users.routes"));
+const timesOfDay_routes_1 = __importDefault(require("./timesOfDay.routes"));
 const language_1 = __importDefault(require("../middlewares/language"));
 const timezone_1 = __importDefault(require("../middlewares/timezone"));
 const route_init = (app) => {
@@ -19,6 +20,7 @@ const route_init = (app) => {
     app.use('/ingredients', ingredients_routes_1.default);
     app.use('/characteristics', characteristics_routes_1.default);
     app.use('/users', users_routes_1.default);
+    app.use('/timesOfDay', timesOfDay_routes_1.default);
 };
 exports.route_init = route_init;
 //# sourceMappingURL=index.js.map

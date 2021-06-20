@@ -7,7 +7,7 @@ const express_1 = require("express");
 const express_validator_1 = require("express-validator");
 const characteristics_controllers_1 = require("../controllers/characteristics.controllers");
 const isAuth_1 = __importDefault(require("../middlewares/isAuth"));
-const validate_fields_1 = require("../middlewares/validate_fields");
+const validate_fields_1 = require("../middlewares/validate-fields");
 const router = express_1.Router();
 router.get('/', [isAuth_1.default], characteristics_controllers_1.getCharacteristics);
 router.get('/:id', [isAuth_1.default], characteristics_controllers_1.getCharacteristic);

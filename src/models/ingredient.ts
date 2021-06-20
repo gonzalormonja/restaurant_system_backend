@@ -7,6 +7,8 @@ interface IngredientInterface extends Model {
   name: string;
   unit_of_measure: string;
   idCustomer: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 type IngredientStatic = typeof Model & {

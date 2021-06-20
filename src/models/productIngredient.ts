@@ -6,6 +6,8 @@ interface ProductIngredientInterface extends Model {
   idProduct: number;
   idIngredient: number;
   quantity: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 type ProductIngredientStatic = typeof Model & {

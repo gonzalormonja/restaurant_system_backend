@@ -6,6 +6,8 @@ interface TypeInterface extends Model {
   id: number;
   name: string;
   idCustomer: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 type TypeStatic = typeof Model & {

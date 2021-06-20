@@ -6,6 +6,8 @@ interface PriceInterface extends Model {
   id: number;
   price: number;
   idProduct: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 type PriceStatic = typeof Model & {

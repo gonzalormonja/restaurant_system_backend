@@ -3,6 +3,7 @@ import categoryRoutes from './categories.routes';
 import IngredientRoute from './ingredients.routes';
 import CharacteristicRoutes from './characteristics.routes';
 import UserRoutes from './users.routes';
+import TimeOfDayRoutes from './timesOfDay.routes';
 import language from '../middlewares/language';
 import timezone from '../middlewares/timezone';
 
@@ -14,4 +15,5 @@ export const route_init = (app) => {
   app.use('/ingredients', IngredientRoute);
   app.use('/characteristics', CharacteristicRoutes);
   app.use('/users', UserRoutes);
+  app.use('/timesOfDay',TimeOfDayRoutes)
 };

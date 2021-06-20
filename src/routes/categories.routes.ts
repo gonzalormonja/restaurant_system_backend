@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { check } from 'express-validator';
-import { validate_fields } from '../middlewares/validate_fields';
+import { validate_fields } from '../middlewares/validate-fields';
 import {
   deleteCategory,
   getCategories,

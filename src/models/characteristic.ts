@@ -6,6 +6,8 @@ interface CharacteristicInterface extends Model {
   id: number;
   name: string;
   idCustomer: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 type CharacteristicStatic = typeof Model & {

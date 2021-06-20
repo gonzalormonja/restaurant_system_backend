@@ -7,6 +7,8 @@ import ProductCharacteristic from './productCharacteristic';
 import ProductGarnish from './productGarnish';
 import ProductIngredient from './productIngredient';
 import Price from './price';
+import TimeOfDay from './timesOfDay';
+import ProductTimeOfDay from './productTimesOfDay';
 
 interface ProductInterface extends Model {
   id: number;
@@ -19,6 +21,8 @@ interface ProductInterface extends Model {
   isGarnish: boolean;
   idCustomer: number;
   approximate_delay_minutes: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 type ProductStatic = typeof Model & {
@@ -114,5 +118,13 @@ Product.belongsToMany(Characteristic, {
 });
 
 Characteristic.belongsToMany(Product, { through: ProductCharacteristic, foreignKey: 'idProduct' });
+
+Product.belongsToMany(TimeOfDay, {
+  through: ProductTimeOfDay,
+  foreignKey: 'idProduct',
+  otherKey: 'idTimeOfDay'
+});
+
+TimeOfDay.belongsToMany(Product, { through: ProductTimeOfDay, foreignKey: 'idProduct' });
 
 export default Product;

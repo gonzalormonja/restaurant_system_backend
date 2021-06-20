@@ -12,6 +12,8 @@ interface UserInterface extends Model {
   password: string;
   idCustomer: number;
   idType: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 type UserStatic = typeof Model & {

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import Characteristic from '../models/characteristic';
-import { changeTimezoneObject } from '../utils/chage-timezone-object';
+import { changeTimezoneObject } from '../utils/datetime-functions';
 
 export const getCharacteristics = async (req: Request, res: Response) => {
   try {

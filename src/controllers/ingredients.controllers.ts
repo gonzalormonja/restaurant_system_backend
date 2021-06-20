@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import Ingredient from '../models/ingredient';
-import { changeTimezoneObject } from '../utils/chage-timezone-object';
+import { changeTimezoneObject } from '../utils/datetime-functions';
 
 export const getIngredients = async (req: Request, res: Response) => {
   try {

@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const products_controllers_1 = require("../controllers/products.controllers");
 const express_validator_1 = require("express-validator");
-const validate_fields_1 = require("../middlewares/validate_fields");
+const validate_fields_1 = require("../middlewares/validate-fields");
 const db_validators_1 = require("../middlewares/db_validators");
 const isAuth_1 = __importDefault(require("../middlewares/isAuth"));
 const router = express_1.Router();

@@ -14,13 +14,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteCharacteristic = exports.putCharacteristic = exports.getCharacteristic = exports.postCharacteristic = exports.getCharacteristics = void 0;
 const characteristic_1 = __importDefault(require("../models/characteristic"));
-const chage_timezone_object_1 = require("../utils/chage-timezone-object");
+const datetime_functions_1 = require("../utils/datetime-functions");
 const getCharacteristics = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const characteristics = yield characteristic_1.default.findAll({
             where: { idCustomer: req['user'].idCustomer }
         });
-        res.json(characteristics.map((characteristic) => chage_timezone_object_1.changeTimezoneObject(characteristic.toJSON(), req['tz'])));
+        res.json(characteristics.map((characteristic) => datetime_functions_1.changeTimezoneObject(characteristic.toJSON(), req['tz'])));
     }
     catch (error) {
         console.log(error);
@@ -34,7 +34,7 @@ const postCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, funct
     try {
         const { body } = req;
         const characteristic = yield characteristic_1.default.create(Object.assign(Object.assign({}, body), { idCustomer: req['user'].idCustomer }));
-        return res.json(chage_timezone_object_1.changeTimezoneObject(characteristic.toJSON(), req['tz']));
+        return res.json(datetime_functions_1.changeTimezoneObject(characteristic.toJSON(), req['tz']));
     }
     catch (error) {
         console.log(error);
@@ -61,7 +61,7 @@ const getCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, functi
             msg: `No existe una caracteristica con el id ${id}`
         });
     }
-    return res.json(chage_timezone_object_1.changeTimezoneObject(characteristic.toJSON(), req['tz']));
+    return res.json(datetime_functions_1.changeTimezoneObject(characteristic.toJSON(), req['tz']));
 });
 exports.getCharacteristic = getCharacteristic;
 const putCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -84,7 +84,7 @@ const putCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, functi
             });
         }
         yield characteristic.update(body);
-        return res.json(chage_timezone_object_1.changeTimezoneObject(characteristic.toJSON(), req['tz']));
+        return res.json(datetime_functions_1.changeTimezoneObject(characteristic.toJSON(), req['tz']));
     }
     catch (error) {
         console.log(error);
@@ -113,7 +113,7 @@ const deleteCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, fun
             });
         }
         yield characteristic.update({ state: false });
-        return res.json(chage_timezone_object_1.changeTimezoneObject(characteristic.toJSON(), req['tz']));
+        return res.json(datetime_functions_1.changeTimezoneObject(characteristic.toJSON(), req['tz']));
     }
     catch (error) {
         console.log(error);

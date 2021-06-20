@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { deleteProduct, getProduct, getProducts, postProduct, patchProduct } from '../controllers/products.controllers';
 import { body, param, query } from 'express-validator';
-import { validate_fields } from '../middlewares/validate_fields';
+import { validate_fields } from '../middlewares/validate-fields';
 import {
   validateCategories,
   validateCategory,

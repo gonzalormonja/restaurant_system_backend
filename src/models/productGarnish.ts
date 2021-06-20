@@ -6,6 +6,8 @@ interface ProductGarnishInterface extends Model {
   idProduct: number;
   idGarnish: number;
   max_quantity: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 type ProductGarnishStatic = typeof Model & {
