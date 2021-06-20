@@ -788,13 +788,13 @@ paths:
               properties:
                 name:
                   type: string
-                  example: '00:00'
+                  example: 'almuerzo'
                 hour_start:
                   type: string
-                  example: '00:00'
+                  example: '11:00'
                 hour_end:
                   type: string
-                  example: '23:59'
+                  example: '13:30'
 
       responses:
         "200":
@@ -860,13 +860,13 @@ paths:
               properties:
                 name:
                   type: string
-                  example: '00:00'
+                  example: 'almuerzo'
                 hour_start:
                   type: string
-                  example: '00:00'
+                  example: '11:00'
                 hour_end:
                   type: string
-                  example: '23:59'
+                  example: '13:30'
       responses:
         "200":
           $ref: "#/components/responses/200_ok"
