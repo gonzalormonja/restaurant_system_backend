@@ -5,7 +5,8 @@ import Type from './types';
 
 interface UserInterface extends Model {
   id: number;
-  name: string;
+  firstName: string;
+  lastName: string;
   phone: string;
   email: string;
   username: string;
@@ -26,7 +27,13 @@ const User = db.define('users', {
     primaryKey: true,
     autoIncrement: true
   },
-  name: {
+  firstName: {
+    type: DataTypes.STRING,
+    validate: {
+      notEmpty: true
+    }
+  },
+  lastName: {
     type: DataTypes.STRING,
     validate: {
       notEmpty: true

@@ -49,7 +49,8 @@ create table types(
 
 CREATE TABLE users(
 	id INT PRIMARY KEY AUTO_INCREMENT,
-	name VARCHAR(255) NOT NULL,
+	firstName VARCHAR(255) NOT NULL,
+	lastName VARCHAR(255) NOT NULL,
 	phone VARCHAR(255),
 	email VARCHAR(255),
 	username VARCHAR(255) NOT NULL,
@@ -182,10 +183,10 @@ values
 	('administrator', 1);
 
 INSERT INTO
-	users(name, username, password, idCustomer, idType)
+	users(firstName,lastName, username, password, idCustomer, idType)
 values
 	(
-		'Pedro',
+		'Pedro','Gimenez',
 		'admin',
 		'$2b$10$Ed0/UB1wtpKmEEiBphiNUuKRguvUPsLe4ch7OUTG5A7tGhM1677CO',
 		1,
