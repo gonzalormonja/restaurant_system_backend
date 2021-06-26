@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { Op } from 'sequelize';
 import Ingredient from '../models/ingredient';
 import { changeTimezoneObject } from '../utils/datetime-functions';
 
@@ -9,9 +10,9 @@ export const getIngredients = async (req: Request, res: Response) => {
     const pipeline: any[] = [];
 
     if (search) {
-      const searchQuery = { $iLike: `%${search}%` };
+      const searchQuery = { [Op.like]: `%${search}%` };
       pipeline.push({
-        $or: [{ name: searchQuery }]
+        [Op.and]: [{ name: searchQuery }, { idCustomer: req['user'].idCustomer }]
       });
     }
     if (start) {
@@ -28,15 +29,10 @@ export const getIngredients = async (req: Request, res: Response) => {
       columnOrder = 'id';
     }
     if (!order) {
-      order = 'DESC';
+      order = 'desc';
     }
     pipeline.push({
       order: [[columnOrder, order]]
-    });
-    pipeline.push({
-      where: {
-        idCustomer: req['user'].idCustomer
-      }
     });
     const ingredients = await Ingredient.findAll(pipeline.reduce((acc, el) => ({ ...acc, ...el }), {}));
     res.json(ingredients.map((ingredient) => changeTimezoneObject(ingredient.toJSON(), req['tz'])));
@@ -66,7 +62,7 @@ export const getIngredient = async (req: Request, res: Response) => {
 
   const ingredient = await Ingredient.findOne({
     where: {
-      $and: [
+      [Op.and]: [
         { id: id },
         {
           idCustomer: req['user'].idCustomer
@@ -91,7 +87,7 @@ export const putIngredient = async (req: Request, res: Response) => {
   try {
     const ingredient = await Ingredient.findOne({
       where: {
-        $and: [
+        [Op.and]: [
           { id: id },
           {
             idCustomer: req['user'].idCustomer
@@ -120,7 +116,7 @@ export const deleteIngredient = async (req: Request, res: Response) => {
     const { id } = req.params;
     const ingredient = await Ingredient.findOne({
       where: {
-        $and: [
+        [Op.and]: [
           { id: id },
           {
             idCustomer: req['user'].idCustomer

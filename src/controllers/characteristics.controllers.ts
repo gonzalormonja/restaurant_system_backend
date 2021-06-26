@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { Op } from 'sequelize';
 import Characteristic from '../models/characteristic';
 import { changeTimezoneObject } from '../utils/datetime-functions';
 
@@ -34,7 +35,7 @@ export const getCharacteristic = async (req: Request, res: Response) => {
 
   const characteristic = await Characteristic.findOne({
     where: {
-      $and: [
+      [Op.and]: [
         { id: id },
         {
           idCustomer: req['user'].idCustomer
@@ -59,7 +60,7 @@ export const putCharacteristic = async (req: Request, res: Response) => {
   try {
     const characteristic = await Characteristic.findOne({
       where: {
-        $and: [
+        [Op.and]: [
           { id: id },
           {
             idCustomer: req['user'].idCustomer
@@ -88,7 +89,7 @@ export const deleteCharacteristic = async (req: Request, res: Response) => {
     const { id } = req.params;
     const characteristic = await Characteristic.findOne({
       where: {
-        $and: [
+        [Op.and]: [
           { id: id },
           {
             idCustomer: req['user'].idCustomer

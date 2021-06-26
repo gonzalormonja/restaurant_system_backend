@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteTimeOfDay = exports.putTimeOfDay = exports.getTimeOfDay = exports.postTimeOfDay = exports.getTimesOfDay = void 0;
+const sequelize_1 = require("sequelize");
 const timesOfDay_1 = __importDefault(require("../models/timesOfDay"));
 const datetime_functions_1 = require("../utils/datetime-functions");
 const getTimesOfDay = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -48,7 +49,7 @@ const getTimeOfDay = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     const { id } = req.params;
     const timeOfDay = yield timesOfDay_1.default.findOne({
         where: {
-            $and: [
+            [sequelize_1.Op.and]: [
                 { id: id },
                 {
                     idCustomer: req['user'].idCustomer
@@ -70,7 +71,7 @@ const putTimeOfDay = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     try {
         const timeOfDay = yield timesOfDay_1.default.findOne({
             where: {
-                $and: [
+                [sequelize_1.Op.and]: [
                     { id: id },
                     {
                         idCustomer: req['user'].idCustomer
@@ -99,7 +100,7 @@ const deleteTimeOfDay = (req, res) => __awaiter(void 0, void 0, void 0, function
         const { id } = req.params;
         const timeOfDay = yield timesOfDay_1.default.findOne({
             where: {
-                $and: [
+                [sequelize_1.Op.and]: [
                     { id: id },
                     {
                         idCustomer: req['user'].idCustomer

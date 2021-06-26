@@ -13,7 +13,13 @@ const User = connection_1.default.define('users', {
         primaryKey: true,
         autoIncrement: true
     },
-    name: {
+    firstName: {
+        type: sequelize_1.DataTypes.STRING,
+        validate: {
+            notEmpty: true
+        }
+    },
+    lastName: {
         type: sequelize_1.DataTypes.STRING,
         validate: {
             notEmpty: true

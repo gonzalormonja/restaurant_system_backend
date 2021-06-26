@@ -1,5 +1,11 @@
 import { Router } from 'express';
-import { deleteProduct, getProduct, getProducts, postProduct, patchProduct } from '../controllers/products.controllers';
+import {
+  deleteProduct,
+  getProduct,
+  getProducts,
+  postProduct,
+  patchProduct
+} from '../controllers/products.controllers';
 import { body, param, query } from 'express-validator';
 import { validate_fields } from '../middlewares/validate-fields';
 import {
@@ -17,10 +23,10 @@ router.get(
   [
     isAuth,
     query('search', 'El campo de search debe ser tipo string').isString().optional({ nullable: true }),
-    query('start', 'El campo start debe ser numerico').isInt().optional({ nullable: true }),
-    query('limit', 'El campo limit debe ser numerico').isInt().optional({ nullable: true }),
+    query('pageNumber', 'El número de página debe ser numerico').isInt().optional({ nullable: true }),
+    query('pageSize', 'El tamaño de página debe ser numerico').isInt().optional({ nullable: true }),
     query('columnOrder', 'El campo columnOrder debe ser tipo string').isString().optional({ nullable: true }),
-    query('order', 'Los valores permitidos son ASC o DESC').isIn(['ASC', 'DESC']).optional({ nullable: true }),
+    query('order', 'Los valores permitidos son asc o desc').isIn(['asc', 'desc', '']).optional({ nullable: true }),
     query('idCategories').isArray().custom(validateCategories).optional({ nullable: true }),
     validate_fields
   ],

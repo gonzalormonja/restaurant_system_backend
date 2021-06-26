@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteCharacteristic = exports.putCharacteristic = exports.getCharacteristic = exports.postCharacteristic = exports.getCharacteristics = void 0;
+const sequelize_1 = require("sequelize");
 const characteristic_1 = __importDefault(require("../models/characteristic"));
 const datetime_functions_1 = require("../utils/datetime-functions");
 const getCharacteristics = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -48,7 +49,7 @@ const getCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, functi
     const { id } = req.params;
     const characteristic = yield characteristic_1.default.findOne({
         where: {
-            $and: [
+            [sequelize_1.Op.and]: [
                 { id: id },
                 {
                     idCustomer: req['user'].idCustomer
@@ -70,7 +71,7 @@ const putCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, functi
     try {
         const characteristic = yield characteristic_1.default.findOne({
             where: {
-                $and: [
+                [sequelize_1.Op.and]: [
                     { id: id },
                     {
                         idCustomer: req['user'].idCustomer
@@ -99,7 +100,7 @@ const deleteCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, fun
         const { id } = req.params;
         const characteristic = yield characteristic_1.default.findOne({
             where: {
-                $and: [
+                [sequelize_1.Op.and]: [
                     { id: id },
                     {
                         idCustomer: req['user'].idCustomer

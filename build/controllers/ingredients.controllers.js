@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteIngredient = exports.putIngredient = exports.getIngredient = exports.postIngredient = exports.getIngredients = void 0;
+const sequelize_1 = require("sequelize");
 const ingredient_1 = __importDefault(require("../models/ingredient"));
 const datetime_functions_1 = require("../utils/datetime-functions");
 const getIngredients = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -20,9 +21,9 @@ const getIngredients = (req, res) => __awaiter(void 0, void 0, void 0, function*
         let { search, start, limit, columnOrder, order } = req.query;
         const pipeline = [];
         if (search) {
-            const searchQuery = { $iLike: `%${search}%` };
+            const searchQuery = { [sequelize_1.Op.like]: `%${search}%` };
             pipeline.push({
-                $or: [{ name: searchQuery }]
+                [sequelize_1.Op.and]: [{ name: searchQuery }, { idCustomer: req['user'].idCustomer }]
             });
         }
         if (start) {
@@ -39,15 +40,10 @@ const getIngredients = (req, res) => __awaiter(void 0, void 0, void 0, function*
             columnOrder = 'id';
         }
         if (!order) {
-            order = 'DESC';
+            order = 'desc';
         }
         pipeline.push({
             order: [[columnOrder, order]]
-        });
-        pipeline.push({
-            where: {
-                idCustomer: req['user'].idCustomer
-            }
         });
         const ingredients = yield ingredient_1.default.findAll(pipeline.reduce((acc, el) => (Object.assign(Object.assign({}, acc), el)), {}));
         res.json(ingredients.map((ingredient) => datetime_functions_1.changeTimezoneObject(ingredient.toJSON(), req['tz'])));
@@ -78,7 +74,7 @@ const getIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     const { id } = req.params;
     const ingredient = yield ingredient_1.default.findOne({
         where: {
-            $and: [
+            [sequelize_1.Op.and]: [
                 { id: id },
                 {
                     idCustomer: req['user'].idCustomer
@@ -100,7 +96,7 @@ const putIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     try {
         const ingredient = yield ingredient_1.default.findOne({
             where: {
-                $and: [
+                [sequelize_1.Op.and]: [
                     { id: id },
                     {
                         idCustomer: req['user'].idCustomer
@@ -129,7 +125,7 @@ const deleteIngredient = (req, res) => __awaiter(void 0, void 0, void 0, functio
         const { id } = req.params;
         const ingredient = yield ingredient_1.default.findOne({
             where: {
-                $and: [
+                [sequelize_1.Op.and]: [
                     { id: id },
                     {
                         idCustomer: req['user'].idCustomer

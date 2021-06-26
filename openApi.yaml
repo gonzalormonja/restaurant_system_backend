@@ -353,6 +353,33 @@ paths:
           schema:
             type: string
             example: "ES"
+        - in: query
+          name: search
+          schema:
+            type: string
+        - in: query
+          name: start
+          schema:
+            type: number
+        - in: query
+          name: limit
+          schema:
+            type: number
+        - in: query
+          name: columnOrder
+          schema:
+            type: string
+        - in: query
+          name: order
+          schema:
+            type: string
+          description: "DESC || ASC"
+        - in: query
+          name: idCategories
+          schema:
+            type: array
+            items:
+              type: number
       responses:
         "200":
           $ref: "#/components/responses/200_ok"

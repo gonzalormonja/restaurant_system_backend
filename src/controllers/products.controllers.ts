@@ -8,6 +8,7 @@ import ProductGarnish from '../models/productGarnish';
 import ProductIngredient from '../models/productIngredient';
 import Price from '../models/price';
 import { changeTimezoneObject } from '../utils/datetime-functions';
+import { Op } from 'sequelize';
 
 export const getProducts = async (req: Request, res: Response) => {
   let { search, start, limit, columnOrder, order, idCategories } = req.query;
@@ -15,14 +16,19 @@ export const getProducts = async (req: Request, res: Response) => {
   const pipeline: any[] = [];
 
   if (search) {
-    const searchQuery = { $iLike: `%${search}%` };
+    const searchQuery = { [Op.like]: `%${search}%` };
     pipeline.push({
-      $or: [{ name: searchQuery }, { short_name: searchQuery }, { bar_code: searchQuery }]
+      [Op.and]: [
+        { [Op.or]: [{ name: searchQuery }, { short_name: searchQuery }, { bar_code: searchQuery }] },
+        {
+          idCustomer: req['user'].idCustomer
+        }
+      ]
     });
   }
   if (idCategories) {
     pipeline.push({
-      idcategory: { $in: [idCategories] }
+      idcategory: { [Op.in]: [idCategories] }
     });
   }
   if (start) {
@@ -39,7 +45,7 @@ export const getProducts = async (req: Request, res: Response) => {
     columnOrder = 'id';
   }
   if (!order) {
-    order = 'DESC';
+    order = 'desc';
   }
   pipeline.push({
     order: [[columnOrder, order]]
@@ -53,11 +59,6 @@ export const getProducts = async (req: Request, res: Response) => {
       { model: Characteristic },
       { model: Ingredient }
     ]
-  });
-  pipeline.push({
-    where: {
-      idCustomer: req['user'].idCustomer
-    }
   });
   const products = await Product.findAll(pipeline.reduce((acc, el) => ({ ...acc, ...el }), {}));
   res.json(products.map((product) => changeTimezoneObject(product.toJSON(), req['tz'])));
@@ -122,7 +123,7 @@ export const getProduct = async (req: Request, res: Response) => {
   const { id } = req.params;
   const product = await Product.findOne({
     where: {
-      $and: [{ id: id }, { idCustomer: req['user'].idCustomer }]
+      [Op.and]: [{ id: id }, { idCustomer: req['user'].idCustomer }]
     }
   });
 
@@ -142,7 +143,7 @@ export const patchProduct = async (req: Request, res: Response) => {
   try {
     const product = await Product.findOne({
       where: {
-        $and: [{ id: id }, { idCustomer: req['user'].idCustomer }]
+        [Op.and]: [{ id: id }, { idCustomer: req['user'].idCustomer }]
       }
     });
     if (!product) {
@@ -238,7 +239,7 @@ export const deleteProduct = async (req: Request, res: Response) => {
     const { id } = req.params;
     const product = await Product.findOne({
       where: {
-        $and: [{ id: id }, { idCustomer: req['user'].idCustomer }]
+        [Op.and]: [{ id: id }, { idCustomer: req['user'].idCustomer }]
       }
     });
     if (!product) {

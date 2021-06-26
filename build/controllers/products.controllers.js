@@ -22,18 +22,24 @@ const productGarnish_1 = __importDefault(require("../models/productGarnish"));
 const productIngredient_1 = __importDefault(require("../models/productIngredient"));
 const price_1 = __importDefault(require("../models/price"));
 const datetime_functions_1 = require("../utils/datetime-functions");
+const sequelize_1 = require("sequelize");
 const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { search, start, limit, columnOrder, order, idCategories } = req.query;
     const pipeline = [];
     if (search) {
-        const searchQuery = { $iLike: `%${search}%` };
+        const searchQuery = { [sequelize_1.Op.like]: `%${search}%` };
         pipeline.push({
-            $or: [{ name: searchQuery }, { short_name: searchQuery }, { bar_code: searchQuery }]
+            [sequelize_1.Op.and]: [
+                { [sequelize_1.Op.or]: [{ name: searchQuery }, { short_name: searchQuery }, { bar_code: searchQuery }] },
+                {
+                    idCustomer: req['user'].idCustomer
+                }
+            ]
         });
     }
     if (idCategories) {
         pipeline.push({
-            idcategory: { $in: [idCategories] }
+            idcategory: { [sequelize_1.Op.in]: [idCategories] }
         });
     }
     if (start) {
@@ -50,7 +56,7 @@ const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         columnOrder = 'id';
     }
     if (!order) {
-        order = 'DESC';
+        order = 'desc';
     }
     pipeline.push({
         order: [[columnOrder, order]]
@@ -64,11 +70,6 @@ const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             { model: characteristic_1.default },
             { model: ingredient_1.default }
         ]
-    });
-    pipeline.push({
-        where: {
-            idCustomer: req['user'].idCustomer
-        }
     });
     const products = yield product_1.default.findAll(pipeline.reduce((acc, el) => (Object.assign(Object.assign({}, acc), el)), {}));
     res.json(products.map((product) => datetime_functions_1.changeTimezoneObject(product.toJSON(), req['tz'])));
@@ -130,7 +131,7 @@ const getProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     const { id } = req.params;
     const product = yield product_1.default.findOne({
         where: {
-            $and: [{ id: id }, { idCustomer: req['user'].idCustomer }]
+            [sequelize_1.Op.and]: [{ id: id }, { idCustomer: req['user'].idCustomer }]
         }
     });
     if (!product) {
@@ -148,7 +149,7 @@ const patchProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     try {
         const product = yield product_1.default.findOne({
             where: {
-                $and: [{ id: id }, { idCustomer: req['user'].idCustomer }]
+                [sequelize_1.Op.and]: [{ id: id }, { idCustomer: req['user'].idCustomer }]
             }
         });
         if (!product) {
@@ -238,7 +239,7 @@ const deleteProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         const { id } = req.params;
         const product = yield product_1.default.findOne({
             where: {
-                $and: [{ id: id }, { idCustomer: req['user'].idCustomer }]
+                [sequelize_1.Op.and]: [{ id: id }, { idCustomer: req['user'].idCustomer }]
             }
         });
         if (!product) {

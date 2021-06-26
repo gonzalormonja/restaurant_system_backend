@@ -2,13 +2,49 @@ import { Request, Response } from 'express';
 import Category from '../models/category';
 import Product from '../models/product';
 import { changeTimezoneObject } from '../utils/datetime-functions';
+const { Op } = require('sequelize');
 
 export const getCategories = async (req: Request, res: Response) => {
   try {
-    const categories = await Category.findAll({
-      where: { idCustomer: req['user'].idCustomer },
-      include: [{ model: Category }, { model: Product }]
+    let { search, pageNumber, pageSize, columnOrder, order, idCategories } = req.query as any;
+    const pipeline: any[] = [];
+
+    if (search) {
+      const searchQuery = { [Op.like]: `%${search}%` };
+      pipeline.push({
+        where: {
+          name: searchQuery
+        }
+      });
+    }
+    if (idCategories) {
+      pipeline.push({
+        idcategory: { [Op.in]: [idCategories] }
+      });
+    }
+    if (pageNumber && pageSize) {
+      pipeline.push(
+        {
+          offset: Number(pageNumber) * Number(pageSize)
+        },
+        {
+          limit: Number(pageSize)
+        }
+      );
+    }
+    if (!columnOrder) {
+      columnOrder = 'id';
+    }
+    if (!order) {
+      order = 'desc';
+    }
+    pipeline.push({
+      order: [[columnOrder, order]]
     });
+    pipeline.push({
+      include: [{ model: Category }]
+    });
+    const categories = await Category.findAll(pipeline.reduce((acc, el) => ({ ...acc, ...el }), {}));
     res.json(categories.map((category) => changeTimezoneObject(category.toJSON(), req['tz'])));
   } catch (error) {
     console.log(error);
@@ -22,7 +58,7 @@ export const postCategory = async (req: Request, res: Response) => {
   try {
     const { body } = req;
     const category = await Category.create({ ...body, idCustomer: req['user'].idCustomer });
-    changeTimezoneObject(category.toJSON(), req['tz']);
+    res.json(changeTimezoneObject(category.toJSON(), req['tz']));
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -36,7 +72,7 @@ export const getCategory = async (req: Request, res: Response) => {
 
   const category = await Category.findOne({
     where: {
-      $and: [
+      [Op.and]: [
         { id: id },
         {
           idCustomer: req['user'].idCustomer
@@ -61,7 +97,7 @@ export const putCategory = async (req: Request, res: Response) => {
   try {
     const category = await Category.findOne({
       where: {
-        $and: [
+        [Op.and]: [
           { id: id },
           {
             idCustomer: req['user'].idCustomer
@@ -90,7 +126,7 @@ export const deleteCategory = async (req: Request, res: Response) => {
     const { id } = req.params;
     const category = await Category.findOne({
       where: {
-        $and: [
+        [Op.and]: [
           { id: id },
           {
             idCustomer: req['user'].idCustomer

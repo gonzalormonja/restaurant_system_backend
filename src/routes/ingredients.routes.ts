@@ -16,10 +16,10 @@ router.get(
   [
     isAuth,
     query('search', 'El campo de search debe ser tipo string').isString().optional({ nullable: true }),
-    query('start', 'El campo start debe ser numerico').isInt().optional({ nullable: true }),
-    query('limit', 'El campo limit debe ser numerico').isInt().optional({ nullable: true }),
+    query('pageNumber', 'El número de página debe ser numerico').isInt().optional({ nullable: true }),
+    query('pageSize', 'El tamaño de página debe ser numerico').isInt().optional({ nullable: true }),
     query('columnOrder', 'El campo columnOrder debe ser tipo string').isString().optional({ nullable: true }),
-    query('order', 'Los valores permitidos son ASC o DESC').isIn(['ASC', 'DESC']).optional({ nullable: true }),
+    query('order', 'Los valores permitidos son asc o desc').isIn(['asc', 'desc', '']).optional({ nullable: true }),
     validate_fields
   ],
   getIngredients
@@ -34,7 +34,9 @@ router.post(
   [
     isAuth,
     body('name', 'El nombre es obligatorio').isString().notEmpty(),
-    body('unit_of_measure', 'La unidad de medida debe ser de tipo string').isString().optional({ nullable: true }),
+    body('unit_of_measure', 'La unidad de medida es obligatoria')
+      .isString()
+      .isIn(['weight', 'liter', 'length', 'unit']),
     validate_fields
   ],
   postIngredient

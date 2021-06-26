@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { Op } from 'sequelize';
 import TimeOfDay from '../models/timesOfDay';
 import { changeTimezoneObject, convert_stringHour_to_date } from '../utils/datetime-functions';
 
@@ -39,7 +40,7 @@ export const getTimeOfDay = async (req: Request, res: Response) => {
 
   const timeOfDay = await TimeOfDay.findOne({
     where: {
-      $and: [
+      [Op.and]: [
         { id: id },
         {
           idCustomer: req['user'].idCustomer
@@ -64,7 +65,7 @@ export const putTimeOfDay = async (req: Request, res: Response) => {
   try {
     const timeOfDay = await TimeOfDay.findOne({
       where: {
-        $and: [
+        [Op.and]: [
           { id: id },
           {
             idCustomer: req['user'].idCustomer
@@ -93,7 +94,7 @@ export const deleteTimeOfDay = async (req: Request, res: Response) => {
     const { id } = req.params;
     const timeOfDay = await TimeOfDay.findOne({
       where: {
-        $and: [
+        [Op.and]: [
           { id: id },
           {
             idCustomer: req['user'].idCustomer
