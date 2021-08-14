@@ -9,7 +9,7 @@ import {
   putCategory
 } from '../controllers/categories.controllers';
 import isAuth from '../middlewares/isAuth';
-import { validateCategories } from '../middlewares/db_validators';
+import { validateCategories, validateCategory } from '../middlewares/db_validators';
 const router = Router();
 
 router.get(
@@ -32,10 +32,24 @@ router.get(
   [isAuth, param('id', 'El id debe ser de tipo numerico y es obligatorio').isInt().notEmpty(), validate_fields],
   getCategory
 );
-router.post('/', [isAuth, body('name', 'El nombre es obligatorio').notEmpty(), validate_fields], postCategory);
+router.post(
+  '/',
+  [
+    isAuth,
+    body('name', 'El nombre es obligatorio').notEmpty(),
+    query('idCategory').isNumeric().custom(validateCategory).optional({ nullable: true }),
+    validate_fields
+  ],
+  postCategory
+);
 router.put(
   '/:id',
-  [isAuth, param('id', 'El id debe ser de tipo numerico y es obligatorio').isInt().notEmpty(), validate_fields],
+  [
+    isAuth,
+    param('id', 'El id debe ser de tipo numerico y es obligatorio').isInt().notEmpty(),
+    query('idCategory').isNumeric().custom(validateCategory).optional({ nullable: true }),
+    validate_fields
+  ],
   putCategory
 );
 router.delete(

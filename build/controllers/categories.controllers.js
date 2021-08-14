@@ -66,7 +66,7 @@ exports.getCategories = getCategories;
 const postCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { body } = req;
-        const category = yield category_1.default.create(Object.assign(Object.assign({}, body), { idCustomer: req['user'].idCustomer }));
+        const category = yield category_1.default.create(Object.assign(Object.assign({}, body), { idCategory: body.idCategory, idCustomer: req['user'].idCustomer }));
         res.json(datetime_functions_1.changeTimezoneObject(category.toJSON(), req['tz']));
     }
     catch (error) {

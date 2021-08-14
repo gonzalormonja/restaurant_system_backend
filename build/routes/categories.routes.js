@@ -21,8 +21,18 @@ router.get('/', [
     validate_fields_1.validate_fields
 ], categories_controllers_1.getCategories);
 router.get('/:id', [isAuth_1.default, express_validator_1.param('id', 'El id debe ser de tipo numerico y es obligatorio').isInt().notEmpty(), validate_fields_1.validate_fields], categories_controllers_1.getCategory);
-router.post('/', [isAuth_1.default, express_validator_1.body('name', 'El nombre es obligatorio').notEmpty(), validate_fields_1.validate_fields], categories_controllers_1.postCategory);
-router.put('/:id', [isAuth_1.default, express_validator_1.param('id', 'El id debe ser de tipo numerico y es obligatorio').isInt().notEmpty(), validate_fields_1.validate_fields], categories_controllers_1.putCategory);
+router.post('/', [
+    isAuth_1.default,
+    express_validator_1.body('name', 'El nombre es obligatorio').notEmpty(),
+    express_validator_1.query('idCategory').isNumeric().custom(db_validators_1.validateCategory).optional({ nullable: true }),
+    validate_fields_1.validate_fields
+], categories_controllers_1.postCategory);
+router.put('/:id', [
+    isAuth_1.default,
+    express_validator_1.param('id', 'El id debe ser de tipo numerico y es obligatorio').isInt().notEmpty(),
+    express_validator_1.query('idCategory').isNumeric().custom(db_validators_1.validateCategory).optional({ nullable: true }),
+    validate_fields_1.validate_fields
+], categories_controllers_1.putCategory);
 router.delete('/:id', [
     isAuth_1.default,
     express_validator_1.param('id', 'El id debe ser de tipo numerico y es obligatorio').isInt().notEmpty(),

@@ -57,7 +57,11 @@ export const getCategories = async (req: Request, res: Response) => {
 export const postCategory = async (req: Request, res: Response) => {
   try {
     const { body } = req;
-    const category = await Category.create({ ...body, idCustomer: req['user'].idCustomer });
+    const category = await Category.create({
+      ...body,
+      idCategory: body.idCategory,
+      idCustomer: req['user'].idCustomer
+    });
     res.json(changeTimezoneObject(category.toJSON(), req['tz']));
   } catch (error) {
     console.log(error);
