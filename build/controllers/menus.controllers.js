@@ -12,7 +12,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findMenuByName = exports.deleteMenu = exports.putMenu = exports.getMenu = exports.postMenu = exports.getMenus = void 0;
 const category_1 = __importDefault(require("../models/category"));
 const characteristic_1 = __importDefault(require("../models/characteristic"));
 const ingredient_1 = __importDefault(require("../models/ingredient"));
@@ -21,7 +20,7 @@ const menuCharacteristic_1 = __importDefault(require("../models/menuCharacterist
 const menuGarnish_1 = __importDefault(require("../models/menuGarnish"));
 const menuIngredient_1 = __importDefault(require("../models/menuIngredient"));
 const price_1 = __importDefault(require("../models/price"));
-const getMenus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getMenus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const menus = yield menu_1.default.findAll({
         include: [
             { model: category_1.default },
@@ -34,8 +33,7 @@ const getMenus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     });
     res.json(menus);
 });
-exports.getMenus = getMenus;
-const postMenu = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.postMenu = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c;
     try {
         const { body } = req;
@@ -86,8 +84,7 @@ const postMenu = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
     }
 });
-exports.postMenu = postMenu;
-const getMenu = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getMenu = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const menu = yield menu_1.default.findByPk(id);
     if (!menu) {
@@ -97,8 +94,7 @@ const getMenu = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     res.json(menu);
 });
-exports.getMenu = getMenu;
-const putMenu = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.putMenu = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const { body } = req;
     try {
@@ -118,8 +114,7 @@ const putMenu = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
     }
 });
-exports.putMenu = putMenu;
-const deleteMenu = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.deleteMenu = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
         const menu = yield menu_1.default.findByPk(id);
@@ -138,8 +133,7 @@ const deleteMenu = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         });
     }
 });
-exports.deleteMenu = deleteMenu;
-const findMenuByName = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.findMenuByName = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name } = req.body;
         const menus = yield menu_1.default.findAll({
@@ -156,5 +150,4 @@ const findMenuByName = (req, res) => __awaiter(void 0, void 0, void 0, function*
         });
     }
 });
-exports.findMenuByName = findMenuByName;
 //# sourceMappingURL=menus.controllers.js.map

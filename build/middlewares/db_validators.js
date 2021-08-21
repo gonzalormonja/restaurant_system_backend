@@ -12,12 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateGarnishes = exports.validateCharacteristics = exports.validateIngredients = exports.validateCategory = void 0;
 const category_1 = __importDefault(require("../models/category"));
 const characteristic_1 = __importDefault(require("../models/characteristic"));
 const ingredient_1 = __importDefault(require("../models/ingredient"));
 const menu_1 = __importDefault(require("../models/menu"));
-const validateCategory = (idCategory) => __awaiter(void 0, void 0, void 0, function* () {
+exports.validateCategory = (idCategory) => __awaiter(void 0, void 0, void 0, function* () {
     if (idCategory) {
         const existCategory = yield category_1.default.findByPk(idCategory);
         if (!existCategory) {
@@ -25,8 +24,7 @@ const validateCategory = (idCategory) => __awaiter(void 0, void 0, void 0, funct
         }
     }
 });
-exports.validateCategory = validateCategory;
-const validateIngredients = (ingredients) => __awaiter(void 0, void 0, void 0, function* () {
+exports.validateIngredients = (ingredients) => __awaiter(void 0, void 0, void 0, function* () {
     if (ingredients) {
         yield Promise.all(ingredients.map((ingredient) => __awaiter(void 0, void 0, void 0, function* () {
             const existIngredient = yield ingredient_1.default.findByPk(ingredient.idIngredient);
@@ -36,8 +34,7 @@ const validateIngredients = (ingredients) => __awaiter(void 0, void 0, void 0, f
         })));
     }
 });
-exports.validateIngredients = validateIngredients;
-const validateCharacteristics = (idCharacteristics) => __awaiter(void 0, void 0, void 0, function* () {
+exports.validateCharacteristics = (idCharacteristics) => __awaiter(void 0, void 0, void 0, function* () {
     if (idCharacteristics) {
         yield Promise.all(idCharacteristics.map((idCharacteristic) => __awaiter(void 0, void 0, void 0, function* () {
             const existCharacteristic = yield characteristic_1.default.findByPk(idCharacteristic);
@@ -47,8 +44,7 @@ const validateCharacteristics = (idCharacteristics) => __awaiter(void 0, void 0,
         })));
     }
 });
-exports.validateCharacteristics = validateCharacteristics;
-const validateGarnishes = (garnishes) => __awaiter(void 0, void 0, void 0, function* () {
+exports.validateGarnishes = (garnishes) => __awaiter(void 0, void 0, void 0, function* () {
     if (garnishes) {
         yield Promise.all(garnishes.map((garnish) => __awaiter(void 0, void 0, void 0, function* () {
             const existGarnish = yield menu_1.default.findByPk(garnish.id);
@@ -61,5 +57,4 @@ const validateGarnishes = (garnishes) => __awaiter(void 0, void 0, void 0, funct
         })));
     }
 });
-exports.validateGarnishes = validateGarnishes;
 //# sourceMappingURL=db_validators.js.map

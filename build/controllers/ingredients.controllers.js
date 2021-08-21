@@ -12,9 +12,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteIngredient = exports.putIngredient = exports.getIngredient = exports.postIngredient = exports.getIngredients = void 0;
 const ingredient_1 = __importDefault(require("../models/ingredient"));
-const getIngredients = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getIngredients = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const ingredients = yield ingredient_1.default.findAll();
         res.json(ingredients);
@@ -26,8 +25,7 @@ const getIngredients = (req, res) => __awaiter(void 0, void 0, void 0, function*
         });
     }
 });
-exports.getIngredients = getIngredients;
-const postIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.postIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { body } = req;
         const category = ingredient_1.default.build(body);
@@ -41,8 +39,7 @@ const postIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function*
         });
     }
 });
-exports.postIngredient = postIngredient;
-const getIngredient = (req, res) => {
+exports.getIngredient = (req, res) => {
     const { id } = req.params;
     const category = ingredient_1.default.findByPk(id);
     if (!category) {
@@ -52,8 +49,7 @@ const getIngredient = (req, res) => {
     }
     res.json(category);
 };
-exports.getIngredient = getIngredient;
-const putIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.putIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const { body } = req;
     try {
@@ -73,8 +69,7 @@ const putIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         });
     }
 });
-exports.putIngredient = putIngredient;
-const deleteIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.deleteIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
         const category = yield ingredient_1.default.findByPk(id);
@@ -93,5 +88,4 @@ const deleteIngredient = (req, res) => __awaiter(void 0, void 0, void 0, functio
         });
     }
 });
-exports.deleteIngredient = deleteIngredient;
 //# sourceMappingURL=ingredients.controllers.js.map

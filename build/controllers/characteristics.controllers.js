@@ -12,9 +12,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteCharacteristic = exports.putCharacteristic = exports.getCharacteristic = exports.postCharacteristic = exports.getCharacteristics = void 0;
 const characteristic_1 = __importDefault(require("../models/characteristic"));
-const getCharacteristics = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getCharacteristics = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const characteristics = yield characteristic_1.default.findAll();
         res.json(characteristics);
@@ -26,8 +25,7 @@ const getCharacteristics = (req, res) => __awaiter(void 0, void 0, void 0, funct
         });
     }
 });
-exports.getCharacteristics = getCharacteristics;
-const postCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.postCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { body } = req;
         const category = characteristic_1.default.build(body);
@@ -41,8 +39,7 @@ const postCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, funct
         });
     }
 });
-exports.postCharacteristic = postCharacteristic;
-const getCharacteristic = (req, res) => {
+exports.getCharacteristic = (req, res) => {
     const { id } = req.params;
     const category = characteristic_1.default.findByPk(id);
     if (!category) {
@@ -52,8 +49,7 @@ const getCharacteristic = (req, res) => {
     }
     res.json(category);
 };
-exports.getCharacteristic = getCharacteristic;
-const putCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.putCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const { body } = req;
     try {
@@ -73,8 +69,7 @@ const putCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, functi
         });
     }
 });
-exports.putCharacteristic = putCharacteristic;
-const deleteCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.deleteCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
         const category = yield characteristic_1.default.findByPk(id);
@@ -93,5 +88,4 @@ const deleteCharacteristic = (req, res) => __awaiter(void 0, void 0, void 0, fun
         });
     }
 });
-exports.deleteCharacteristic = deleteCharacteristic;
 //# sourceMappingURL=characteristics.controllers.js.map

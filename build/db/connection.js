@@ -5,7 +5,6 @@ const db = new sequelize_1.Sequelize('restaurant_system', 'restaurant', 'passwor
     host: 'localhost',
     dialect: 'mysql',
     port: 3306,
-    // logging: false
 });
 exports.default = db;
 //# sourceMappingURL=connection.js.map

@@ -12,10 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteCategory = exports.putCategory = exports.getCategory = exports.postCategory = exports.getCategories = void 0;
 const category_1 = __importDefault(require("../models/category"));
 const menu_1 = __importDefault(require("../models/menu"));
-const getCategories = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getCategories = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const categories = yield category_1.default.findAll({
             include: [
@@ -32,8 +31,7 @@ const getCategories = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         });
     }
 });
-exports.getCategories = getCategories;
-const postCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.postCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { body } = req;
         const category = category_1.default.build(body);
@@ -47,8 +45,7 @@ const postCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         });
     }
 });
-exports.postCategory = postCategory;
-const getCategory = (req, res) => {
+exports.getCategory = (req, res) => {
     const { id } = req.params;
     const category = category_1.default.findByPk(id);
     if (!category) {
@@ -58,8 +55,7 @@ const getCategory = (req, res) => {
     }
     res.json(category);
 };
-exports.getCategory = getCategory;
-const putCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.putCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const { body } = req;
     try {
@@ -79,8 +75,7 @@ const putCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         });
     }
 });
-exports.putCategory = putCategory;
-const deleteCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.deleteCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
         const category = yield category_1.default.findByPk(id);
@@ -99,5 +94,4 @@ const deleteCategory = (req, res) => __awaiter(void 0, void 0, void 0, function*
         });
     }
 });
-exports.deleteCategory = deleteCategory;
 //# sourceMappingURL=categories.controllers.js.map
