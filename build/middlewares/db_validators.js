@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const category_1 = __importDefault(require("../models/category"));
 const characteristic_1 = __importDefault(require("../models/characteristic"));
 const ingredient_1 = __importDefault(require("../models/ingredient"));
-const menu_1 = __importDefault(require("../models/menu"));
+const product_1 = __importDefault(require("../models/product"));
 exports.validateCategory = (idCategory) => __awaiter(void 0, void 0, void 0, function* () {
     if (idCategory) {
         const existCategory = yield category_1.default.findByPk(idCategory);
@@ -23,6 +23,18 @@ exports.validateCategory = (idCategory) => __awaiter(void 0, void 0, void 0, fun
             throw new Error(`La categoria ${idCategory} no existe`);
         }
     }
+    return true;
+});
+exports.validateCategories = (categories) => __awaiter(void 0, void 0, void 0, function* () {
+    if (categories) {
+        yield Promise.all(categories.map((category) => __awaiter(void 0, void 0, void 0, function* () {
+            const existcategory = yield category_1.default.findByPk(category);
+            if (!existcategory) {
+                throw new Error(`La categoria ${category} no existe`);
+            }
+        })));
+    }
+    return true;
 });
 exports.validateIngredients = (ingredients) => __awaiter(void 0, void 0, void 0, function* () {
     if (ingredients) {
@@ -33,6 +45,7 @@ exports.validateIngredients = (ingredients) => __awaiter(void 0, void 0, void 0,
             }
         })));
     }
+    return true;
 });
 exports.validateCharacteristics = (idCharacteristics) => __awaiter(void 0, void 0, void 0, function* () {
     if (idCharacteristics) {
@@ -43,18 +56,20 @@ exports.validateCharacteristics = (idCharacteristics) => __awaiter(void 0, void 
             }
         })));
     }
+    return true;
 });
 exports.validateGarnishes = (garnishes) => __awaiter(void 0, void 0, void 0, function* () {
     if (garnishes) {
         yield Promise.all(garnishes.map((garnish) => __awaiter(void 0, void 0, void 0, function* () {
-            const existGarnish = yield menu_1.default.findByPk(garnish.id);
+            const existGarnish = yield product_1.default.findByPk(garnish.id);
             if (!existGarnish) {
                 throw new Error(`La guarnicion ${garnish.id} no existe`);
             }
             if (!existGarnish.isGarnish) {
-                throw new Error(`El menu ${garnish.name} no es una guarnicion valida`);
+                throw new Error(`El product ${garnish.name} no es una guarnicion valida`);
             }
         })));
     }
+    return true;
 });
 //# sourceMappingURL=db_validators.js.map
