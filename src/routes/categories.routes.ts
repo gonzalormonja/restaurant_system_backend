@@ -54,12 +54,7 @@ router.put(
 );
 router.delete(
   '/:id',
-  [
-    isAuth,
-    param('id', 'El id debe ser de tipo numerico y es obligatorio').isInt().notEmpty(),
-    body('name', 'El nombre es obligatorio').notEmpty(),
-    validate_fields
-  ],
+  [isAuth, param('id', 'El id debe ser de tipo numerico y es obligatorio').isInt().notEmpty(), validate_fields],
   deleteCategory
 );
 

@@ -13,7 +13,14 @@ export const getCategories = async (req: Request, res: Response) => {
       const searchQuery = { [Op.like]: `%${search}%` };
       pipeline.push({
         where: {
-          name: searchQuery
+          name: searchQuery,
+          state: 1
+        }
+      });
+    } else {
+      pipeline.push({
+        where: {
+          state: 1
         }
       });
     }
@@ -92,7 +99,7 @@ export const getCategory = async (req: Request, res: Response) => {
     });
   }
 
-  changeTimezoneObject(category.toJSON(), req['tz']);
+  res.json(changeTimezoneObject(category.toJSON(), req['tz']));
 };
 
 export const putCategory = async (req: Request, res: Response) => {
@@ -100,7 +107,7 @@ export const putCategory = async (req: Request, res: Response) => {
   const { body } = req;
 
   try {
-    const category = await Category.findOne({
+    let category = await Category.findOne({
       where: {
         [Op.and]: [
           { id: id },
@@ -117,7 +124,8 @@ export const putCategory = async (req: Request, res: Response) => {
     }
 
     await category.update(body);
-    changeTimezoneObject(category.toJSON(), req['tz']);
+    category = await Category.findByPk(category.id, { include: [Category] });
+    res.json(changeTimezoneObject(category.toJSON(), req['tz']));
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -146,7 +154,7 @@ export const deleteCategory = async (req: Request, res: Response) => {
     }
 
     await category.update({ state: false });
-    return changeTimezoneObject(category.toJSON(), req['tz']);
+    res.json(true);
   } catch (error) {
     console.log(error);
     res.status(500).json({
