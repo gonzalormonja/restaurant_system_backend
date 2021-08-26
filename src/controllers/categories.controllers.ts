@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
+import { Sequelize } from 'sequelize';
 import Category from '../models/category';
-import Product from '../models/product';
 import { changeTimezoneObject } from '../utils/datetime-functions';
 const { Op } = require('sequelize');
 
@@ -41,18 +41,31 @@ export const getCategories = async (req: Request, res: Response) => {
     }
     if (!columnOrder) {
       columnOrder = 'id';
+    } else {
+      switch (columnOrder) {
+        case 'category':
+          columnOrder = 'category.name';
+      }
     }
     if (!order) {
       order = 'desc';
     }
     pipeline.push({
-      order: [[columnOrder, order]]
+      order: [[Sequelize.literal(columnOrder), order]]
     });
     pipeline.push({
       include: [{ model: Category }]
     });
     const categories = await Category.findAll(pipeline.reduce((acc, el) => ({ ...acc, ...el }), {}));
-    res.json(categories.map((category) => changeTimezoneObject(category.toJSON(), req['tz'])));
+    const all_categories = await Category.count({
+      where: {
+        state: 1
+      }
+    });
+    res.json({
+      totalData: all_categories,
+      data: categories.map((category) => changeTimezoneObject(category.toJSON(), req['tz']))
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({
