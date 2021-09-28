@@ -23,8 +23,9 @@ const productIngredient_1 = __importDefault(require("../models/productIngredient
 const price_1 = __importDefault(require("../models/price"));
 const datetime_functions_1 = require("../utils/datetime-functions");
 const sequelize_1 = require("sequelize");
+const sequelize_2 = require("sequelize");
 const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let { search, start, limit, columnOrder, order, idCategories } = req.query;
+    let { search, pageNumber, pageSize, columnOrder, order, idCategories } = req.query;
     const pipeline = [];
     if (search) {
         const searchQuery = { [sequelize_1.Op.like]: `%${search}%` };
@@ -33,8 +34,16 @@ const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 { [sequelize_1.Op.or]: [{ name: searchQuery }, { short_name: searchQuery }, { bar_code: searchQuery }] },
                 {
                     idCustomer: req['user'].idCustomer
-                }
+                },
+                { state: 1 }
             ]
+        });
+    }
+    else {
+        pipeline.push({
+            where: {
+                state: 1
+            }
         });
     }
     if (idCategories) {
@@ -42,14 +51,11 @@ const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             idcategory: { [sequelize_1.Op.in]: [idCategories] }
         });
     }
-    if (start) {
+    if (pageNumber && pageSize) {
         pipeline.push({
-            offset: start
-        });
-    }
-    if (limit) {
-        pipeline.push({
-            limit: Number(limit)
+            offset: Number(pageNumber) * Number(pageSize)
+        }, {
+            limit: Number(pageSize)
         });
     }
     if (!columnOrder) {
@@ -59,7 +65,7 @@ const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         order = 'desc';
     }
     pipeline.push({
-        order: [[columnOrder, order]]
+        order: [[sequelize_2.Sequelize.literal(columnOrder), order]]
     });
     pipeline.push({
         include: [
@@ -72,14 +78,22 @@ const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         ]
     });
     const products = yield product_1.default.findAll(pipeline.reduce((acc, el) => (Object.assign(Object.assign({}, acc), el)), {}));
-    res.json(products.map((product) => datetime_functions_1.changeTimezoneObject(product.toJSON(), req['tz'])));
+    const totalData = yield product_1.default.count({
+        where: {
+            state: 1
+        }
+    });
+    res.json({
+        totalData: totalData,
+        data: products.map((product) => datetime_functions_1.changeTimezoneObject(product.toJSON(), req['tz']))
+    });
 });
 exports.getProducts = getProducts;
 const postProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c;
     try {
         const { body } = req;
-        const product = yield product_1.default.create(Object.assign(Object.assign({}, body), { idCustomer: req['user'].idCustomer }));
+        let product = yield product_1.default.create(Object.assign(Object.assign({}, body), { idCustomer: req['user'].idCustomer }));
         //* add ingredients
         (_a = body.ingredients) === null || _a === void 0 ? void 0 : _a.map((ingredient) => __awaiter(void 0, void 0, void 0, function* () {
             const ingredientRecord = yield ingredient_1.default.findByPk(ingredient.id);
@@ -117,6 +131,7 @@ const postProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         }));
         //* add price
         yield price_1.default.create({ price: body.price ? body.price : 0, idProduct: product.id });
+        product = yield product_1.default.findByPk(product.id, { include: [category_1.default] });
         res.json(datetime_functions_1.changeTimezoneObject(product.toJSON(), req['tz']));
     }
     catch (error) {
@@ -147,7 +162,7 @@ const patchProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     const { id } = req.params;
     const { body } = req;
     try {
-        const product = yield product_1.default.findOne({
+        let product = yield product_1.default.findOne({
             where: {
                 [sequelize_1.Op.and]: [{ id: id }, { idCustomer: req['user'].idCustomer }]
             }
@@ -224,6 +239,7 @@ const patchProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             //* add price
             yield price_1.default.create({ price: body.price ? body.price : 0, idProduct: product.id });
         }
+        product = yield product_1.default.findByPk(product.id, { include: [category_1.default] });
         res.json(datetime_functions_1.changeTimezoneObject(product.toJSON(), req['tz']));
     }
     catch (error) {

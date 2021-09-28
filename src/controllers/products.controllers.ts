@@ -9,9 +9,10 @@ import ProductIngredient from '../models/productIngredient';
 import Price from '../models/price';
 import { changeTimezoneObject } from '../utils/datetime-functions';
 import { Op } from 'sequelize';
+import { Sequelize } from 'sequelize';
 
 export const getProducts = async (req: Request, res: Response) => {
-  let { search, start, limit, columnOrder, order, idCategories } = req.query;
+  let { search, pageNumber, pageSize, columnOrder, order, idCategories } = req.query as any;
 
   const pipeline: any[] = [];
 
@@ -22,8 +23,15 @@ export const getProducts = async (req: Request, res: Response) => {
         { [Op.or]: [{ name: searchQuery }, { short_name: searchQuery }, { bar_code: searchQuery }] },
         {
           idCustomer: req['user'].idCustomer
-        }
+        },
+        { state: 1 }
       ]
+    });
+  } else {
+    pipeline.push({
+      where: {
+        state: 1
+      }
     });
   }
   if (idCategories) {
@@ -31,15 +39,15 @@ export const getProducts = async (req: Request, res: Response) => {
       idcategory: { [Op.in]: [idCategories] }
     });
   }
-  if (start) {
-    pipeline.push({
-      offset: start
-    });
-  }
-  if (limit) {
-    pipeline.push({
-      limit: Number(limit)
-    });
+  if (pageNumber && pageSize) {
+    pipeline.push(
+      {
+        offset: Number(pageNumber) * Number(pageSize)
+      },
+      {
+        limit: Number(pageSize)
+      }
+    );
   }
   if (!columnOrder) {
     columnOrder = 'id';
@@ -48,7 +56,7 @@ export const getProducts = async (req: Request, res: Response) => {
     order = 'desc';
   }
   pipeline.push({
-    order: [[columnOrder, order]]
+    order: [[Sequelize.literal(columnOrder), order]]
   });
   pipeline.push({
     include: [
@@ -61,14 +69,22 @@ export const getProducts = async (req: Request, res: Response) => {
     ]
   });
   const products = await Product.findAll(pipeline.reduce((acc, el) => ({ ...acc, ...el }), {}));
-  res.json(products.map((product) => changeTimezoneObject(product.toJSON(), req['tz'])));
+  const totalData = await Product.count({
+    where: {
+      state: 1
+    }
+  });
+  res.json({
+    totalData: totalData,
+    data: products.map((product) => changeTimezoneObject(product.toJSON(), req['tz']))
+  });
 };
 
 export const postProduct = async (req: Request, res: Response) => {
   try {
     const { body } = req;
 
-    const product = await Product.create({ ...body, idCustomer: req['user'].idCustomer });
+    let product = await Product.create({ ...body, idCustomer: req['user'].idCustomer });
     //* add ingredients
     body.ingredients?.map(async (ingredient) => {
       const ingredientRecord = await Ingredient.findByPk(ingredient.id);
@@ -109,7 +125,7 @@ export const postProduct = async (req: Request, res: Response) => {
 
     //* add price
     await Price.create({ price: body.price ? body.price : 0, idProduct: product.id });
-
+    product = await Product.findByPk(product.id, { include: [Category] });
     res.json(changeTimezoneObject(product.toJSON(), req['tz']));
   } catch (error) {
     console.log(error);
@@ -141,7 +157,7 @@ export const patchProduct = async (req: Request, res: Response) => {
   const { body } = req;
 
   try {
-    const product = await Product.findOne({
+    let product = await Product.findOne({
       where: {
         [Op.and]: [{ id: id }, { idCustomer: req['user'].idCustomer }]
       }
@@ -224,6 +240,7 @@ export const patchProduct = async (req: Request, res: Response) => {
       //* add price
       await Price.create({ price: body.price ? body.price : 0, idProduct: product.id });
     }
+    product = await Product.findByPk(product.id, { include: [Category] });
 
     res.json(changeTimezoneObject(product.toJSON(), req['tz']));
   } catch (error) {
