@@ -35,7 +35,26 @@ export const getIngredients = async (req: Request, res: Response) => {
       order: [[columnOrder, order]]
     });
     const ingredients = await Ingredient.findAll(pipeline.reduce((acc, el) => ({ ...acc, ...el }), {}));
-    res.json(ingredients.map((ingredient) => changeTimezoneObject(ingredient.toJSON(), req['tz'])));
+    let totalData = 0;
+    if (search) {
+      const searchQuery = { [Op.like]: `%${search}%` };
+      totalData = await Ingredient.count({
+        where: {
+          [Op.and]: [{ name: searchQuery }, { idCustomer: req['user'].idCustomer }]
+        }
+      });
+    } else {
+      totalData = await Ingredient.count({
+        where: {
+          idCustomer: req['user'].idCustomer
+        }
+      });
+    }
+
+    res.json({
+      totalData: totalData,
+      data: ingredients.map((ingredient) => changeTimezoneObject(ingredient.toJSON(), req['tz']))
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -114,7 +133,7 @@ export const putIngredient = async (req: Request, res: Response) => {
 export const deleteIngredient = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const ingredient = await Ingredient.findOne({
+    const ingredient = await Ingredient.destroy({
       where: {
         [Op.and]: [
           { id: id },
@@ -130,8 +149,9 @@ export const deleteIngredient = async (req: Request, res: Response) => {
       });
     }
 
-    await ingredient.update({ state: false });
-    return res.json(changeTimezoneObject(ingredient.toJSON(), req['tz']));
+    // await ingredient.update({ state: false });
+    // return res.json(changeTimezoneObject(ingredient.toJSON(), req['tz']));
+    res.json({ ok: true });
   } catch (error) {
     console.log(error);
     res.status(500).json({

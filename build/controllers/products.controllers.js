@@ -30,13 +30,15 @@ const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     if (search) {
         const searchQuery = { [sequelize_1.Op.like]: `%${search}%` };
         pipeline.push({
-            [sequelize_1.Op.and]: [
-                { [sequelize_1.Op.or]: [{ name: searchQuery }, { short_name: searchQuery }, { bar_code: searchQuery }] },
-                {
-                    idCustomer: req['user'].idCustomer
-                },
-                { state: 1 }
-            ]
+            where: {
+                [sequelize_1.Op.and]: [
+                    { [sequelize_1.Op.or]: [{ name: searchQuery }, { short_name: searchQuery }, { bar_code: searchQuery }] },
+                    {
+                        idCustomer: req['user'].idCustomer
+                    },
+                    { state: 1 }
+                ]
+            }
         });
     }
     else {
@@ -78,14 +80,31 @@ const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         ]
     });
     const products = yield product_1.default.findAll(pipeline.reduce((acc, el) => (Object.assign(Object.assign({}, acc), el)), {}));
-    const totalData = yield product_1.default.count({
-        where: {
-            state: 1
-        }
-    });
+    let totalData = 0;
+    if (search) {
+        const searchQuery = { [sequelize_1.Op.like]: `%${search}%` };
+        totalData = yield product_1.default.count({
+            where: {
+                [sequelize_1.Op.and]: [
+                    { [sequelize_1.Op.or]: [{ name: searchQuery }, { short_name: searchQuery }, { bar_code: searchQuery }] },
+                    {
+                        idCustomer: req['user'].idCustomer
+                    },
+                    { state: 1 }
+                ]
+            }
+        });
+    }
+    else {
+        totalData = yield product_1.default.count({
+            where: {
+                state: 1
+            }
+        });
+    }
     res.json({
         totalData: totalData,
-        data: products.map((product) => datetime_functions_1.changeTimezoneObject(product.toJSON(), req['tz']))
+        data: products.map((product) => (0, datetime_functions_1.changeTimezoneObject)(product.toJSON(), req['tz']))
     });
 });
 exports.getProducts = getProducts;
@@ -132,7 +151,7 @@ const postProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         //* add price
         yield price_1.default.create({ price: body.price ? body.price : 0, idProduct: product.id });
         product = yield product_1.default.findByPk(product.id, { include: [category_1.default] });
-        res.json(datetime_functions_1.changeTimezoneObject(product.toJSON(), req['tz']));
+        res.json((0, datetime_functions_1.changeTimezoneObject)(product.toJSON(), req['tz']));
     }
     catch (error) {
         console.log(error);
@@ -154,7 +173,7 @@ const getProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             msg: `No existe un product con el id ${id}`
         });
     }
-    res.json(datetime_functions_1.changeTimezoneObject(product.toJSON(), req['tz']));
+    res.json((0, datetime_functions_1.changeTimezoneObject)(product.toJSON(), req['tz']));
 });
 exports.getProduct = getProduct;
 const patchProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -240,7 +259,7 @@ const patchProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             yield price_1.default.create({ price: body.price ? body.price : 0, idProduct: product.id });
         }
         product = yield product_1.default.findByPk(product.id, { include: [category_1.default] });
-        res.json(datetime_functions_1.changeTimezoneObject(product.toJSON(), req['tz']));
+        res.json((0, datetime_functions_1.changeTimezoneObject)(product.toJSON(), req['tz']));
     }
     catch (error) {
         console.log(error);
@@ -264,7 +283,7 @@ const deleteProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             });
         }
         yield product.update({ state: false });
-        return res.json(datetime_functions_1.changeTimezoneObject(product.toJSON(), req['tz']));
+        return res.json((0, datetime_functions_1.changeTimezoneObject)(product.toJSON(), req['tz']));
     }
     catch (error) {
         console.log(error);

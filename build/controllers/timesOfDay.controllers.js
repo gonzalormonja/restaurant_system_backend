@@ -21,7 +21,7 @@ const getTimesOfDay = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         const timesOfDay = yield timesOfDay_1.default.findAll({
             where: { idCustomer: req['user'].idCustomer }
         });
-        res.json(timesOfDay.map((timeOfDay) => datetime_functions_1.changeTimezoneObject(timeOfDay.toJSON(), req['tz'])));
+        res.json(timesOfDay.map((timeOfDay) => (0, datetime_functions_1.changeTimezoneObject)(timeOfDay.toJSON(), req['tz'])));
     }
     catch (error) {
         console.log(error);
@@ -34,8 +34,8 @@ exports.getTimesOfDay = getTimesOfDay;
 const postTimeOfDay = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { body } = req;
-        const timeOfDay = yield timesOfDay_1.default.create(Object.assign(Object.assign({}, body), { hour_start: datetime_functions_1.convert_stringHour_to_date(body['hour_start'], req['tz']), hour_end: datetime_functions_1.convert_stringHour_to_date(body['hour_end'], req['tz']), idCustomer: req['user'].idCustomer }));
-        datetime_functions_1.changeTimezoneObject(timeOfDay.toJSON(), req['tz']);
+        const timeOfDay = yield timesOfDay_1.default.create(Object.assign(Object.assign({}, body), { hour_start: (0, datetime_functions_1.convert_stringHour_to_date)(body['hour_start'], req['tz']), hour_end: (0, datetime_functions_1.convert_stringHour_to_date)(body['hour_end'], req['tz']), idCustomer: req['user'].idCustomer }));
+        (0, datetime_functions_1.changeTimezoneObject)(timeOfDay.toJSON(), req['tz']);
     }
     catch (error) {
         console.log(error);
@@ -62,7 +62,7 @@ const getTimeOfDay = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             msg: `No existe un periodo del día con el id ${id}`
         });
     }
-    datetime_functions_1.changeTimezoneObject(timeOfDay.toJSON(), req['tz']);
+    (0, datetime_functions_1.changeTimezoneObject)(timeOfDay.toJSON(), req['tz']);
 });
 exports.getTimeOfDay = getTimeOfDay;
 const putTimeOfDay = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -85,7 +85,7 @@ const putTimeOfDay = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             });
         }
         yield timeOfDay.update(body);
-        datetime_functions_1.changeTimezoneObject(timeOfDay.toJSON(), req['tz']);
+        (0, datetime_functions_1.changeTimezoneObject)(timeOfDay.toJSON(), req['tz']);
     }
     catch (error) {
         console.log(error);
@@ -114,7 +114,7 @@ const deleteTimeOfDay = (req, res) => __awaiter(void 0, void 0, void 0, function
             });
         }
         yield timeOfDay.update({ state: false });
-        return datetime_functions_1.changeTimezoneObject(timeOfDay.toJSON(), req['tz']);
+        return (0, datetime_functions_1.changeTimezoneObject)(timeOfDay.toJSON(), req['tz']);
     }
     catch (error) {
         console.log(error);

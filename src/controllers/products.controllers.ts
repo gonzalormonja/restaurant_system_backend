@@ -19,13 +19,15 @@ export const getProducts = async (req: Request, res: Response) => {
   if (search) {
     const searchQuery = { [Op.like]: `%${search}%` };
     pipeline.push({
-      [Op.and]: [
-        { [Op.or]: [{ name: searchQuery }, { short_name: searchQuery }, { bar_code: searchQuery }] },
-        {
-          idCustomer: req['user'].idCustomer
-        },
-        { state: 1 }
-      ]
+      where: {
+        [Op.and]: [
+          { [Op.or]: [{ name: searchQuery }, { short_name: searchQuery }, { bar_code: searchQuery }] },
+          {
+            idCustomer: req['user'].idCustomer
+          },
+          { state: 1 }
+        ]
+      }
     });
   } else {
     pipeline.push({
@@ -69,11 +71,28 @@ export const getProducts = async (req: Request, res: Response) => {
     ]
   });
   const products = await Product.findAll(pipeline.reduce((acc, el) => ({ ...acc, ...el }), {}));
-  const totalData = await Product.count({
-    where: {
-      state: 1
-    }
-  });
+  let totalData = 0;
+  if (search) {
+    const searchQuery = { [Op.like]: `%${search}%` };
+    totalData = await Product.count({
+      where: {
+        [Op.and]: [
+          { [Op.or]: [{ name: searchQuery }, { short_name: searchQuery }, { bar_code: searchQuery }] },
+          {
+            idCustomer: req['user'].idCustomer
+          },
+          { state: 1 }
+        ]
+      }
+    });
+  } else {
+    totalData = await Product.count({
+      where: {
+        state: 1
+      }
+    });
+  }
+
   res.json({
     totalData: totalData,
     data: products.map((product) => changeTimezoneObject(product.toJSON(), req['tz']))

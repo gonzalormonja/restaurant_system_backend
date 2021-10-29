@@ -46,7 +46,26 @@ const getIngredients = (req, res) => __awaiter(void 0, void 0, void 0, function*
             order: [[columnOrder, order]]
         });
         const ingredients = yield ingredient_1.default.findAll(pipeline.reduce((acc, el) => (Object.assign(Object.assign({}, acc), el)), {}));
-        res.json(ingredients.map((ingredient) => datetime_functions_1.changeTimezoneObject(ingredient.toJSON(), req['tz'])));
+        let totalData = 0;
+        if (search) {
+            const searchQuery = { [sequelize_1.Op.like]: `%${search}%` };
+            totalData = yield ingredient_1.default.count({
+                where: {
+                    [sequelize_1.Op.and]: [{ name: searchQuery }, { idCustomer: req['user'].idCustomer }]
+                }
+            });
+        }
+        else {
+            totalData = yield ingredient_1.default.count({
+                where: {
+                    idCustomer: req['user'].idCustomer
+                }
+            });
+        }
+        res.json({
+            totalData: totalData,
+            data: ingredients.map((ingredient) => (0, datetime_functions_1.changeTimezoneObject)(ingredient.toJSON(), req['tz']))
+        });
     }
     catch (error) {
         console.log(error);
@@ -60,7 +79,7 @@ const postIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function*
     try {
         const { body } = req;
         const ingredient = yield ingredient_1.default.create(Object.assign(Object.assign({}, body), { idCustomer: req['user'].idCustomer }));
-        res.json(datetime_functions_1.changeTimezoneObject(ingredient.toJSON(), req['tz']));
+        res.json((0, datetime_functions_1.changeTimezoneObject)(ingredient.toJSON(), req['tz']));
     }
     catch (error) {
         console.log(error);
@@ -87,7 +106,7 @@ const getIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             msg: `No existe una ingrediente con el id ${id}`
         });
     }
-    res.json(datetime_functions_1.changeTimezoneObject(ingredient.toJSON(), req['tz']));
+    res.json((0, datetime_functions_1.changeTimezoneObject)(ingredient.toJSON(), req['tz']));
 });
 exports.getIngredient = getIngredient;
 const putIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -110,7 +129,7 @@ const putIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             });
         }
         yield ingredient.update(body);
-        res.json(datetime_functions_1.changeTimezoneObject(ingredient.toJSON(), req['tz']));
+        res.json((0, datetime_functions_1.changeTimezoneObject)(ingredient.toJSON(), req['tz']));
     }
     catch (error) {
         console.log(error);
@@ -123,7 +142,7 @@ exports.putIngredient = putIngredient;
 const deleteIngredient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const ingredient = yield ingredient_1.default.findOne({
+        const ingredient = yield ingredient_1.default.destroy({
             where: {
                 [sequelize_1.Op.and]: [
                     { id: id },
@@ -138,8 +157,9 @@ const deleteIngredient = (req, res) => __awaiter(void 0, void 0, void 0, functio
                 msg: `No existe una ingrediente con el id ${id}`
             });
         }
-        yield ingredient.update({ state: false });
-        return res.json(datetime_functions_1.changeTimezoneObject(ingredient.toJSON(), req['tz']));
+        // await ingredient.update({ state: false });
+        // return res.json(changeTimezoneObject(ingredient.toJSON(), req['tz']));
+        res.json({ ok: true });
     }
     catch (error) {
         console.log(error);

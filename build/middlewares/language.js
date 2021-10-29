@@ -20,8 +20,8 @@ const language = (req, res, next) => {
         lang = "es";
         req['lang'] = lang;
     }
-    const cache = react_intl_1.createIntlCache();
-    const intl = react_intl_1.createIntl({
+    const cache = (0, react_intl_1.createIntlCache)();
+    const intl = (0, react_intl_1.createIntl)({
         locale: lang,
         messages: (lang === "es") ? es_1.default : (lang === "en") ? en_1.default : pt_1.default,
     }, cache);

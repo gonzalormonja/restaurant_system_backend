@@ -30,7 +30,7 @@ class Server {
         });
         this.middlewares = () => {
             //CORS
-            this.app.use(cors_1.default());
+            this.app.use((0, cors_1.default)());
             //Lecuta del body
             this.app.use(express_1.default.json());
             //Carpeta publica(fotos), la carpeta se llama public
@@ -45,11 +45,11 @@ class Server {
       `);
             });
         };
-        this.app = express_1.default();
+        this.app = (0, express_1.default)();
         this.port = process.env.PORT || '8000';
         this.dbConnection();
         this.middlewares();
-        routes_1.route_init(this.app);
+        (0, routes_1.route_init)(this.app);
     }
 }
 exports.default = Server;

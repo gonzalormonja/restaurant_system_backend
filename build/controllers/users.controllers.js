@@ -37,7 +37,7 @@ const signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                     msg: '[SignIn] usuario no encontrado'
                 });
             }
-            const token = generate_token_1.generate_token(user);
+            const token = (0, generate_token_1.generate_token)(user);
             user.password = null;
             res.json({
                 token: token,

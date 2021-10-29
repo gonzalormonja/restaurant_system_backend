@@ -75,7 +75,7 @@ const getCategories = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         });
         res.json({
             totalData: all_categories,
-            data: categories.map((category) => datetime_functions_1.changeTimezoneObject(category.toJSON(), req['tz']))
+            data: categories.map((category) => (0, datetime_functions_1.changeTimezoneObject)(category.toJSON(), req['tz']))
         });
     }
     catch (error) {
@@ -91,7 +91,7 @@ const postCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         const { body } = req;
         let category = yield category_1.default.create(Object.assign(Object.assign({}, body), { idCategory: body.idCategory, idCustomer: req['user'].idCustomer }));
         category = yield category_1.default.findByPk(category.id, { include: [category_1.default] });
-        res.json(datetime_functions_1.changeTimezoneObject(category.toJSON(), req['tz']));
+        res.json((0, datetime_functions_1.changeTimezoneObject)(category.toJSON(), req['tz']));
     }
     catch (error) {
         console.log(error);
@@ -118,7 +118,7 @@ const getCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             msg: `No existe una categoria con el id ${id}`
         });
     }
-    res.json(datetime_functions_1.changeTimezoneObject(category.toJSON(), req['tz']));
+    res.json((0, datetime_functions_1.changeTimezoneObject)(category.toJSON(), req['tz']));
 });
 exports.getCategory = getCategory;
 const putCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -142,7 +142,7 @@ const putCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         }
         yield category.update(body);
         category = yield category_1.default.findByPk(category.id, { include: [category_1.default] });
-        res.json(datetime_functions_1.changeTimezoneObject(category.toJSON(), req['tz']));
+        res.json((0, datetime_functions_1.changeTimezoneObject)(category.toJSON(), req['tz']));
     }
     catch (error) {
         console.log(error);

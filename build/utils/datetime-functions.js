@@ -20,7 +20,7 @@ const changeTimezoneObject = (object, tz) => {
                 .toFormat(exports.dateTimeFormat.format_date_time);
         }
         else if (typeof object[field] === 'object' && object[field]) {
-            object[field] = exports.changeTimezoneObject(object[field], tz);
+            object[field] = (0, exports.changeTimezoneObject)(object[field], tz);
         }
         else if (regExTimeDB.test(object[field])) {
             object[field] = luxon_1.DateTime.fromFormat(`${object[field]}`, exports.dateTimeFormat.format_time_bd, { zone: exports.default_tz })

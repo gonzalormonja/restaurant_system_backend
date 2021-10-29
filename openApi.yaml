@@ -118,11 +118,11 @@ paths:
           schema:
             type: string
         - in: query
-          name: start
+          name: pageNumber
           schema:
             type: number
         - in: query
-          name: limit
+          name: pageSize
           schema:
             type: number
         - in: query
@@ -358,11 +358,11 @@ paths:
           schema:
             type: string
         - in: query
-          name: start
+          name: pageNumber
           schema:
             type: number
         - in: query
-          name: limit
+          name: pageSize
           schema:
             type: number
         - in: query
@@ -503,11 +503,11 @@ paths:
           schema:
             type: string
         - in: query
-          name: start
+          name: pageNumber
           schema:
             type: number
         - in: query
-          name: limit
+          name: pageSize
           schema:
             type: number
         - in: query
