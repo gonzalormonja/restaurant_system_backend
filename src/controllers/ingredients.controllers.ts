@@ -12,7 +12,7 @@ export const getIngredients = async (req: Request, res: Response) => {
     if (search) {
       const searchQuery = { [Op.like]: `%${search}%` };
       pipeline.push({
-        [Op.and]: [{ name: searchQuery }, { idCustomer: req['user'].idCustomer }]
+        where: { [Op.and]: [{ name: searchQuery }, { idCustomer: req['user'].idCustomer }] }
       });
     }
     if (start) {

@@ -23,7 +23,7 @@ const getIngredients = (req, res) => __awaiter(void 0, void 0, void 0, function*
         if (search) {
             const searchQuery = { [sequelize_1.Op.like]: `%${search}%` };
             pipeline.push({
-                [sequelize_1.Op.and]: [{ name: searchQuery }, { idCustomer: req['user'].idCustomer }]
+                where: { [sequelize_1.Op.and]: [{ name: searchQuery }, { idCustomer: req['user'].idCustomer }] }
             });
         }
         if (start) {
