@@ -24,7 +24,9 @@ const price_1 = __importDefault(require("../models/price"));
 const datetime_functions_1 = require("../utils/datetime-functions");
 const sequelize_1 = require("sequelize");
 const sequelize_2 = require("sequelize");
+const products_services_1 = __importDefault(require("../services/products.services"));
 const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const productService = new products_services_1.default();
     let { search, pageNumber, pageSize, columnOrder, order, idCategories } = req.query;
     const pipeline = [];
     if (search) {
@@ -60,15 +62,6 @@ const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             limit: Number(pageSize)
         });
     }
-    if (!columnOrder) {
-        columnOrder = 'id';
-    }
-    if (!order) {
-        order = 'desc';
-    }
-    pipeline.push({
-        order: [[sequelize_2.Sequelize.literal(columnOrder), order]]
-    });
     pipeline.push({
         include: [
             { model: category_1.default },
@@ -77,6 +70,18 @@ const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             { model: product_1.default, as: 'productsOfGarnish' },
             { model: characteristic_1.default },
             { model: ingredient_1.default }
+        ]
+    });
+    if (!columnOrder) {
+        columnOrder = 'id';
+    }
+    if (!order) {
+        order = 'desc';
+    }
+    pipeline.push({
+        order: [
+            [sequelize_2.Sequelize.literal(columnOrder), order],
+            [price_1.default, 'createdAt', 'asc']
         ]
     });
     const products = yield product_1.default.findAll(pipeline.reduce((acc, el) => (Object.assign(Object.assign({}, acc), el)), {}));
@@ -104,7 +109,7 @@ const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
     res.json({
         totalData: totalData,
-        data: products.map((product) => (0, datetime_functions_1.changeTimezoneObject)(product.toJSON(), req['tz']))
+        data: products.map((product) => (0, datetime_functions_1.changeTimezoneObject)(productService.add_last_price(product.toJSON()), req['tz']))
     });
 });
 exports.getProducts = getProducts;
@@ -163,23 +168,21 @@ const postProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 exports.postProduct = postProduct;
 const getProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const product = yield product_1.default.findOne({
-        where: {
-            [sequelize_1.Op.and]: [{ id: id }, { idCustomer: req['user'].idCustomer }]
-        }
-    });
+    const productService = new products_services_1.default();
+    const product = yield productService.getProduct(id, req['user'].idCustomer);
     if (!product) {
         return res.status(404).json({
             msg: `No existe un product con el id ${id}`
         });
     }
-    res.json((0, datetime_functions_1.changeTimezoneObject)(product.toJSON(), req['tz']));
+    res.json((0, datetime_functions_1.changeTimezoneObject)(product, req['tz']));
 });
 exports.getProduct = getProduct;
 const patchProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _d, _e, _f;
     const { id } = req.params;
     const { body } = req;
+    const productService = new products_services_1.default();
     try {
         let product = yield product_1.default.findOne({
             where: {
@@ -258,8 +261,8 @@ const patchProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             //* add price
             yield price_1.default.create({ price: body.price ? body.price : 0, idProduct: product.id });
         }
-        product = yield product_1.default.findByPk(product.id, { include: [category_1.default] });
-        res.json((0, datetime_functions_1.changeTimezoneObject)(product.toJSON(), req['tz']));
+        product = yield productService.getProduct(id, req['user'].idCustomer);
+        res.json((0, datetime_functions_1.changeTimezoneObject)(product, req['tz']));
     }
     catch (error) {
         console.log(error);

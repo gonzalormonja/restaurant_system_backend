@@ -10,8 +10,10 @@ import Price from '../models/price';
 import { changeTimezoneObject } from '../utils/datetime-functions';
 import { Op } from 'sequelize';
 import { Sequelize } from 'sequelize';
+import ProductService from '../services/products.services';
 
 export const getProducts = async (req: Request, res: Response) => {
+  const productService = new ProductService();
   let { search, pageNumber, pageSize, columnOrder, order, idCategories } = req.query as any;
 
   const pipeline: any[] = [];
@@ -51,15 +53,6 @@ export const getProducts = async (req: Request, res: Response) => {
       }
     );
   }
-  if (!columnOrder) {
-    columnOrder = 'id';
-  }
-  if (!order) {
-    order = 'desc';
-  }
-  pipeline.push({
-    order: [[Sequelize.literal(columnOrder), order]]
-  });
   pipeline.push({
     include: [
       { model: Category },
@@ -68,6 +61,18 @@ export const getProducts = async (req: Request, res: Response) => {
       { model: Product, as: 'productsOfGarnish' },
       { model: Characteristic },
       { model: Ingredient }
+    ]
+  });
+  if (!columnOrder) {
+    columnOrder = 'id';
+  }
+  if (!order) {
+    order = 'desc';
+  }
+  pipeline.push({
+    order: [
+      [Sequelize.literal(columnOrder), order],
+      [Price, 'createdAt', 'asc']
     ]
   });
   const products = await Product.findAll(pipeline.reduce((acc, el) => ({ ...acc, ...el }), {}));
@@ -95,7 +100,9 @@ export const getProducts = async (req: Request, res: Response) => {
 
   res.json({
     totalData: totalData,
-    data: products.map((product) => changeTimezoneObject(product.toJSON(), req['tz']))
+    data: products.map((product) =>
+      changeTimezoneObject(productService.add_last_price(product.toJSON()), req['tz'])
+    )
   });
 };
 
@@ -156,27 +163,23 @@ export const postProduct = async (req: Request, res: Response) => {
 
 export const getProduct = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const product = await Product.findOne({
-    where: {
-      [Op.and]: [{ id: id }, { idCustomer: req['user'].idCustomer }]
-    }
-  });
-
+  const productService = new ProductService();
+  const product = await productService.getProduct(id, req['user'].idCustomer);
   if (!product) {
     return res.status(404).json({
       msg: `No existe un product con el id ${id}`
     });
   }
-
-  res.json(changeTimezoneObject(product.toJSON(), req['tz']));
+  res.json(changeTimezoneObject(product, req['tz']));
 };
 
 export const patchProduct = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { body } = req;
+  const productService = new ProductService();
 
   try {
-    let product = await Product.findOne({
+    let product: any = await Product.findOne({
       where: {
         [Op.and]: [{ id: id }, { idCustomer: req['user'].idCustomer }]
       }
@@ -259,9 +262,9 @@ export const patchProduct = async (req: Request, res: Response) => {
       //* add price
       await Price.create({ price: body.price ? body.price : 0, idProduct: product.id });
     }
-    product = await Product.findByPk(product.id, { include: [Category] });
 
-    res.json(changeTimezoneObject(product.toJSON(), req['tz']));
+    product = await productService.getProduct(id, req['user'].idCustomer);
+    res.json(changeTimezoneObject(product, req['tz']));
   } catch (error) {
     console.log(error);
     res.status(500).json({
