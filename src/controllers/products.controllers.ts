@@ -165,6 +165,13 @@ export const getProduct = async (req: Request, res: Response) => {
   const { id } = req.params;
   const productService = new ProductService();
   const product = await productService.getProduct(id, req['user'].idCustomer);
+  let categoryName = product.category.name;
+  let categoryFather = await Category.findByPk(product.category.idCategory);
+  while (categoryFather) {
+    categoryName = `${categoryFather.name} -> ${categoryName}`;
+    categoryFather = await Category.findByPk(categoryFather.idCategory);
+  }
+  product.category_name = categoryName;
   if (!product) {
     return res.status(404).json({
       msg: `No existe un product con el id ${id}`

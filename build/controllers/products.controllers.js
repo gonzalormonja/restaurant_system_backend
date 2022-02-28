@@ -170,6 +170,13 @@ const getProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     const { id } = req.params;
     const productService = new products_services_1.default();
     const product = yield productService.getProduct(id, req['user'].idCustomer);
+    let categoryName = product.category.name;
+    let categoryFather = yield category_1.default.findByPk(product.category.idCategory);
+    while (categoryFather) {
+        categoryName = `${categoryFather.name} -> ${categoryName}`;
+        categoryFather = yield category_1.default.findByPk(categoryFather.idCategory);
+    }
+    product.category_name = categoryName;
     if (!product) {
         return res.status(404).json({
             msg: `No existe un product con el id ${id}`
