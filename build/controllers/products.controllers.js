@@ -191,17 +191,18 @@ const patchProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     const { body } = req;
     const productService = new products_services_1.default();
     try {
-        let product = yield product_1.default.findOne({
+        const product = yield productService.getProduct(id, req['user'].idCustomer);
+        let productObject = yield product_1.default.findOne({
             where: {
                 [sequelize_1.Op.and]: [{ id: id }, { idCustomer: req['user'].idCustomer }]
             }
         });
-        if (!product) {
+        if (!productObject) {
             return res.status(404).json({
                 msg: `No existe un product con el id ${id}`
             });
         }
-        yield product.update(body);
+        yield productObject.update(body);
         //* update ingredients
         if (body.ingredients) {
             //* delete previous ingredients
@@ -216,7 +217,7 @@ const patchProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 if (ingredientRecord) {
                     productIngredient_1.default.create({
                         idIngredient: ingredientRecord.id,
-                        idProduct: product.id,
+                        idProduct: productObject.id,
                         quantity: ingredient.quantity
                     });
                 }
@@ -236,7 +237,7 @@ const patchProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 if (characteristicRecord) {
                     productCharacteristic_1.default.create({
                         idCharacteristic: characteristicRecord.id,
-                        idProduct: product.id
+                        idProduct: productObject.id
                     });
                 }
             }));
@@ -258,18 +259,18 @@ const patchProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                     }
                     productGarnish_1.default.create({
                         idGarnish: garnishRecord.id,
-                        idProduct: product.id,
+                        idProduct: productObject.id,
                         max_quantity: garnish.max_quantity
                     });
                 }
             }));
         }
-        if (body.price) {
+        if (body.price && product.price != body.price) {
             //* add price
-            yield price_1.default.create({ price: body.price ? body.price : 0, idProduct: product.id });
+            yield price_1.default.create({ price: body.price ? body.price : 0, idProduct: productObject.id });
         }
-        product = yield productService.getProduct(id, req['user'].idCustomer);
-        res.json((0, datetime_functions_1.changeTimezoneObject)(product, req['tz']));
+        productObject = yield productService.getProduct(id, req['user'].idCustomer);
+        res.json((0, datetime_functions_1.changeTimezoneObject)(productObject, req['tz']));
     }
     catch (error) {
         console.log(error);

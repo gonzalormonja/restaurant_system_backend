@@ -186,18 +186,21 @@ export const patchProduct = async (req: Request, res: Response) => {
   const productService = new ProductService();
 
   try {
-    let product: any = await Product.findOne({
+    const product = await productService.getProduct(id, req['user'].idCustomer);
+
+    let productObject: any = await Product.findOne({
       where: {
         [Op.and]: [{ id: id }, { idCustomer: req['user'].idCustomer }]
       }
     });
-    if (!product) {
+
+    if (!productObject) {
       return res.status(404).json({
         msg: `No existe un product con el id ${id}`
       });
     }
 
-    await product.update(body);
+    await productObject.update(body);
 
     //* update ingredients
     if (body.ingredients) {
@@ -213,7 +216,7 @@ export const patchProduct = async (req: Request, res: Response) => {
         if (ingredientRecord) {
           ProductIngredient.create({
             idIngredient: ingredientRecord.id,
-            idProduct: product.id,
+            idProduct: productObject.id,
             quantity: ingredient.quantity
           });
         }
@@ -234,7 +237,7 @@ export const patchProduct = async (req: Request, res: Response) => {
         if (characteristicRecord) {
           ProductCharacteristic.create({
             idCharacteristic: characteristicRecord.id,
-            idProduct: product.id
+            idProduct: productObject.id
           });
         }
       });
@@ -258,20 +261,20 @@ export const patchProduct = async (req: Request, res: Response) => {
           }
           ProductGarnish.create({
             idGarnish: garnishRecord.id,
-            idProduct: product.id,
+            idProduct: productObject.id,
             max_quantity: garnish.max_quantity
           });
         }
       });
     }
 
-    if (body.price) {
+    if (body.price && product.price != body.price) {
       //* add price
-      await Price.create({ price: body.price ? body.price : 0, idProduct: product.id });
+      await Price.create({ price: body.price ? body.price : 0, idProduct: productObject.id });
     }
 
-    product = await productService.getProduct(id, req['user'].idCustomer);
-    res.json(changeTimezoneObject(product, req['tz']));
+    productObject = await productService.getProduct(id, req['user'].idCustomer);
+    res.json(changeTimezoneObject(productObject, req['tz']));
   } catch (error) {
     console.log(error);
     res.status(500).json({
