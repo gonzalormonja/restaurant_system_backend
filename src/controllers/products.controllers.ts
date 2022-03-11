@@ -70,6 +70,11 @@ export const getProducts = async (req: Request, res: Response) => {
       [Price, 'createdAt', 'asc']
     ]
   });
+
+  pipeline.push({
+    attributes: ['createdAt', 'id', 'name', 'short_name', 'state']
+  });
+
   const products = await Product.findAll(pipeline.reduce((acc, el) => ({ ...acc, ...el }), {}));
   let totalData = 0;
   if (search) {
@@ -95,9 +100,11 @@ export const getProducts = async (req: Request, res: Response) => {
 
   res.json({
     totalData: totalData,
-    data: products.map((product) =>
-      changeTimezoneObject(productService.add_last_price(product.toJSON()), req['tz'])
-    )
+    data: products.map((product) => {
+      const prod = productService.add_last_price(product.toJSON());
+      Reflect.deleteProperty(prod, 'prices');
+      return changeTimezoneObject(prod, req['tz']);
+    })
   });
 };
 

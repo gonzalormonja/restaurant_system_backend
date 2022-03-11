@@ -14,11 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteProduct = exports.patchProduct = exports.getProduct = exports.postProduct = exports.getProducts = void 0;
 const category_1 = __importDefault(require("../models/category"));
-const characteristic_1 = __importDefault(require("../models/characteristic"));
 const ingredient_1 = __importDefault(require("../models/ingredient"));
 const product_1 = __importDefault(require("../models/product"));
-const productCharacteristic_1 = __importDefault(require("../models/productCharacteristic"));
-const productGarnish_1 = __importDefault(require("../models/productGarnish"));
 const productIngredient_1 = __importDefault(require("../models/productIngredient"));
 const price_1 = __importDefault(require("../models/price"));
 const datetime_functions_1 = require("../utils/datetime-functions");
@@ -66,9 +63,7 @@ const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         include: [
             { model: category_1.default },
             { model: price_1.default },
-            { model: product_1.default, as: 'garnishes' },
             { model: product_1.default, as: 'productsOfGarnish' },
-            { model: characteristic_1.default },
             { model: ingredient_1.default }
         ]
     });
@@ -83,6 +78,9 @@ const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             [sequelize_2.Sequelize.literal(columnOrder), order],
             [price_1.default, 'createdAt', 'asc']
         ]
+    });
+    pipeline.push({
+        attributes: ['createdAt', 'id', 'name', 'short_name', 'state']
     });
     const products = yield product_1.default.findAll(pipeline.reduce((acc, el) => (Object.assign(Object.assign({}, acc), el)), {}));
     let totalData = 0;
@@ -109,12 +107,16 @@ const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
     res.json({
         totalData: totalData,
-        data: products.map((product) => (0, datetime_functions_1.changeTimezoneObject)(productService.add_last_price(product.toJSON()), req['tz']))
+        data: products.map((product) => {
+            const prod = productService.add_last_price(product.toJSON());
+            Reflect.deleteProperty(prod, 'prices');
+            return (0, datetime_functions_1.changeTimezoneObject)(prod, req['tz']);
+        })
     });
 });
 exports.getProducts = getProducts;
 const postProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c;
+    var _a;
     try {
         const { body } = req;
         let product = yield product_1.default.create(Object.assign(Object.assign({}, body), { idCustomer: req['user'].idCustomer }));
@@ -126,30 +128,6 @@ const postProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                     idIngredient: ingredientRecord.id,
                     idProduct: product.id,
                     quantity: ingredient.quantity
-                });
-            }
-        }));
-        //* add characteristics
-        (_b = body.idCharacteristics) === null || _b === void 0 ? void 0 : _b.map((idCharacteristic) => __awaiter(void 0, void 0, void 0, function* () {
-            const characteristicRecord = yield characteristic_1.default.findByPk(idCharacteristic);
-            if (characteristicRecord) {
-                productCharacteristic_1.default.create({
-                    idCharacteristic: characteristicRecord.id,
-                    idProduct: product.id
-                });
-            }
-        }));
-        //* add garnishes
-        (_c = body.garnishes) === null || _c === void 0 ? void 0 : _c.map((garnish) => __awaiter(void 0, void 0, void 0, function* () {
-            const garnishRecord = yield product_1.default.findByPk(garnish.id);
-            if (garnishRecord) {
-                if (!garnishRecord.isGarnish) {
-                    throw new Error(`El product ${garnishRecord.name} no es una guarnicion valida`);
-                }
-                productGarnish_1.default.create({
-                    idGarnish: garnishRecord.id,
-                    idProduct: product.id,
-                    max_quantity: garnish.max_quantity
                 });
             }
         }));
@@ -186,7 +164,7 @@ const getProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 });
 exports.getProduct = getProduct;
 const patchProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _d, _e, _f;
+    var _b;
     const { id } = req.params;
     const { body } = req;
     const productService = new products_services_1.default();
@@ -212,55 +190,13 @@ const patchProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 }
             });
             //*add ingredients
-            (_d = body.ingredients) === null || _d === void 0 ? void 0 : _d.map((ingredient) => __awaiter(void 0, void 0, void 0, function* () {
+            (_b = body.ingredients) === null || _b === void 0 ? void 0 : _b.map((ingredient) => __awaiter(void 0, void 0, void 0, function* () {
                 const ingredientRecord = yield ingredient_1.default.findByPk(ingredient.id);
                 if (ingredientRecord) {
                     productIngredient_1.default.create({
                         idIngredient: ingredientRecord.id,
                         idProduct: productObject.id,
                         quantity: ingredient.quantity
-                    });
-                }
-            }));
-        }
-        //* update characteristics
-        if (body.idCharacteristics) {
-            //* delete previous characteristics
-            productCharacteristic_1.default.destroy({
-                where: {
-                    idProduct: id
-                }
-            });
-            //* add characteristics
-            (_e = body.idCharacteristics) === null || _e === void 0 ? void 0 : _e.map((idCharacteristic) => __awaiter(void 0, void 0, void 0, function* () {
-                const characteristicRecord = yield characteristic_1.default.findByPk(idCharacteristic);
-                if (characteristicRecord) {
-                    productCharacteristic_1.default.create({
-                        idCharacteristic: characteristicRecord.id,
-                        idProduct: productObject.id
-                    });
-                }
-            }));
-        }
-        //* update granishes
-        if (body.granishes) {
-            //* delete previous granishes
-            productGarnish_1.default.destroy({
-                where: {
-                    idProduct: id
-                }
-            });
-            //* add garnishes
-            (_f = body.garnishes) === null || _f === void 0 ? void 0 : _f.map((garnish) => __awaiter(void 0, void 0, void 0, function* () {
-                const garnishRecord = yield product_1.default.findByPk(garnish.id);
-                if (garnishRecord) {
-                    if (!garnishRecord.isGarnish) {
-                        throw new Error(`El product ${garnishRecord.name} no es una guarnicion valida`);
-                    }
-                    productGarnish_1.default.create({
-                        idGarnish: garnishRecord.id,
-                        idProduct: productObject.id,
-                        max_quantity: garnish.max_quantity
                     });
                 }
             }));
